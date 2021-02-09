@@ -11,16 +11,6 @@ struct Material
 	sampler2D texture_ao1;
 };
 
-
-//struct Material
-//{
-//	sampler2D albedo;
-//	sampler2D normal;
-//	sampler2D metallic;
-//	sampler2D roughness;
-//	sampler2D ao;
-//};
-
 struct TexelValue
 {
 	vec3 albedo;
@@ -57,18 +47,18 @@ struct SpotLight
 };
 
 in VS_OUT {
-    vec3 FragPos;
     vec3 Normal;
     vec2 TexCoord;
-	mat3 TBN;
+	vec3 TangentViewPos;
+	vec3 TangentFragPos;
+	vec3 DirLightTangentSpace;
+	vec3 PointLightTangentSpace[50];
 } fs_in;
-
-uniform vec3 in_ViewPos;
-uniform DirLight in_DirLight;
 
 uniform int in_NoPointLights;
 uniform int in_NoSpotLights;
 
+uniform DirLight in_DirLight;
 uniform PointLight in_PointLights[50];
 uniform SpotLight in_SpotLights[50];
 
@@ -95,7 +85,7 @@ void main()
     tex.roughness = texture(in_Material.texture_roughness1, fs_in.TexCoord).r;
     tex.ao        = texture(in_Material.texture_ao1, fs_in.TexCoord).r;
 
-	vec3 viewDir = normalize(in_ViewPos - fs_in.FragPos); // V
+	vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos); // V
 	vec3 F0 = vec3(0.04); // Surface reflection at zero incidence
 	F0 = mix(F0, tex.albedo, tex.metallic);
 	
@@ -103,11 +93,11 @@ void main()
 	Lo += CalcDirLight(in_DirLight, tex.normal, viewDir, tex, F0);
 	for(int i = 0; i < in_NoPointLights; i++)
 	{
-		Lo += CalcPointLight(in_PointLights[i], tex.normal, fs_in.FragPos, viewDir, tex, F0); 
+		Lo += CalcPointLight(in_PointLights[i], tex.normal, fs_in.TangentFragPos, viewDir, tex, F0); 
 	}
 	for (int i = 0; i < in_NoSpotLights; i++)
 	{
-		Lo += CalcSpotLight(in_SpotLights[i], tex.normal, fs_in.FragPos, viewDir, tex);
+		Lo += CalcSpotLight(in_SpotLights[i], tex.normal, fs_in.TangentFragPos, viewDir, tex);
 	}
 
 	vec3 ambient = vec3(0.03) * tex.albedo * tex.ao;
@@ -123,14 +113,13 @@ vec3 CalcNormal()
 {
 	vec3 normal = texture(in_Material.texture_normal1, fs_in.TexCoord).rgb;
 	normal = normal * 2.0 - 1.0;
-	normal = normalize(fs_in.TBN * normal);
 	return normal;
 }
 
 // calculates the color when using a directional light.
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, TexelValue tex, vec3 F0)
 {
-	vec3 L = normalize(-light.direction); 				// Light direction
+	vec3 L = normalize(fs_in.DirLightTangentSpace); 	// Light direction
 	vec3 H = normalize(viewDir + L);            	 	// Inbetween vector
 	vec3 radiance = light.color;	
 	
