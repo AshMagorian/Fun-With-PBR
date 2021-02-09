@@ -154,7 +154,7 @@ void ShaderProgram::SetUniform(std::string uniform, glm::vec2 value)
 
 	if (uniformId == -1)
 	{
-		throw std::exception();
+		throw Exception(uniform + " not found");
 	}
 
 	glUseProgram(id);
@@ -168,7 +168,7 @@ void ShaderProgram::SetUniform(std::string uniform, glm::vec3 value)
 
 	if (uniformId == -1)
 	{
-		throw std::exception();
+		throw Exception( uniform + " not found");
 	}
 
 	glUseProgram(id);
@@ -181,7 +181,7 @@ void ShaderProgram::SetUniform(std::string uniform, glm::vec4 value)
 
 	if (uniformId == -1)
 	{
-		throw std::exception();
+		throw Exception(uniform + " not found");
 	}
 
 	glUseProgram(id);
@@ -194,7 +194,7 @@ void ShaderProgram::SetUniform(std::string uniform, float value)
 
 	if (uniformId == -1)
 	{
-		throw std::exception();
+		throw Exception(uniform + " not found");
 	}
 
 	glUseProgram(id);
@@ -207,7 +207,7 @@ void ShaderProgram::SetUniform(std::string uniform, int value)
 
 	if (uniformId == -1)
 	{
-		throw std::exception();
+		throw Exception(uniform + " not found");
 	}
 
 	glUseProgram(id);
@@ -220,7 +220,7 @@ void ShaderProgram::SetUniform(std::string uniform, glm::mat4 value)
 
 	if (uniformId == -1)
 	{
-		throw std::exception();
+		throw Exception(uniform + " not found");
 	}
 
 	glUseProgram(id);
@@ -234,7 +234,7 @@ void ShaderProgram::SetUniform(std::string uniform, std::shared_ptr<Texture> tex
 
 	if (uniformId == -1)
 	{
-		throw std::exception();
+		throw Exception(uniform + " not found");
 	}
 	//Tries to find the correct sampler in the vector
 	for (size_t i = 0; i < samplers.size(); i++)

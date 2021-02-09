@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include "Resource.h"
 
 class VertexArray;
 class Texture;

@@ -2,7 +2,7 @@
 
 Lights::Lights()
 {
-	m_directionalLight->colour = glm::vec3(0.25f, 0.25f, 0.25f);
+	m_directionalLight->colour = glm::vec3(5.0f, 5.0f, 5.0f);
 	m_directionalLight->direction = glm::vec3(-0.2f, -1.0f, -0.3f);
 }
 
@@ -11,9 +11,9 @@ void Lights::UpdateLightShaderValues()
 	for (std::list<std::shared_ptr<ShaderProgram>>::iterator i = m_shaderPrograms.begin(); i != m_shaderPrograms.end(); ++i)
 	{
 		(*i)->SetUniform("in_ViewPos", m_application.lock()->GetCamera()->GetCurrentCamera()->GetTransform()->GetPos());
-
-		//(*i)->SetUniform("in_DirLight.direction", m_directionalLight->direction);
-		//(*i)->SetUniform("in_DirLight.color", m_directionalLight->colour);
+		
+		(*i)->SetUniform("in_DirLight.direction", m_directionalLight->direction);
+		(*i)->SetUniform("in_DirLight.color", m_directionalLight->colour);
 
 		if (std::distance(m_pointLights.begin(), m_pointLights.end()) > 0)
 		{

@@ -5,6 +5,7 @@ class ShaderProgram;
 class VertexArray;
 class Texture;
 class PBR_Material;
+class Model;
 
 class Renderer : public Component
 {
@@ -13,6 +14,8 @@ private:
 	std::shared_ptr<VertexArray> m_va;
 	std::shared_ptr<PBR_Material> m_mat;
 	std::shared_ptr<Camera> m_cam;
+	
+	std::shared_ptr<Model> m_model;
 
 public:
 	Renderer();
@@ -20,6 +23,7 @@ public:
 
 	void OnInit() {}
 	void OnInit(std::shared_ptr<ShaderProgram> _shader, std::shared_ptr<VertexArray> _va, std::shared_ptr<PBR_Material> _mat);
+	void OnInit(std::string _path, std::shared_ptr<ShaderProgram> _shader);
 	void OnTick();
 	void OnDisplay();
 

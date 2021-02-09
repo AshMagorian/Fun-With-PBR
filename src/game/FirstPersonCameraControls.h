@@ -11,7 +11,7 @@ private:
 	glm::vec3 m_rightVector; ///< A vector which points to the rigth of where the camera is facing
 	glm::vec3 m_upVector;
 
-	float m_movementSpeed = 10.0f; ///< The speed in which the player moves forward
+	float m_movementSpeed = 3.0f; ///< The speed in which the player moves forward
 
 public:
 	void OnBegin();

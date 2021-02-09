@@ -13,6 +13,7 @@ if(MSVC)
     contrib/msvc-windows-x86/ogg/include
     contrib/msvc-windows-x86/vorbis/include
     contrib/msvc-windows-x86/GLFW/include
+    contrib/msvc-windows-x86/assimp/include
   )
 
   link_directories(
@@ -20,7 +21,8 @@ if(MSVC)
     ${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/openal-soft/lib
     ${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/ogg/lib
     ${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/vorbis/lib
-	${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/GLFW/lib
+    ${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/GLFW/lib
+    ${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/assimp/lib
   )
 endif()
 
@@ -66,15 +68,19 @@ add_library(VanillaEngine
 	src/VanillaEngine/Input.cpp
 	src/VanillaEngine/PBR_Material.h
 	src/VanillaEngine/PBR_Material.cpp
+	src/VanillaEngine/Mesh.h
+	src/VanillaEngine/Mesh.cpp
+	src/VanillaEngine/Model.h
+	src/VanillaEngine/Model.cpp
 )
 
 if(MSVC)
   target_link_libraries(VanillaEngine
-    glew32 opengl32 OpenAL32 ogg vorbis vorbisfile glfw3
+    glew32 opengl32 OpenAL32 ogg vorbis vorbisfile glfw3 assimp-vc141-mtd
   )
 else()
   target_link_libraries(VanillaEngine
-    GLU GLEW GL AL ogg vorbis vorbisfile glfw3
+    GLU GLEW GL AL ogg vorbis vorbisfile glfw3 assimp-vc141-mtd
   )
 endif()
 
@@ -91,7 +97,8 @@ if(MSVC)
     COMMAND ${CMAKE_COMMAND} -E copy
 	  "${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/glew/bin/glew32.dll"
 	  "${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/openal-soft/bin/OpenAL32.dll"
-      "${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/GLFW/bin/glfw3.dll"
-      "$<TARGET_FILE_DIR:game>"
+	  "${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/GLFW/bin/glfw3.dll"
+	  "${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/assimp/bin/assimp-vc141-mtd.dll"
+	  "$<TARGET_FILE_DIR:game>"
   )
 endif()
