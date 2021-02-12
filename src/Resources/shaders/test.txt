@@ -1,0 +1,2 @@
+../src/resources/shaders/vertFragFiles/test.vert
+../src/resources/shaders/vertFragFiles/test.frag

@@ -72,6 +72,10 @@ add_library(VanillaEngine
 	src/VanillaEngine/Mesh.cpp
 	src/VanillaEngine/Model.h
 	src/VanillaEngine/Model.cpp
+	src/VanillaEngine/Skybox.h
+	src/VanillaEngine/SkyBox.cpp
+	src/VanillaEngine/Sphere.h
+
 )
 
 if(MSVC)

@@ -38,6 +38,7 @@ void main()
     vec3 N = normalize(vec3(in_Model * vec4(in_Normal, 0.0)));
 	vec3 B = cross(N, T);
     mat3 TBN = transpose(mat3(T, B, N));
+	//mat3 TBN = mat3(1.0);
 	
 	vs_out.TangentFragPos = TBN * vec3(in_Model * vec4(in_Position, 1.0));
 	vs_out.TangentViewPos = TBN * in_ViewPos;

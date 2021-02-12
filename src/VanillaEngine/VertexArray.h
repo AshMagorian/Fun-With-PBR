@@ -16,6 +16,7 @@ class VertexArray : public Resource
 {
 private:
 	GLuint id;
+	int indexCount;
 	std::vector<std::shared_ptr<VertexBuffer>> buffers; ///< Stores the buffers (Which holds the model data)
 	bool dirty;
 
@@ -28,6 +29,7 @@ public:
 
 	void SetBuffer(std::string attribute, std::shared_ptr<VertexBuffer> buffer);
 	int GetVertexCount();
+	int GetIndexCount() { return indexCount; }
 	GLuint GetId();
 };
 #endif

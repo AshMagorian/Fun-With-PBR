@@ -1,5 +1,6 @@
 #include "VertexArray.h"
 #include "Exception.h"
+#include "Sphere.h"
 
 #include <fstream>
 #include <iostream>
@@ -77,6 +78,14 @@ VertexArray::VertexArray()
 */
 VertexArray::VertexArray(std::string path)
 {
+	if (path == "sphere")
+	{
+		id = Sphere::SetupSphere();
+		indexCount = Sphere::GetIndexCount();
+		dirty = false;
+		return;
+	}
+
 	glGenVertexArrays(1, &id);
 
 	if (!id)

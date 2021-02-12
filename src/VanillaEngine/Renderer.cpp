@@ -35,13 +35,15 @@ void Renderer::OnDisplay()
 	{
 		m_shaderProgram->SetUniform("in_Model", GetEntity()->GetTransform()->GetModelMatrix());
 
-		//m_shaderProgram->SetUniform("in_Material.albedo", m_mat->GetAlbedo());
-		//m_shaderProgram->SetUniform("in_Material.normal", m_mat->GetNormal());
-		//m_shaderProgram->SetUniform("in_Material.metallic", m_mat->GetMetallic());
-		//m_shaderProgram->SetUniform("in_Material.roughness", m_mat->GetRoughness());
-		//m_shaderProgram->SetUniform("in_Material.ao", m_mat->GetAO());
+		m_shaderProgram->SetUniform("in_Material.texture_diffuse1", m_mat->GetAlbedo());
+		m_shaderProgram->SetUniform("in_Material.texture_normal1", m_mat->GetNormal());
+		m_shaderProgram->SetUniform("in_Material.texture_metallic1", m_mat->GetMetallic());
+		m_shaderProgram->SetUniform("in_Material.texture_roughness1", m_mat->GetRoughness());
+		m_shaderProgram->SetUniform("in_Material.texture_ao1", m_mat->GetAO());
 
-		//m_shaderProgram->Draw(m_va);
+		//m_shaderProgram->SetUniform("in_Material.diffuse", m_mat->GetAlbedo());
+
+		m_shaderProgram->Draw(m_va);
 	}
 	else
 	{

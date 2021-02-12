@@ -32,6 +32,8 @@ std::shared_ptr<Application> const Application::Init(int _w, int _h)
 	glfwMakeContextCurrent(app->m_window);
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
+	glfwSwapInterval(1);
+
 	try 
 	{ 
 		if (glewInit() != GLEW_OK) { throw Exception("GLEW couldn't be initialised"); } 
@@ -53,7 +55,7 @@ std::shared_ptr<Application> const Application::Init(int _w, int _h)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
+	app->m_skybox->Init(app->self);
 
 	return app;
 }
@@ -91,6 +93,8 @@ void Application::Run()
 			std::cout << "myEngine Exception: " << e.what() << std::endl;
 		}
 		
+		m_skybox->DrawSkybox();
+
 		for (std::list<std::shared_ptr<Entity>>::iterator i = entities.begin(); i != entities.end(); ++i)
 		{
 			(*i)->Display();

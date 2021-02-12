@@ -23,14 +23,15 @@ private:
 	GLuint id;
 	std::vector<Sampler> samplers;
 
+	void CreateShaderProgram(std::string _vert, std::string _frag);
 	void ReadFromFile(std::string _path, std::string& _text);
 	void CompileShader(GLuint _id, std::string _shaderType);
 	GLuint AttachVetexShader(std::string _path);
 	GLuint AttachFragmentShader(std::string _path);
 
 public:
-	ShaderProgram();
 	ShaderProgram(std::string _path);
+	ShaderProgram(std::string _vert, std::string _frag);
 
 	void Draw(std::shared_ptr<VertexArray> vertexArray);
 

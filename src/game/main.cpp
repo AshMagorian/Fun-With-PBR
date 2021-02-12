@@ -10,20 +10,30 @@ int main(int argc, char *argv[])
 	std::shared_ptr<Application> application = Application::Init(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	application->GetResourceManager()->CreateResource<ShaderProgram>("../src/resources/shaders/pbrShader.txt", "pbr_shader");
+	application->GetResourceManager()->CreateResource<ShaderProgram>("../src/resources/shaders/test.txt", "test_shader");
 	application->GetResourceManager()->CreateResource<VertexArray>("../src/resources/Cube.obj", "cube");
 	application->GetResourceManager()->CreateResource<VertexArray>("../src/resources/Plane.obj", "plane");
+	application->GetResourceManager()->CreateResource<VertexArray>("sphere", "sphere");
 
-	//application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_diff.png", "metal_plate_diff");
-	//application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_nor.png", "metal_plate_normal");
-	//application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_spec.png", "metal_plate_metallic");
-	//application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_rough.png", "metal_plate_rough");
-	//application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_AO.png", "metal_plate_ao");
-	//std::shared_ptr<PBR_Material> metalPlate = std::make_shared<PBR_Material>();
-	//metalPlate->SetTextures(application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_diff"),
-	//						application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_normal"),
-	//						application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_metallic"),
-	//						application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_rough"),
-	//						application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_ao"));
+	application->GetSkybox()->CreateSkybox("bg",
+		"../src/resources/textures/right.jpg",
+		"../src/resources/textures/left.jpg",
+		"../src/resources/textures/top.jpg",
+		"../src/resources/textures/bottom.jpg",
+		"../src/resources/textures/back.jpg",
+		"../src/resources/textures/front.jpg");
+
+	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_diff.png", "metal_plate_diff");
+	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_nor.png", "metal_plate_normal");
+	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_spec.png", "metal_plate_metallic");
+	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_rough.png", "metal_plate_rough");
+	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_AO.png", "metal_plate_ao");
+	std::shared_ptr<PBR_Material> metalPlate = std::make_shared<PBR_Material>();
+	metalPlate->SetTextures(application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_diff"),
+							application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_normal"),
+							application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_metallic"),
+							application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_rough"),
+							application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_ao"));
 
 	application->GetLightManager()->AddShaderProgram(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
 
@@ -45,13 +55,16 @@ int main(int argc, char *argv[])
 	//floor->GetTransform()->SetPos(glm::vec3(0.0f, -4.0f, 0.0f));
 	//floor->GetTransform()->SetScale(glm::vec3(3.0f, 1.0f, 3.0f));
 
-
-	std::shared_ptr<Entity> assimpTest = application->AddEntity();
-	//assimpTest->AddComponent<Renderer>( "../src/resources/backpack/backpack.obj", 
+	// Test Object froi assimp
+	//std::shared_ptr<Entity> assimpTest = application->AddEntity();
+	//assimpTest->AddComponent<Renderer>("../src/resources/backpack/backpack.obj",
 	//	application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
-	assimpTest->AddComponent<Renderer>("../src/resources/backpack/backpack.obj",
-		application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
-	//assimpTest->GetTransform()->SetScale(glm::vec3(0.1));
+
+	//test sphere
+	std::shared_ptr<Entity> testSphere = application->AddEntity();
+	testSphere->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),
+										application->GetResourceManager()->LoadFromResources<VertexArray>("sphere"),
+										metalPlate);
 
 	//std::shared_ptr<Entity> light = application->AddEntity();
 	//light->AddComponent<PointLight>();

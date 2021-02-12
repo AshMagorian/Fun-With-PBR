@@ -113,7 +113,9 @@ vec3 CalcNormal()
 {
 	vec3 normal = texture(in_Material.texture_normal1, fs_in.TexCoord).rgb;
 	normal = normal * 2.0 - 1.0;
+	//vec3 normal = fs_in.TangentFragPos;
 	return normal;
+
 }
 
 // calculates the color when using a directional light.

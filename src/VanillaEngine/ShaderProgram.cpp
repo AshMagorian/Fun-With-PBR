@@ -3,11 +3,6 @@
 #include <glm/ext.hpp>
 #include <iostream>
 
-ShaderProgram::ShaderProgram()
-{
-	id = glCreateProgram();
-}
-
 /**
 *The file passed through contains the paths for both shader files. This is because to make
 *Shaderprogram a resource it needed to take only one paramater as opposed to two
@@ -32,11 +27,20 @@ ShaderProgram::ShaderProgram(std::string _path)
 		fragPath += line;
 	}
 	file.close();
+	CreateShaderProgram(vertPath, fragPath);
+}
 
+ShaderProgram::ShaderProgram(std::string _vert, std::string _frag)
+{
+	CreateShaderProgram(_vert, _frag);
+}
+
+void ShaderProgram::CreateShaderProgram(std::string _vert, std::string _frag)
+{
 	id = glCreateProgram();
 
-	GLuint vertexShaderId = AttachVetexShader(vertPath);
-	GLuint fragmentShaderId = AttachFragmentShader(fragPath);
+	GLuint vertexShaderId = AttachVetexShader(_vert);
+	GLuint fragmentShaderId = AttachFragmentShader(_frag);
 
 	glBindAttribLocation(id, 0, "in_Position");
 	glBindAttribLocation(id, 1, "in_Color");
@@ -49,7 +53,14 @@ ShaderProgram::ShaderProgram(std::string _path)
 	glGetProgramiv(id, GL_LINK_STATUS, &success);
 	if (!success)
 	{
-		throw Exception("Shader cannot be created");
+		GLint maxLength = 0;
+		glGetProgramiv(id, GL_INFO_LOG_LENGTH, &maxLength);
+
+		// The maxLength includes the NULL character
+		std::vector<GLchar> infoLog(maxLength);
+		glGetProgramInfoLog(id, maxLength, &maxLength, &infoLog[0]);
+		glDeleteProgram(id);
+		throw Exception("Shader link error: " + (std::string)&infoLog.at(0));
 	}
 	glUseProgram(id);
 
@@ -135,7 +146,16 @@ void ShaderProgram::Draw(std::shared_ptr<VertexArray> vertexArray)
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
-	glDrawArrays(GL_TRIANGLES, 0, vertexArray->GetVertexCount());
+
+	if (vertexArray->GetIndexCount() == 0)
+	{
+		glDrawArrays(GL_TRIANGLES, 0, vertexArray->GetVertexCount());
+	}
+	else
+	{
+		glDrawElements(GL_TRIANGLE_STRIP, vertexArray->GetIndexCount(), GL_UNSIGNED_INT, 0);
+	}
+
 	//Unbinds the textures for all samplers
 	for (size_t i = 0; i < samplers.size(); i++)
 	{
