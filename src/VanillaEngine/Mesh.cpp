@@ -73,6 +73,8 @@ void Mesh::Draw(std::shared_ptr<ShaderProgram> shader)
 	}
 	glActiveTexture(GL_TEXTURE0);
 
+	glUniform1i(glGetUniformLocation(shader->GetId(), "in_MatBinary"), 31);
+
 	// draw mesh
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);

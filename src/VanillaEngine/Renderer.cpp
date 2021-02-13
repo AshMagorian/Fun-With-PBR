@@ -35,12 +35,38 @@ void Renderer::OnDisplay()
 	{
 		m_shaderProgram->SetUniform("in_Model", GetEntity()->GetTransform()->GetModelMatrix());
 
-		m_shaderProgram->SetUniform("in_Material.texture_diffuse1", m_mat->GetAlbedo());
-		m_shaderProgram->SetUniform("in_Material.texture_normal1", m_mat->GetNormal());
-		m_shaderProgram->SetUniform("in_Material.texture_metallic1", m_mat->GetMetallic());
-		m_shaderProgram->SetUniform("in_Material.texture_roughness1", m_mat->GetRoughness());
-		m_shaderProgram->SetUniform("in_Material.texture_ao1", m_mat->GetAO());
+		int matBinary = 0;
 
+		if (m_mat->GetAlbedo() != nullptr) {
+			m_shaderProgram->SetUniform("in_Material.texture_diffuse1", m_mat->GetAlbedo());
+			matBinary += 16; }
+		else
+			m_shaderProgram->SetUniform("in_Tex.albedo", m_mat->GetAlbedoValue());
+
+		if (m_mat->GetNormal() != nullptr) {
+			m_shaderProgram->SetUniform("in_Material.texture_normal1", m_mat->GetNormal());
+			matBinary += 8; }
+		else
+			m_shaderProgram->SetUniform("in_Tex.normal", glm::vec3(0.0f, 0.0f, 1.0f));
+
+		if (m_mat->GetMetallic() != nullptr) {
+			m_shaderProgram->SetUniform("in_Material.texture_metallic1", m_mat->GetMetallic());
+			matBinary += 4; }
+		else
+			m_shaderProgram->SetUniform("in_Tex.metallic", m_mat->GetMetallicValue());
+
+		if (m_mat->GetRoughness() != nullptr) {
+			m_shaderProgram->SetUniform("in_Material.texture_roughness1", m_mat->GetRoughness());
+			matBinary += 2; }
+		else
+			m_shaderProgram->SetUniform("in_Tex.roughness", m_mat->GetRoughnessValue());
+
+		if (m_mat->GetAO() != nullptr) {
+			m_shaderProgram->SetUniform("in_Material.texture_ao1", m_mat->GetAO());
+			matBinary += 1; }
+		else
+			m_shaderProgram->SetUniform("in_Tex.ao", 1.0f);
+		m_shaderProgram->SetUniform("in_MatBinary", matBinary);
 		//m_shaderProgram->SetUniform("in_Material.diffuse", m_mat->GetAlbedo());
 
 		m_shaderProgram->Draw(m_va);

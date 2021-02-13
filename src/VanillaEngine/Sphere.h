@@ -100,7 +100,7 @@ GLuint Sphere::SetupSphere()
 			{
 				for (int x = X_SEGMENTS; x >= 0; --x)
 				{
-					indices.push_back(y * (X_SEGMENTS + 1) + x);
+					indices.push_back(y		  * (X_SEGMENTS + 1) + x);
 					indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
 				}
 			}
@@ -113,8 +113,9 @@ GLuint Sphere::SetupSphere()
 		std::vector<glm::vec3> bitangents(positions.size(), glm::vec3(0.0f));
 		TempVertex v1, v2, v3;
 		glm::vec3 tmpTangent, tmpBitangent;
-		for (int i = 0; i < indexCount - 1; i += 3)
+		for (int i = 0; i < indexCount - 2; i ++)
 		{
+
 			v1.vector = positions[indices[i]];
 			v1.uv = uv[indices[i]];
 			v2.vector = positions[indices[i + 1]];

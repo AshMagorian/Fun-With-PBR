@@ -62,9 +62,12 @@ uniform DirLight in_DirLight;
 uniform PointLight in_PointLights[50];
 uniform SpotLight in_SpotLights[50];
 
+uniform int in_MatBinary;
+uniform TexelValue in_Tex;
 uniform Material in_Material;
 const float PI = 3.14159265359;
 
+TexelValue CalcTexelValues();
 vec3 CalcNormal();
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, TexelValue tex, vec3 F0);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, TexelValue tex, vec3 F0);
@@ -78,12 +81,7 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0);
 
 void main()
 {
-	TexelValue tex;
-	tex.albedo    = pow(texture(in_Material.texture_diffuse1, fs_in.TexCoord).rgb, vec3(2.2));
-    tex.normal    = CalcNormal();
-    tex.metallic  = texture(in_Material.texture_metallic1, fs_in.TexCoord).r;
-    tex.roughness = texture(in_Material.texture_roughness1, fs_in.TexCoord).r;
-    tex.ao        = texture(in_Material.texture_ao1, fs_in.TexCoord).r;
+	TexelValue tex = CalcTexelValues();
 
 	vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos); // V
 	vec3 F0 = vec3(0.04); // Surface reflection at zero incidence
@@ -109,11 +107,36 @@ void main()
 	FragColor = vec4(color, 1.0);
 }
 
+TexelValue CalcTexelValues()
+{
+	int matBinary = in_MatBinary;
+	TexelValue rtn = in_Tex;
+	if(matBinary >= 16)
+	{	rtn.albedo    = pow(texture(in_Material.texture_diffuse1, fs_in.TexCoord).rgb, vec3(2.2));
+		matBinary -= 16;
+	}
+	if(matBinary >= 8)
+	{	rtn.normal    = CalcNormal();
+		matBinary -= 8;
+	}
+	if(matBinary >= 4)
+	{	rtn.metallic  = texture(in_Material.texture_metallic1, fs_in.TexCoord).r;
+		matBinary -= 4;
+	}
+	if(matBinary >= 2)
+	{	rtn.roughness = texture(in_Material.texture_roughness1, fs_in.TexCoord).r;
+		matBinary -= 2;
+	}
+	if(matBinary >= 1)
+		rtn.ao        = texture(in_Material.texture_ao1, fs_in.TexCoord).r;
+return rtn;
+}
+
 vec3 CalcNormal()
 {
 	vec3 normal = texture(in_Material.texture_normal1, fs_in.TexCoord).rgb;
 	normal = normal * 2.0 - 1.0;
-	//vec3 normal = fs_in.TangentFragPos;
+
 	return normal;
 
 }
