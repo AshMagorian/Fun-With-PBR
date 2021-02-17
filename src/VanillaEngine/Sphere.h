@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 struct TempVertex
 {
@@ -65,8 +66,8 @@ GLuint Sphere::SetupSphere()
 		std::vector<glm::vec3> normals;
 		std::vector<unsigned int> indices;
 
-		const unsigned int X_SEGMENTS = 64;
-		const unsigned int Y_SEGMENTS = 64;
+		const unsigned int X_SEGMENTS = 64 ;
+		const unsigned int Y_SEGMENTS = 64 ;
 		const float PI = 3.14159265359;
 		for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
 		{
@@ -113,21 +114,48 @@ GLuint Sphere::SetupSphere()
 		std::vector<glm::vec3> bitangents(positions.size(), glm::vec3(0.0f));
 		TempVertex v1, v2, v3;
 		glm::vec3 tmpTangent, tmpBitangent;
+		int test = 2 * (X_SEGMENTS + 1);
+		std::vector<int> duplicatePoints;
+
 		for (int i = 0; i < indexCount - 2; i ++)
 		{
+			if ((i+1)%(test) == 0 )
+			{
+				duplicatePoints.push_back(i);
+			}
+			else if ((i + 2) % (test) == 0)
+			{
+				duplicatePoints.push_back(i);
+			}
+			else
+			{
+				v1.vector = positions[indices[i]];
+				v1.uv = uv[indices[i]];
+				v2.vector = positions[indices[i + 1]];
+				v2.uv = uv[indices[i + 1]];
+				v3.vector = positions[indices[i + 2]];
+				v3.uv = uv[indices[i + 2]];
 
-			v1.vector = positions[indices[i]];
-			v1.uv = uv[indices[i]];
-			v2.vector = positions[indices[i + 1]];
-			v2.uv = uv[indices[i + 1]];
-			v3.vector = positions[indices[i + 2]];
-			v3.uv = uv[indices[i + 2]];
+				ComputeTangentBasis(v1, v2, v3, tmpTangent, tmpBitangent);
+				tangents[indices[i]] += tmpTangent;
+				tangents[indices[i + 1]] += tmpTangent;
+				tangents[indices[i + 2]] += tmpTangent;
+			}
 
-			ComputeTangentBasis(v1, v2, v3, tmpTangent, tmpBitangent);
-			tangents[indices[i]] += tmpTangent;
-			tangents[indices[i + 1]] += tmpTangent;
-			tangents[indices[i + 2]] += tmpTangent;
-
+		}
+		//search duplicates
+		for (int i = 0; i < duplicatePoints.size(); i++)
+		{
+			int index = duplicatePoints[i];
+			int p = indices[index];
+			int p2 = indices[index - X_SEGMENTS * 2];
+			if (abs(positions[p].x - positions[p2].x) < 0.00001f)
+			{
+				//Add tangents of duplicate points to each other to average them
+				tangents[p] += tangents[p2];
+				tangents[p2] = tangents[p];
+			}
+		
 		}
 
 		//****************************************8****************************************************

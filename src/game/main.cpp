@@ -11,6 +11,8 @@ int main(int argc, char *argv[])
 
 	application->GetResourceManager()->CreateResource<ShaderProgram>("../src/resources/shaders/pbrShader.txt", "pbr_shader");
 	application->GetResourceManager()->CreateResource<ShaderProgram>("../src/resources/shaders/test.txt", "test_shader");
+	application->GetResourceManager()->CreateResource<ShaderProgram>("../src/resources/shaders/NormalDebug.txt", "normal_debug_shader");
+
 	application->GetResourceManager()->CreateResource<VertexArray>("../src/resources/Cube.obj", "cube");
 	application->GetResourceManager()->CreateResource<VertexArray>("../src/resources/Plane.obj", "plane");
 	application->GetResourceManager()->CreateResource<VertexArray>("sphere", "sphere");
@@ -69,6 +71,12 @@ int main(int argc, char *argv[])
 	testSphere->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),
 										application->GetResourceManager()->LoadFromResources<VertexArray>("sphere"),
 										metalPlate);
+
+	//std::shared_ptr<Entity> testSphere2 = application->AddEntity();
+	//testSphere2->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),
+	//	application->GetResourceManager()->LoadFromResources<VertexArray>("sphere"),
+	//	gold);
+	//testSphere2->GetTransform()->SetPos(glm::vec3(2.0f, 0.0f, 0.0f));
 
 	std::shared_ptr<Entity> testSphere2 = application->AddEntity();
 	testSphere2->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),

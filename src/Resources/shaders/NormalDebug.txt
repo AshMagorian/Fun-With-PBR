@@ -1,0 +1,2 @@
+../src/resources/shaders/vertFragFiles/NormalDebug.vert
+../src/resources/shaders/vertFragFiles/NormalDebug.frag
