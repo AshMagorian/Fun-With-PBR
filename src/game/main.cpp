@@ -17,13 +17,15 @@ int main(int argc, char *argv[])
 	application->GetResourceManager()->CreateResource<VertexArray>("../src/resources/Plane.obj", "plane");
 	application->GetResourceManager()->CreateResource<VertexArray>("sphere", "sphere");
 
-	application->GetSkybox()->CreateSkybox("bg",
-		"../src/resources/textures/right.jpg",
-		"../src/resources/textures/left.jpg",
-		"../src/resources/textures/top.jpg",
-		"../src/resources/textures/bottom.jpg",
-		"../src/resources/textures/back.jpg",
-		"../src/resources/textures/front.jpg");
+	//application->GetSkybox()->CreateSkybox("bg",
+	//	"../src/resources/textures/right.jpg",
+	//	"../src/resources/textures/left.jpg",
+	//	"../src/resources/textures/top.jpg",
+	//	"../src/resources/textures/bottom.jpg",
+	//	"../src/resources/textures/back.jpg",
+	//	"../src/resources/textures/front.jpg");
+
+	application->GetSkybox()->CreateSkybox("bg", "../src/resources/Textures/MonValley_A_LookoutPoint_2k.hdr");
 
 	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_diff.png", "metal_plate_diff");
 	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_nor.png", "metal_plate_normal");

@@ -18,6 +18,18 @@ void Skybox::Init(std::weak_ptr<Application>_app)
 	{
 		std::cout << "VanillaEngine Exception: " << e.what() << std::endl;
 	}
+
+	try
+	{
+		m_hdrShader = std::make_shared<ShaderProgram>("../src/resources/shaders/hdrCube.vert", "../src/resources/shaders/hdrCube.frag");
+		glUseProgram(m_hdrShader->GetId());
+		glUniform1i(glGetUniformLocation(m_hdrShader->GetId(), "equirectangularMap"), 0);
+		glUseProgram(0);
+	}
+	catch (Exception& e)
+	{
+		std::cout << "VanillaEngine Exception: " << e.what() << std::endl;
+	}
 }
 
 void Skybox::InitBoxVertexArray()
@@ -91,6 +103,32 @@ void Skybox::SetFaces(std::string _rt, std::string _lt, std::string _tp, std::st
 	m_texturesFaces[5] = _ft;
 }
 
+void Skybox::CreateSkybox(std::string _name, std::string _path)
+{
+	stbi_set_flip_vertically_on_load(true);
+	int width, height, nrComponents;
+	float* data = stbi_loadf(_path.c_str(), &width, &height, &nrComponents, 0);
+	if (data)
+	{
+		glGenTextures(1, &textureID);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		stbi_image_free(data);
+	}
+	else
+	{
+		std::cout << "Failed to load HDR image." << std::endl;
+	}
+	stbi_set_flip_vertically_on_load(false);
+	hdr = true;
+}
+
 void Skybox::CreateSkybox(std::string _name, std::string _right, std::string _left, std::string _top, std::string _bottom, std::string _back, std::string _front)
 {
 
@@ -126,6 +164,7 @@ void Skybox::CreateSkybox(std::string _name, std::string _right, std::string _le
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	hdr = false;
 }
 
 //void Skybox::SetSkybox(std::string _name)
@@ -144,12 +183,20 @@ void Skybox::DrawSkybox()
 	glDepthMask(GL_FALSE);
 
 	SetShaderUniforms();
-
-	glUseProgram(m_shader->GetId());
-
 	glBindVertexArray(vaID);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	if (hdr == true)
+	{
+		glUseProgram(m_hdrShader->GetId());
+				glBindTexture(GL_TEXTURE_2D, textureID);
+	}
+	else
+	{
+		glUseProgram(m_shader->GetId());
+		glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	}
+
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	glDepthMask(GL_TRUE);
@@ -164,7 +211,15 @@ void Skybox::SetShaderUniforms()
 {
 	glm::mat4 view = glm::mat4(glm::mat3(m_application.lock()->GetCamera()->GetViewMatrix()));
 	glm::mat4 proj = m_application.lock()->GetCamera()->GetProjectionMatrix();
+	if (hdr == true)
+	{
+		m_hdrShader->SetUniform("in_View", view);
+		m_hdrShader->SetUniform("in_Projection", proj);
+	}
+	else
+	{
+		m_shader->SetUniform("in_View", view);
+		m_shader->SetUniform("in_Projection", proj);
+	}
 
-	m_shader->SetUniform("in_View", view);
-	m_shader->SetUniform("in_Projection", proj);
 }
