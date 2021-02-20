@@ -81,9 +81,6 @@ void Application::Run()
 			}
 		}
 
-		glClearColor(0.6f, 0.4f, 0.6f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		try
 		{
 			m_mainCamera->UpdateMatrix(m_windowWidth, m_windowHeight);
@@ -92,7 +89,11 @@ void Application::Run()
 		{
 			std::cout << "myEngine Exception: " << e.what() << std::endl;
 		}
-		
+
+		glClearColor(0.6f, 0.4f, 0.6f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glViewport(0, 0, 1024, 768);
+
 		m_skybox->DrawSkybox();
 
 		for (std::list<std::shared_ptr<Entity>>::iterator i = entities.begin(); i != entities.end(); ++i)

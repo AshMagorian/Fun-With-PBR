@@ -2,9 +2,11 @@
 #define PBR_MATERIAL_H
 
 #include <memory>
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 
 class Texture;
+class ShaderProgram;
 
 class PBR_Material
 {
@@ -19,7 +21,11 @@ private:
 	float m_metallic_value = 0.0f;
 	float m_roughness_value = 0.5f;
 
+	static GLuint m_cubeId;
+
 public:
+	static void SetupCubeID(GLuint _hdrTex, GLuint _cubeVA, std::shared_ptr<ShaderProgram> _hdrShader);
+
 	std::shared_ptr<Texture> GetAlbedo() { return m_albedo; }
 	std::shared_ptr<Texture> GetNormal() { return m_normal; }
 	std::shared_ptr<Texture> GetMetallic() { return m_metallic; }

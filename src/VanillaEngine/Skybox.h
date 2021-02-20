@@ -37,6 +37,9 @@ public:
 	*/
 	void CreateSkybox(std::string _name, std::string _path);
 	void CreateSkybox(std::string _name, std::string _right, std::string _left, std::string _top, std::string _bottom, std::string _back, std::string _front);
+
+	GLuint LoadHDRTexture(std::string _path);
+	GLuint MakeCubemapFromHDR(GLuint _hdr_id);
 	
 	/*
 	*Sets the named skybox as the current one
