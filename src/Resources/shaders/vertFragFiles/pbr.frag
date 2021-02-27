@@ -67,6 +67,8 @@ uniform TexelValue in_Tex;
 uniform Material in_Material;
 const float PI = 3.14159265359;
 
+uniform samplerCube irradianceMap;
+
 TexelValue CalcTexelValues();
 vec3 CalcNormal();
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, TexelValue tex, vec3 F0);
@@ -78,6 +80,7 @@ float DistributionGGX(vec3 N, vec3 H, float roughness);
 float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
 vec3 FresnelSchlick(float cosTheta, vec3 F0);
+vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 
 void main()
 {
@@ -97,9 +100,17 @@ void main()
 	{
 		Lo += CalcSpotLight(in_SpotLights[i], tex.normal, fs_in.TangentFragPos, viewDir, tex);
 	}
-
-	vec3 ambient = vec3(0.03) * tex.albedo * tex.ao;
+	
+	vec3 kS = FresnelSchlickRoughness(max(dot(tex.normal, viewDir), 0.0), F0, tex.roughness);
+	vec3 kD = vec3(1.0) - kS;
+	kD *= (1.0 - tex.metallic);
+	vec3 irradiance = texture(irradianceMap, fs_in.Normal).rgb;
+	vec3 diffuse = irradiance * tex.albedo;	
+	vec3 ambient =  (kD * diffuse) * tex.ao; 
 	vec3 color = ambient + Lo;
+	
+	//vec3 ambient = vec3(0.03) * tex.albedo * tex.ao;
+	//vec3 color = ambient + Lo;
 	
 	color = color / (color + vec3(1.0));
 	color = pow(color, vec3(1.0/2.2));
@@ -229,3 +240,8 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0)
 {
     return F0 + (1.0 - F0) * pow(max(1.0 - cosTheta, 0.0), 5.0);
 }
+
+vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
+{
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0) * pow(max(1.0 - cosTheta, 0.0), 5.0);
+}  

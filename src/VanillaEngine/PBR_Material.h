@@ -21,10 +21,11 @@ private:
 	float m_metallic_value = 0.0f;
 	float m_roughness_value = 0.5f;
 
-	static GLuint m_cubeId;
+	static GLuint m_irradianceMapID;
 
 public:
-	static void SetupCubeID(GLuint _hdrTex, GLuint _cubeVA, std::shared_ptr<ShaderProgram> _hdrShader);
+	static void SetIrradiance(GLuint _id) { m_irradianceMapID = _id; }
+	static GLuint GetIrradiance() { return  m_irradianceMapID; }
 
 	std::shared_ptr<Texture> GetAlbedo() { return m_albedo; }
 	std::shared_ptr<Texture> GetNormal() { return m_normal; }

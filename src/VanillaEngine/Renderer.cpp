@@ -38,6 +38,12 @@ void Renderer::OnDisplay()
 			if (m_mat)
 			{
 				m_shaderProgram->SetUniform("in_Model", GetEntity()->GetTransform()->GetModelMatrix());
+				
+				//m_shaderProgram->SetUniform("irradianceMap", PBR_Material::GetIrradiance());
+				glUseProgram(m_shaderProgram->GetId());
+				glUniform1i(glGetUniformLocation(m_shaderProgram->GetId(), "irradianceMap"), 6);
+				glActiveTexture(GL_TEXTURE6);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, PBR_Material::GetIrradiance());
 
 				int matBinary = 0;
 

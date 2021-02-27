@@ -1,2 +1,2 @@
-../src/resources/shaders/vertFragFiles/pbr.vert
-../src/resources/shaders/vertFragFiles/pbr.frag
+../src/resources/shaders/vertFragFiles/pbr2.vert
+../src/resources/shaders/vertFragFiles/pbr2.frag

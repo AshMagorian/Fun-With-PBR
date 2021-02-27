@@ -19,9 +19,8 @@ private:
 	std::vector<std::string> m_texturesFaces;
 	std::shared_ptr<ShaderProgram> m_shader;
 	std::shared_ptr<ShaderProgram> m_hdrShader;
+	std::shared_ptr<ShaderProgram> m_irradianceShader;
 	std::weak_ptr<Application> m_application;
-
-	bool hdr = false;
 
 	void InitBoxVertexArray();
 	void SetFaces(std::string _rt, std::string _lt, std::string _tp, std::string _bm, std::string _bk, std::string _ft);
@@ -39,7 +38,8 @@ public:
 	void CreateSkybox(std::string _name, std::string _right, std::string _left, std::string _top, std::string _bottom, std::string _back, std::string _front);
 
 	GLuint LoadHDRTexture(std::string _path);
-	GLuint MakeCubemapFromHDR(GLuint _hdr_id);
+	GLuint MakeCubemapFromHDR(GLuint _hdr_id, GLuint* _captureFBO, GLuint* _captureRBO);
+	GLuint MakeIrradianceMap(GLuint _captureFBO, GLuint _captureRBO);
 	
 	/*
 	*Sets the named skybox as the current one

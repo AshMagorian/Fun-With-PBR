@@ -25,7 +25,9 @@ int main(int argc, char *argv[])
 	//	"../src/resources/textures/back.jpg",
 	//	"../src/resources/textures/front.jpg");
 
-	application->GetSkybox()->CreateSkybox("bg", "../src/resources/Textures/MonValley_A_LookoutPoint_2k.hdr");
+	//application->GetSkybox()->CreateSkybox("bg", "../src/resources/Textures/MonValley_A_LookoutPoint_2k.hdr");
+	application->GetSkybox()->CreateSkybox("bg", "../src/resources/Textures/Mt-Washington-Gold-Room_Ref.hdr");
+	
 
 	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_diff.png", "metal_plate_diff");
 	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_nor.png", "metal_plate_normal");
@@ -39,9 +41,9 @@ int main(int argc, char *argv[])
 							application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_rough"),
 							application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_ao"));
 	std::shared_ptr<PBR_Material> gold = std::make_shared<PBR_Material>();
-	gold->SetAlbedo(glm::vec3(1.0f, 0.766f, 0.336f));
-	gold->SetMetallic(1.0f);
-	gold->SetRoughness(0.3f);
+	gold->SetAlbedo(glm::vec3(1.0f, 1.0f, 1.0f));
+	gold->SetMetallic(0.0f);
+	gold->SetRoughness(0.8f);
 
 	application->GetLightManager()->AddShaderProgram(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
 
