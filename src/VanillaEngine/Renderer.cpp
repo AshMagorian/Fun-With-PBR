@@ -45,6 +45,14 @@ void Renderer::OnDisplay()
 				glActiveTexture(GL_TEXTURE6);
 				glBindTexture(GL_TEXTURE_CUBE_MAP, PBR_Material::GetIrradiance());
 
+				glUniform1i(glGetUniformLocation(m_shaderProgram->GetId(), "prefilterMap"), 7);
+				glActiveTexture(GL_TEXTURE7);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, PBR_Material::GetPrefilter());
+
+				glUniform1i(glGetUniformLocation(m_shaderProgram->GetId(), "brdfLUT"), 8);
+				glActiveTexture(GL_TEXTURE8);
+				glBindTexture(GL_TEXTURE_2D, PBR_Material::GetBRDF());
+
 				int matBinary = 0;
 
 				if (m_mat->GetAlbedo() != nullptr) {

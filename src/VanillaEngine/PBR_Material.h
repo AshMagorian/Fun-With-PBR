@@ -22,10 +22,19 @@ private:
 	float m_roughness_value = 0.5f;
 
 	static GLuint m_irradianceMapID;
+	static GLuint m_prefilterMapID;
 
+	static bool brdfCheck;
+	static GLuint m_brdfID;
+
+	static void MakeBRDFTex();
 public:
 	static void SetIrradiance(GLuint _id) { m_irradianceMapID = _id; }
 	static GLuint GetIrradiance() { return  m_irradianceMapID; }
+
+	static void SetPrefilter(GLuint _id);
+	static GLuint GetPrefilter() { return  m_prefilterMapID; }
+	static GLuint GetBRDF() { return m_brdfID; }
 
 	std::shared_ptr<Texture> GetAlbedo() { return m_albedo; }
 	std::shared_ptr<Texture> GetNormal() { return m_normal; }

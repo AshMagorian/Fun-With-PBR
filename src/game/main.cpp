@@ -40,10 +40,14 @@ int main(int argc, char *argv[])
 							application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_metallic"),
 							application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_rough"),
 							application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_ao"));
-	std::shared_ptr<PBR_Material> gold = std::make_shared<PBR_Material>();
-	gold->SetAlbedo(glm::vec3(1.0f, 1.0f, 1.0f));
-	gold->SetMetallic(0.0f);
-	gold->SetRoughness(0.8f);
+	std::shared_ptr<PBR_Material> dielectric = std::make_shared<PBR_Material>();
+	dielectric->SetAlbedo(glm::vec3(0.2f, 0.0f, 0.0f));
+	dielectric->SetMetallic(0.0f);
+	dielectric->SetRoughness(0.3f);
+	std::shared_ptr<PBR_Material> metal = std::make_shared<PBR_Material>();
+	metal->SetAlbedo(glm::vec3(0.2f, 0.3f, 0.5f));
+	metal->SetMetallic(1.0f);
+	metal->SetRoughness(0.1f);
 
 	application->GetLightManager()->AddShaderProgram(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
 
@@ -85,8 +89,14 @@ int main(int argc, char *argv[])
 	std::shared_ptr<Entity> testSphere2 = application->AddEntity();
 	testSphere2->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),
 		application->GetResourceManager()->LoadFromResources<VertexArray>("sphere"),
-		gold);
+		dielectric);
 	testSphere2->GetTransform()->SetPos(glm::vec3(2.0f, 0.0f, 0.0f));
+
+	std::shared_ptr<Entity> testSphere3 = application->AddEntity();
+	testSphere3->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),
+		application->GetResourceManager()->LoadFromResources<VertexArray>("sphere"),
+		metal);
+	testSphere3->GetTransform()->SetPos(glm::vec3(-2.0f, 0.0f, 0.0f));
 
 
 	//std::shared_ptr<Entity> light = application->AddEntity();

@@ -67,6 +67,8 @@ uniform Material in_Material;
 const float PI = 3.14159265359;
 
 uniform samplerCube irradianceMap;
+uniform samplerCube prefilterMap;
+uniform sampler2D   brdfLUT;  
 
 TexelValue CalcTexelValues();
 vec3 CalcNormal();
@@ -100,12 +102,22 @@ void main()
 		Lo += CalcSpotLight(in_SpotLights[i], tex.normal, fs_in.FragPos, viewDir, tex);
 	}
 	
-	vec3 kS = FresnelSchlickRoughness(max(dot(tex.normal, viewDir), 0.0), F0, tex.roughness);
+	//******** DIFFUSE IBL *************
+	vec3 F = FresnelSchlickRoughness(max(dot(tex.normal, viewDir), 0.0), F0, tex.roughness);
+	vec3 kS = F;
 	vec3 kD = vec3(1.0) - kS;
 	kD *= (1.0 - tex.metallic);
 	vec3 irradiance = texture(irradianceMap, tex.normal).rgb;
 	vec3 diffuse = irradiance * tex.albedo;	
-	vec3 ambient =  (kD * diffuse) * tex.ao; 
+	
+	//******** SPECULAR IBL *************
+	vec3 R = reflect(-viewDir, tex.normal);
+	const float MAX_REFLECTION_LOD = 4.0;
+	vec3 prefilteredColor = textureLod(prefilterMap, R,  tex.roughness * MAX_REFLECTION_LOD).rgb; 
+	vec2 envBRDF  = texture(brdfLUT, vec2(max(dot(tex.normal, viewDir), 0.0), tex.roughness)).rg;
+	vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
+	
+	vec3 ambient =  (kD * diffuse + specular) * tex.ao; 
 	vec3 color = ambient + Lo;
 	
 	//vec3 ambient = vec3(0.03) * tex.albedo * tex.ao;
@@ -130,7 +142,7 @@ TexelValue CalcTexelValues()
 		matBinary -= 8;
 	}
 	else
-		rtn.normal    = fs_in.Normal;
+		rtn.normal    = normalize(fs_in.TBN * vec3(0.0, 0.0, 1.0));
 	if(matBinary >= 4)
 	{	rtn.metallic  = texture(in_Material.texture_metallic1, fs_in.TexCoord).r;
 		matBinary -= 4;

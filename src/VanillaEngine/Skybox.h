@@ -20,6 +20,8 @@ private:
 	std::shared_ptr<ShaderProgram> m_shader;
 	std::shared_ptr<ShaderProgram> m_hdrShader;
 	std::shared_ptr<ShaderProgram> m_irradianceShader;
+	std::shared_ptr<ShaderProgram> m_prefilterShader;
+	std::shared_ptr<ShaderProgram> m_brdfShader;
 	std::weak_ptr<Application> m_application;
 
 	void InitBoxVertexArray();
@@ -40,7 +42,9 @@ public:
 	GLuint LoadHDRTexture(std::string _path);
 	GLuint MakeCubemapFromHDR(GLuint _hdr_id, GLuint* _captureFBO, GLuint* _captureRBO);
 	GLuint MakeIrradianceMap(GLuint _captureFBO, GLuint _captureRBO);
-	
+	GLuint MakePrefilterMap(GLuint _captureFBO, GLuint _captureRBO);
+	GLuint MakeBRDFTex(GLuint _captureFBO, GLuint _captureRBO);
+
 	/*
 	*Sets the named skybox as the current one
 	*/
