@@ -22,7 +22,7 @@ private:
 public:
 	Texture() {}
 	/**
-	*\brief Loads the texture from teh path specified
+	*\brief Loads the texture from the path specified
 	*/
 	Texture(std::string path);
 	/**
@@ -33,5 +33,6 @@ public:
 	*\brief Returns the id
 	*/
 	GLuint getId() { return id; }
+	void SetID(GLuint _id) { id = _id; }
 };
 #endif

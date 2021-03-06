@@ -2,10 +2,9 @@
 #include "ShaderProgram.h"
 #include <glm/ext.hpp>
 
-GLuint PBR_Material::m_irradianceMapID = 0;
-GLuint PBR_Material::m_prefilterMapID = 0;
 GLuint PBR_Material::m_brdfID = 0;
 bool PBR_Material::brdfCheck = false;
+std::vector<IBL_data> PBR_Material::m_envMaps;
 
 void PBR_Material::SetTextures(std::shared_ptr<Texture> _albedo,
 								std::shared_ptr<Texture> _normal,
@@ -20,9 +19,23 @@ void PBR_Material::SetTextures(std::shared_ptr<Texture> _albedo,
 	m_ao = _ao;
 }
 
-void PBR_Material::SetPrefilter(GLuint _id)
+void PBR_Material::SetIBLData(std::string _name, GLuint _irradianceId, GLuint _prefilterId)
 {
-	m_prefilterMapID = _id;
+	for (size_t i = 0; i < m_envMaps.size(); i++)
+	{
+		if (_name == m_envMaps.at(i).envName)
+		{
+			m_envMaps.at(i).irradianceMapID = _irradianceId;
+			m_envMaps.at(i).prefilterMapID = _prefilterId;
+		}
+	}
+	// Make a new IBL_data struct to push back
+	IBL_data data;
+	data.envName = _name;
+	data.irradianceMapID = _irradianceId;
+	data.prefilterMapID = _prefilterId;
+	m_envMaps.push_back(data);
+
 	if (brdfCheck == false)
 	{
 		MakeBRDFTex();
@@ -61,4 +74,28 @@ void PBR_Material::MakeBRDFTex()
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+GLuint PBR_Material::GetIrradiance(std::string _name)
+{
+	for (size_t i = 0; i < m_envMaps.size(); i++)
+	{
+		if (_name == m_envMaps.at(i).envName)
+		{
+			return  m_envMaps.at(i).irradianceMapID;
+		}
+	}
+	return NULL;
+}
+
+GLuint PBR_Material::GetPrefilter(std::string _name)
+{
+	for (size_t i = 0; i < m_envMaps.size(); i++)
+	{
+		if (_name == m_envMaps.at(i).envName)
+		{
+			return  m_envMaps.at(i).prefilterMapID;
+		}
+	}
+	return NULL;
 }

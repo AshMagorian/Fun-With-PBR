@@ -12,10 +12,13 @@ class Renderer : public Component
 private:
 	std::shared_ptr<ShaderProgram> m_shaderProgram;
 	std::shared_ptr<VertexArray> m_va;
-	std::shared_ptr<PBR_Material> m_mat;
+	std::shared_ptr<PBR_Material> m_pbrMat;
 	std::shared_ptr<Camera> m_cam;
 	
-	std::shared_ptr<Model> m_model;
+	std::shared_ptr<Model> m_assimpModel;
+
+	void BindPBRValues();
+	void BindIBLMaps();
 
 public:
 	Renderer();
@@ -28,7 +31,7 @@ public:
 	void OnDisplay();
 
 	void SetMesh(std::shared_ptr<VertexArray> _va) { m_va = _va; }
-	void SetPBRMaterial(std::shared_ptr<PBR_Material> _mat) { m_mat = _mat; }
+	void SetPBRMaterial(std::shared_ptr<PBR_Material> _mat) { m_pbrMat = _mat; }
 	void SetShader(std::shared_ptr<ShaderProgram> _shader) { m_shaderProgram = _shader; }
 	void SetCamera(std::shared_ptr<Camera> _cam) { m_cam = _cam; }
 

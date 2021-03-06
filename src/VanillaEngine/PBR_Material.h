@@ -2,11 +2,19 @@
 #define PBR_MATERIAL_H
 
 #include <memory>
+#include <vector>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
 class Texture;
 class ShaderProgram;
+
+struct IBL_data
+{
+	std::string envName;
+	GLuint irradianceMapID;
+	GLuint prefilterMapID;
+};
 
 class PBR_Material
 {
@@ -21,19 +29,16 @@ private:
 	float m_metallic_value = 0.0f;
 	float m_roughness_value = 0.5f;
 
-	static GLuint m_irradianceMapID;
-	static GLuint m_prefilterMapID;
+	static std::vector<IBL_data> m_envMaps;
 
 	static bool brdfCheck;
 	static GLuint m_brdfID;
 
 	static void MakeBRDFTex();
 public:
-	static void SetIrradiance(GLuint _id) { m_irradianceMapID = _id; }
-	static GLuint GetIrradiance() { return  m_irradianceMapID; }
-
-	static void SetPrefilter(GLuint _id);
-	static GLuint GetPrefilter() { return  m_prefilterMapID; }
+	static void SetIBLData(std::string _name, GLuint _irradianceId, GLuint _prefilterId);
+	static GLuint GetIrradiance(std::string _name);
+	static GLuint GetPrefilter(std::string _name);
 	static GLuint GetBRDF() { return m_brdfID; }
 
 	std::shared_ptr<Texture> GetAlbedo() { return m_albedo; }

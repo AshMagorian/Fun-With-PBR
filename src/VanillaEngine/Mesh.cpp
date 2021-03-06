@@ -1,6 +1,6 @@
 #include "Mesh.h"
 #include "ShaderProgram.h"
-
+#include "PBR_Material.h"
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<AssimpTexture> textures)
 {
@@ -72,8 +72,6 @@ void Mesh::Draw(std::shared_ptr<ShaderProgram> shader)
 		glBindTexture(GL_TEXTURE_2D, textures[i].id);
 	}
 	glActiveTexture(GL_TEXTURE0);
-
-	glUniform1i(glGetUniformLocation(shader->GetId(), "in_MatBinary"), 31);
 
 	// draw mesh
 	glBindVertexArray(VAO);

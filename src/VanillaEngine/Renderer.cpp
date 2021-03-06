@@ -8,7 +8,7 @@ void Renderer::OnInit(std::shared_ptr<ShaderProgram> _shader, std::shared_ptr<Ve
 {
 	m_shaderProgram = _shader;
 	m_va = _va;
-	m_mat = _mat;
+	m_pbrMat = _mat;
 	m_cam = GetApplication()->GetCamera();
 }
 
@@ -16,7 +16,7 @@ void Renderer::OnInit(std::string _path, std::shared_ptr<ShaderProgram> _shader)
 {
 	//Convert the path to char*
 	char* p = &_path[0];
-	m_model = std::make_shared<Model>(p);
+	m_assimpModel = std::make_shared<Model>(p);
 	m_shaderProgram = _shader;
 	m_cam = GetApplication()->GetCamera();
 }
@@ -33,84 +33,86 @@ void Renderer::OnDisplay()
 {
 	if (m_shaderProgram)
 	{
+		m_shaderProgram->SetUniform("in_Model", GetEntity()->GetTransform()->GetModelMatrix());
 		if (m_va)
 		{
-			if (m_mat)
+			if (m_pbrMat)
 			{
-				m_shaderProgram->SetUniform("in_Model", GetEntity()->GetTransform()->GetModelMatrix());
-				
-				//m_shaderProgram->SetUniform("irradianceMap", PBR_Material::GetIrradiance());
-				glUseProgram(m_shaderProgram->GetId());
-				glUniform1i(glGetUniformLocation(m_shaderProgram->GetId(), "irradianceMap"), 6);
-				glActiveTexture(GL_TEXTURE6);
-				glBindTexture(GL_TEXTURE_CUBE_MAP, PBR_Material::GetIrradiance());
-
-				glUniform1i(glGetUniformLocation(m_shaderProgram->GetId(), "prefilterMap"), 7);
-				glActiveTexture(GL_TEXTURE7);
-				glBindTexture(GL_TEXTURE_CUBE_MAP, PBR_Material::GetPrefilter());
-
-				glUniform1i(glGetUniformLocation(m_shaderProgram->GetId(), "brdfLUT"), 8);
-				glActiveTexture(GL_TEXTURE8);
-				glBindTexture(GL_TEXTURE_2D, PBR_Material::GetBRDF());
-
-				int matBinary = 0;
-
-				if (m_mat->GetAlbedo() != nullptr) {
-					m_shaderProgram->SetUniform("in_Material.texture_diffuse1", m_mat->GetAlbedo());
-					matBinary += 16;
-				}
-				else
-					m_shaderProgram->SetUniform("in_Tex.albedo", m_mat->GetAlbedoValue());
-
-				if (m_mat->GetNormal() != nullptr) {
-					m_shaderProgram->SetUniform("in_Material.texture_normal1", m_mat->GetNormal());
-					matBinary += 8;
-				}
-				else
-					m_shaderProgram->SetUniform("in_Tex.normal", glm::vec3(0.0f, 0.0f, 1.0f));
-
-				if (m_mat->GetMetallic() != nullptr) {
-					m_shaderProgram->SetUniform("in_Material.texture_metallic1", m_mat->GetMetallic());
-					matBinary += 4;
-				}
-				else
-					m_shaderProgram->SetUniform("in_Tex.metallic", m_mat->GetMetallicValue());
-
-				if (m_mat->GetRoughness() != nullptr) {
-					m_shaderProgram->SetUniform("in_Material.texture_roughness1", m_mat->GetRoughness());
-					matBinary += 2;
-				}
-				else
-					m_shaderProgram->SetUniform("in_Tex.roughness", m_mat->GetRoughnessValue());
-
-				if (m_mat->GetAO() != nullptr) {
-					m_shaderProgram->SetUniform("in_Material.texture_ao1", m_mat->GetAO());
-					matBinary += 1;
-				}
-				else
-					m_shaderProgram->SetUniform("in_Tex.ao", 1.0f);
-				m_shaderProgram->SetUniform("in_MatBinary", matBinary);
-				//m_shaderProgram->SetUniform("in_Material.diffuse", m_mat->GetAlbedo());
-
-				m_shaderProgram->Draw(m_va);
+				BindPBRValues();
 			}
-			else
-			{
-				m_shaderProgram->SetUniform("in_Model", GetEntity()->GetTransform()->GetModelMatrix());
-				m_shaderProgram->Draw(m_va);
-			}
-			
+			m_shaderProgram->Draw(m_va);
 		}
-		else
+		else if (m_assimpModel)
 		{
-			m_shaderProgram->SetUniform("in_Model", GetEntity()->GetTransform()->GetModelMatrix());
-			//Using assimp
-			m_model->Draw(m_shaderProgram);
+			//Render using assimp
+			m_shaderProgram->SetUniform("in_MatBinary", 31);
+			BindIBLMaps();
+			m_assimpModel->Draw(m_shaderProgram);
 		}
-
 	}
 	else
 	{
-
+		std::cout << "Couldn't draw, shader not found" << std::endl;
 	}
+}
+
+void Renderer::BindPBRValues()
+{
+	int matBinary = 0;
+
+	if (m_pbrMat->GetAlbedo() != nullptr) {
+		m_shaderProgram->SetUniform("in_Material.texture_diffuse1", m_pbrMat->GetAlbedo());
+		matBinary += 16;
+	}
+	else
+		m_shaderProgram->SetUniform("in_Tex.albedo", m_pbrMat->GetAlbedoValue());
+
+	if (m_pbrMat->GetNormal() != nullptr) {
+		m_shaderProgram->SetUniform("in_Material.texture_normal1", m_pbrMat->GetNormal());
+		matBinary += 8;
+	}
+	else
+		m_shaderProgram->SetUniform("in_Tex.normal", glm::vec3(0.0f, 0.0f, 1.0f));
+
+	if (m_pbrMat->GetMetallic() != nullptr) {
+		m_shaderProgram->SetUniform("in_Material.texture_metallic1", m_pbrMat->GetMetallic());
+		matBinary += 4;
+	}
+	else
+		m_shaderProgram->SetUniform("in_Tex.metallic", m_pbrMat->GetMetallicValue());
+
+	if (m_pbrMat->GetRoughness() != nullptr) {
+		m_shaderProgram->SetUniform("in_Material.texture_roughness1", m_pbrMat->GetRoughness());
+		matBinary += 2;
+	}
+	else
+		m_shaderProgram->SetUniform("in_Tex.roughness", m_pbrMat->GetRoughnessValue());
+
+	if (m_pbrMat->GetAO() != nullptr) {
+		m_shaderProgram->SetUniform("in_Material.texture_ao1", m_pbrMat->GetAO());
+		matBinary += 1;
+	}
+	else
+		m_shaderProgram->SetUniform("in_Tex.ao", 1.0f);
+
+	m_shaderProgram->SetUniform("in_MatBinary", matBinary);
+	BindIBLMaps();
+}
+
+void Renderer::BindIBLMaps()
+{
+	std::string mapName = GetApplication()->GetSkybox()->GetCurrentMapName();
+	
+	glUseProgram(m_shaderProgram->GetId());
+	glUniform1i(glGetUniformLocation(m_shaderProgram->GetId(), "irradianceMap"), 6);
+	glActiveTexture(GL_TEXTURE6);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, PBR_Material::GetIrradiance(mapName));
+
+	glUniform1i(glGetUniformLocation(m_shaderProgram->GetId(), "prefilterMap"), 7);
+	glActiveTexture(GL_TEXTURE7);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, PBR_Material::GetPrefilter(mapName));
+
+	glUniform1i(glGetUniformLocation(m_shaderProgram->GetId(), "brdfLUT"), 8);
+	glActiveTexture(GL_TEXTURE8);
+	glBindTexture(GL_TEXTURE_2D, PBR_Material::GetBRDF());
 }

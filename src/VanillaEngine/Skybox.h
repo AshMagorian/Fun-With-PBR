@@ -9,19 +9,25 @@
 class ShaderProgram;
 class Application;
 
+struct CubemapTexture
+{
+	std::string name;
+	GLuint id;
+};
 
 class Skybox
 {
 private:
 	GLuint textureID;
+	std::vector<CubemapTexture> m_cubemaps;
+	unsigned int m_currentMap = 0;
 	GLuint vaID;
-	GLuint vbID;
+
 	std::vector<std::string> m_texturesFaces;
 	std::shared_ptr<ShaderProgram> m_shader;
 	std::shared_ptr<ShaderProgram> m_hdrShader;
 	std::shared_ptr<ShaderProgram> m_irradianceShader;
 	std::shared_ptr<ShaderProgram> m_prefilterShader;
-	std::shared_ptr<ShaderProgram> m_brdfShader;
 	std::weak_ptr<Application> m_application;
 
 	void InitBoxVertexArray();
@@ -38,12 +44,13 @@ public:
 	*/
 	void CreateSkybox(std::string _name, std::string _path);
 	void CreateSkybox(std::string _name, std::string _right, std::string _left, std::string _top, std::string _bottom, std::string _back, std::string _front);
+	void SetSkybox(std::string _name);
+	std::string GetCurrentMapName() { return m_cubemaps.at(m_currentMap).name; }
 
 	GLuint LoadHDRTexture(std::string _path);
 	GLuint MakeCubemapFromHDR(GLuint _hdr_id, GLuint* _captureFBO, GLuint* _captureRBO);
-	GLuint MakeIrradianceMap(GLuint _captureFBO, GLuint _captureRBO);
-	GLuint MakePrefilterMap(GLuint _captureFBO, GLuint _captureRBO);
-	GLuint MakeBRDFTex(GLuint _captureFBO, GLuint _captureRBO);
+	GLuint MakeIrradianceMap(GLuint _captureFBO, GLuint _captureRBO, GLuint _textureID);
+	GLuint MakePrefilterMap(GLuint _captureFBO, GLuint _captureRBO, GLuint _textureID);
 
 	/*
 	*Sets the named skybox as the current one

@@ -52,14 +52,6 @@ void Skybox::Init(std::weak_ptr<Application>_app)
 	{
 		std::cout << "VanillaEngine Exception: " << e.what() << std::endl;
 	}
-	try
-	{
-		m_brdfShader = std::make_shared<ShaderProgram>("../src/resources/shaders/brdf.vert", "../src/resources/shaders/brdf.frag");
-	}
-	catch (Exception& e)
-	{
-		std::cout << "VanillaEngine Exception: " << e.what() << std::endl;
-	}
 }
 
 void Skybox::InitBoxVertexArray()
@@ -108,7 +100,7 @@ void Skybox::InitBoxVertexArray()
 		-1.0f, -1.0f,  1.0f,
 		 1.0f, -1.0f,  1.0f
 	};
-
+	GLuint vbID;
 	glGenVertexArrays(1, &vaID);
 	glGenBuffers(1, &vbID);
 	glBindVertexArray(vaID);
@@ -137,18 +129,17 @@ void Skybox::CreateSkybox(std::string _name, std::string _path)
 {
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	unsigned int captureFBO, captureRBO;
+	CubemapTexture tex;
 
-	GLuint id = LoadHDRTexture(_path); 
-	textureID = MakeCubemapFromHDR(id, &captureFBO, &captureRBO);
+	GLuint HDR_id = LoadHDRTexture(_path); 
 	
-	GLuint irradianceID = MakeIrradianceMap(captureFBO, captureRBO);
-	PBR_Material::SetIrradiance(irradianceID);
+	tex.name = _name;
+	tex.id = MakeCubemapFromHDR(HDR_id, &captureFBO, &captureRBO);
+	m_cubemaps.push_back(tex);
 
-	GLuint prefilterID = MakePrefilterMap(captureFBO, captureRBO);
-	PBR_Material::SetPrefilter(prefilterID);
-	//GLuint brdfID = MakeBRDFTex(captureFBO, captureRBO);
-
-	//textureID = PBR_Material::GetIrradiance();
+	GLuint irradianceID = MakeIrradianceMap(captureFBO, captureRBO, tex.id);
+	GLuint prefilterID = MakePrefilterMap(captureFBO, captureRBO, tex.id);
+	PBR_Material::SetIBLData(tex.name, irradianceID, prefilterID);
 }
 /*
 Creates and returns a HDR environment map
@@ -245,7 +236,7 @@ GLuint Skybox::MakeCubemapFromHDR(GLuint _hdr_id, GLuint* _captureFBO, GLuint* _
 	return envCubemap;
 }
 
-GLuint Skybox::MakeIrradianceMap(GLuint _captureFBO, GLuint _captureRBO)
+GLuint Skybox::MakeIrradianceMap(GLuint _captureFBO, GLuint _captureRBO, GLuint _textureID)
 {
 	unsigned int irradianceMap;
 	glGenTextures(1, &irradianceMap);
@@ -279,7 +270,7 @@ GLuint Skybox::MakeIrradianceMap(GLuint _captureFBO, GLuint _captureRBO)
 	glUniform1i(glGetUniformLocation(m_irradianceShader->GetId(), "skybox"), 0);
 	glUniformMatrix4fv(glGetUniformLocation(m_irradianceShader->GetId(), "in_Projection"), 1, GL_FALSE, glm::value_ptr(captureProjection));
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _textureID);
 	glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
 	glBindFramebuffer(GL_FRAMEBUFFER, _captureFBO);
 	for (unsigned int i = 0; i < 6; ++i)
@@ -297,7 +288,7 @@ GLuint Skybox::MakeIrradianceMap(GLuint _captureFBO, GLuint _captureRBO)
 	return irradianceMap;
 }
 
-GLuint Skybox::MakePrefilterMap(GLuint _captureFBO, GLuint _captureRBO)
+GLuint Skybox::MakePrefilterMap(GLuint _captureFBO, GLuint _captureRBO, GLuint _textureID)
 {
 	unsigned int prefilterMap;
 	glGenTextures(1, &prefilterMap);
@@ -328,7 +319,7 @@ GLuint Skybox::MakePrefilterMap(GLuint _captureFBO, GLuint _captureRBO)
 	glUniform1i(glGetUniformLocation(m_prefilterShader->GetId(), "environmentMap"), 0);
 	glUniformMatrix4fv(glGetUniformLocation(m_prefilterShader->GetId(), "in_Projection"), 1, GL_FALSE, glm::value_ptr(captureProjection));
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _textureID);
 	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
@@ -342,7 +333,7 @@ GLuint Skybox::MakePrefilterMap(GLuint _captureFBO, GLuint _captureRBO)
 		glBindRenderbuffer(GL_RENDERBUFFER, _captureRBO);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
 		glViewport(0, 0, mipWidth, mipHeight);
-		// Roughness values: 0, 0.25, 0.5, 0.75, 1.0
+		// Calculated for roughness values: 0, 0.25, 0.5, 0.75, 1.0
 		float roughness = (float)mip / (float)(maxMipLevels - 1);
 		glUniform1f(glGetUniformLocation(m_prefilterShader->GetId(), "roughness"), roughness);
 		for (unsigned int i = 0; i < 6; ++i)
@@ -358,36 +349,6 @@ GLuint Skybox::MakePrefilterMap(GLuint _captureFBO, GLuint _captureRBO)
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return prefilterMap;
-}
-
-GLuint Skybox::MakeBRDFTex(GLuint _captureFBO, GLuint _captureRBO)
-{
-	unsigned int brdfLUTTexture;
-	glGenTextures(1, &brdfLUTTexture);
-	// pre-allocate enough memory for the LUT texture.
-	glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, _captureFBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, _captureRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
-	glViewport(0, 0, 512, 512);
-
-	glUseProgram(m_brdfShader->GetId());
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//render quad here
-	unsigned int emptyVA;
-	glGenVertexArrays(1, &emptyVA);
-	glBindVertexArray(emptyVA);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	return brdfLUTTexture;
 }
 
 void Skybox::CreateSkybox(std::string _name, std::string _right, std::string _left, std::string _top, std::string _bottom, std::string _back, std::string _front)
@@ -427,16 +388,16 @@ void Skybox::CreateSkybox(std::string _name, std::string _right, std::string _le
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
-//void Skybox::SetSkybox(std::string _name)
-//{
-//	for (int i = 0; i < m_boxTextures.size(); ++i)
-//	{
-//		if (_name == m_boxTextures[i].name)
-//		{
-//			textureID = m_boxTextures[i].id;
-//		}
-//	}
-//}
+void Skybox::SetSkybox(std::string _name)
+{
+	for (int i = 0; i < m_cubemaps.size(); ++i)
+	{
+		if (_name == m_cubemaps[i].name)
+		{
+			m_currentMap = i;
+		}
+	}
+}
 
 void Skybox::DrawSkybox()
 {
@@ -447,7 +408,7 @@ void Skybox::DrawSkybox()
 	glActiveTexture(GL_TEXTURE0);
 
 	glUseProgram(m_shader->GetId());
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);	
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemaps.at(m_currentMap).id);	
 
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
