@@ -11,17 +11,21 @@ struct TempVertex
 	glm::vec2 uv;
 };
 
-class Sphere
+class PrimitiveShape
 {
 private:
 	static GLuint id;
+	static GLuint plane_id;
 	static int indexCount;
 public:
 	static GLuint SetupSphere();
-	static int GetIndexCount() { return Sphere::indexCount; }
+	static int GetIndexCount() { return PrimitiveShape::indexCount; }
+
+	static GLuint SetupPlane();
 };
-GLuint Sphere::id = 0;
-int Sphere::indexCount = 0;
+GLuint PrimitiveShape::plane_id = 0;
+GLuint PrimitiveShape::id = 0;
+int PrimitiveShape::indexCount = 0;
 
 void ComputeTangentBasis(
 	//inputs
@@ -51,7 +55,7 @@ void ComputeTangentBasis(
 	bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * r;
 }
 
-GLuint Sphere::SetupSphere()
+GLuint PrimitiveShape::SetupSphere()
 {
 	if (id == 0)
 	{
@@ -201,4 +205,70 @@ GLuint Sphere::SetupSphere()
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, stride, (void*)(8 * sizeof(float)));
 	}
 	return id;
+}
+
+GLuint PrimitiveShape::SetupPlane()
+{
+	if (plane_id == 0)
+	{
+		// positions
+		glm::vec3 pos1(-1.0f, 1.0f, 0.0f);
+		glm::vec3 pos2(-1.0f, -1.0f, 0.0f);
+		glm::vec3 pos3(1.0f, -1.0f, 0.0f);
+		glm::vec3 pos4(1.0f, 1.0f, 0.0f);
+		// texture coordinates
+		glm::vec2 uv1(0.0f, 1.0f);
+		glm::vec2 uv2(0.0f, 0.0f);
+		glm::vec2 uv3(1.0f, 0.0f);
+		glm::vec2 uv4(1.0f, 1.0f);
+		// normal vector
+		glm::vec3 nm(0.0f, 0.0f, 1.0f);
+
+		glm::vec3 tangent1, bitangent1;
+		glm::vec3 tangent2, bitangent2;
+
+		TempVertex v1, v2, v3;
+		// Calculate tangent for triangle of positions 1, 2 and 3
+		v1.vector = pos1;
+		v1.uv = uv1;
+		v2.vector = pos2;
+		v2.uv = uv2;
+		v3.vector = pos3;
+		v3.uv = uv3;
+		ComputeTangentBasis(v1, v2, v3, tangent1, bitangent1);
+		// Calculate tangent for triangle of positions 1, 3 and 4
+		v2.vector = pos3;
+		v2.uv = uv3;
+		v3.vector = pos4;
+		v3.uv = uv4;
+		ComputeTangentBasis(v1, v2, v3, tangent2, bitangent2);
+
+		float quadVertices[] = {
+			// positions            // normal         // texcoords  // tangent 
+			pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent1.x, tangent1.y, tangent1.z,
+			pos2.x, pos2.y, pos2.z, nm.x, nm.y, nm.z, uv2.x, uv2.y, tangent1.x, tangent1.y, tangent1.z,
+			pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent1.x, tangent1.y, tangent1.z,
+
+			pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent2.x, tangent2.y, tangent2.z,
+			pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent2.x, tangent2.y, tangent2.z,
+			pos4.x, pos4.y, pos4.z, nm.x, nm.y, nm.z, uv4.x, uv4.y, tangent2.x, tangent2.y, tangent2.z
+		};
+		// configure plane VAO
+		GLuint quadVBO;
+		glGenVertexArrays(1, &plane_id);
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(plane_id);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0); // in_Pos
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(3); // in_Normal
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(3 * sizeof(float)));
+		glEnableVertexAttribArray(2); // in_TexCoord
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
+		glEnableVertexAttribArray(4); // in_Tangent
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 11 * sizeof(float), (void*)(8 * sizeof(float)));
+
+	}
+	return plane_id;
 }

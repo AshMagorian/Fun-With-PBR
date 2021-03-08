@@ -12,6 +12,7 @@ out VS_OUT {
 	mat3 TBN;
 } vs_out;
 
+uniform float in_TexCoordScale;
 uniform mat4 in_View;
 uniform mat4 in_Projection;
 uniform mat4 in_Model;
@@ -19,7 +20,7 @@ uniform mat4 in_Model;
 void main()
 {
 	vs_out.FragPos = vec3(in_Model * vec4(in_Position, 1.0));
-	vs_out.TexCoord = in_TexCoord;
+	vs_out.TexCoord = in_TexCoord * in_TexCoordScale;
 	vs_out.Normal = mat3(in_Model) * in_Normal;
 	gl_Position = in_Projection * in_View * in_Model * vec4(in_Position, 1.0);
 	

@@ -1,6 +1,6 @@
 #include "VertexArray.h"
 #include "Exception.h"
-#include "Sphere.h"
+#include "PrimitiveShape.h"
 
 #include <fstream>
 #include <iostream>
@@ -80,8 +80,15 @@ VertexArray::VertexArray(std::string path)
 {
 	if (path == "sphere")
 	{
-		id = Sphere::SetupSphere();
-		indexCount = Sphere::GetIndexCount();
+		id = PrimitiveShape::SetupSphere();
+		indexCount = PrimitiveShape::GetIndexCount();
+		dirty = false;
+		return;
+	}
+	if (path == "plane")
+	{
+		id = PrimitiveShape::SetupPlane();
+		vertexCount = 6;
 		dirty = false;
 		return;
 	}
@@ -182,6 +189,8 @@ VertexArray::VertexArray(std::string path)
 	SetBuffer("in_Position", positionBuffer);
 	if (texCoordBuffer) SetBuffer("in_TexCoord", texCoordBuffer);
 	if (normalBuffer) SetBuffer("in_Normal", normalBuffer);
+
+	vertexCount = buffers.at(0)->GetDataSize() / buffers.at(0)->GetComponents();
 }
 
 /**
@@ -216,11 +225,12 @@ void VertexArray::SetBuffer(std::string attribute, std::shared_ptr<VertexBuffer>
 
 int VertexArray::GetVertexCount()
 {
-	if (!buffers.at(0))
-	{
-		throw Exception("Buffers don't exist");
-	}
-	return buffers.at(0)->GetDataSize() / buffers.at(0)->GetComponents();
+	//if (!buffers.at(0))
+	//{
+	//	throw Exception("Buffers don't exist");
+	//}
+	//return buffers.at(0)->GetDataSize() / buffers.at(0)->GetComponents();
+	return vertexCount;
 }
 
 GLuint VertexArray::GetId()

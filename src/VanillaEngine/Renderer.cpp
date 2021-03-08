@@ -45,7 +45,6 @@ void Renderer::OnDisplay()
 		else if (m_assimpModel)
 		{
 			//Render using assimp
-			m_shaderProgram->SetUniform("in_MatBinary", 31);
 			BindIBLMaps();
 			m_assimpModel->Draw(m_shaderProgram);
 		}
@@ -95,7 +94,12 @@ void Renderer::BindPBRValues()
 	else
 		m_shaderProgram->SetUniform("in_Tex.ao", 1.0f);
 
+	if (m_pbrMat->GetDisplacement() != nullptr) {
+
+	}
+
 	m_shaderProgram->SetUniform("in_MatBinary", matBinary);
+	m_shaderProgram->SetUniform("in_TexCoordScale", m_pbrMat->GetTexCoordScale());
 	BindIBLMaps();
 }
 

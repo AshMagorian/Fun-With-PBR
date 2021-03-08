@@ -16,7 +16,8 @@ class VertexArray : public Resource
 {
 private:
 	GLuint id;
-	int indexCount;
+	int indexCount = 0;
+	int vertexCount = 0;
 	std::vector<std::shared_ptr<VertexBuffer>> buffers; ///< Stores the buffers (Which holds the model data)
 	bool dirty;
 

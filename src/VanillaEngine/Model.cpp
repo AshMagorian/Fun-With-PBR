@@ -6,7 +6,7 @@
 #include <iostream>
 void Model::LoadModel(std::string path)
 {
-	stbi_set_flip_vertically_on_load(true);
+	//stbi_set_flip_vertically_on_load(true);
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
@@ -83,19 +83,19 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 		aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
 
 		std::vector<AssimpTexture> diffuseMaps = LoadMaterialTextures(material,
-			aiTextureType_DIFFUSE, "texture_diffuse");
+			aiTextureType_DIFFUSE, "texture_diffuse");								// Diffuse = Albedo
 		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 		std::vector<AssimpTexture> normalMaps = LoadMaterialTextures(material,
-			aiTextureType_HEIGHT, "texture_normal");
+			aiTextureType_HEIGHT, "texture_normal");								// Height = Normal
 		textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 		std::vector<AssimpTexture> metallicMaps = LoadMaterialTextures(material,
-			aiTextureType_SPECULAR, "texture_metallic");
+			aiTextureType_SPECULAR, "texture_metallic");							// Specular = Metallic
 		textures.insert(textures.end(), metallicMaps.begin(), metallicMaps.end());
 		std::vector<AssimpTexture> roughnessMaps = LoadMaterialTextures(material,
-			aiTextureType_SHININESS, "texture_roughness");
+			aiTextureType_SHININESS, "texture_roughness");							// Shininess = Roughness
 		textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
 		std::vector<AssimpTexture> aoMaps = LoadMaterialTextures(material,
-			aiTextureType_AMBIENT, "texture_ao");
+			aiTextureType_AMBIENT, "texture_ao");									// Ambient = AO
 		textures.insert(textures.end(), aoMaps.begin(), aoMaps.end());
 	}
 

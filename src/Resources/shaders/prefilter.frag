@@ -99,3 +99,4 @@ float DistributionGGX(float NdotH, float roughness)
 	denom = PI * denom * denom;
 	return num / denom;
 }
+

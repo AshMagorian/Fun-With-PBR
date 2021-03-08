@@ -74,7 +74,7 @@ add_library(VanillaEngine
 	src/VanillaEngine/Model.cpp
 	src/VanillaEngine/Skybox.h
 	src/VanillaEngine/SkyBox.cpp
-	src/VanillaEngine/Sphere.h
+	src/VanillaEngine/PrimitiveShape.h
 
 )
 

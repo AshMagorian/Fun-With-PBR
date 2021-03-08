@@ -51,6 +51,7 @@ void Mesh::Draw(std::shared_ptr<ShaderProgram> shader)
 	unsigned int roughnessNr = 1;
 	unsigned int aoNr = 1;
 
+	unsigned int matBinary = 0;
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
@@ -58,20 +59,38 @@ void Mesh::Draw(std::shared_ptr<ShaderProgram> shader)
 		std::string number;
 		std::string name = textures[i].type;
 		if (name == "texture_diffuse")
+		{
+			if (diffuseNr == 1) { matBinary += 16; }
 			number = std::to_string(diffuseNr++);
+		}
 		else if (name == "texture_normal")
+		{
+			if (normalNr == 1) { matBinary += 8; }
 			number = std::to_string(normalNr++);
+		}
 		else if (name == "texture_metallic")
+		{
+			if (metallicNr == 1) { matBinary += 4; }
 			number = std::to_string(metallicNr++);
+		}
 		else if (name == "texture_roughness")
+		{
+			if (roughnessNr == 1) { matBinary += 2; }
 			number = std::to_string(roughnessNr++);
+		}
 		else if (name == "texture_ao")
+		{
+			if (aoNr == 1) { matBinary += 1; }
 			number = std::to_string(aoNr++);
+		}
 
 		glUniform1i(glGetUniformLocation(shader->GetId(), ("in_Material." + name + number).c_str()), i);
 		glBindTexture(GL_TEXTURE_2D, textures[i].id);
 	}
 	glActiveTexture(GL_TEXTURE0);
+
+	// Send data telling the shader which texture maps are being used
+	glUniform1i(glGetUniformLocation(shader->GetId(), "in_MatBinary"), matBinary);
 
 	// draw mesh
 	glBindVertexArray(VAO);
