@@ -17,6 +17,9 @@ int main(int argc, char *argv[])
 	application->GetResourceManager()->CreateResource<VertexArray>("plane", "plane");
 	application->GetResourceManager()->CreateResource<VertexArray>("sphere", "sphere");
 
+	application->GetResourceManager()->CreateResource<PBR_Material>("../src/resources/Textures/Cobblestone/cobblestone.txt", "cobble_mat");
+	application->GetResourceManager()->CreateResource<PBR_Material>("../src/resources/Textures/metal_plate/metal_plate.txt", "metal_plate_mat");
+
 	//application->GetSkybox()->CreateSkybox("bg",
 	//	"../src/resources/textures/right.jpg",
 	//	"../src/resources/textures/left.jpg",
@@ -27,37 +30,7 @@ int main(int argc, char *argv[])
 
 	application->GetSkybox()->CreateSkybox("bg", "../src/resources/Textures/MonValley_A_LookoutPoint_2k.hdr");
 	application->GetSkybox()->CreateSkybox("bg2", "../src/resources/Textures/Mt-Washington-Gold-Room_Ref.hdr");
-	application->GetSkybox()->SetSkybox("bg2");
-
-
-
-	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_diff.png", "metal_plate_diff");
-	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_nor.png", "metal_plate_normal");
-	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_spec.png", "metal_plate_metallic");
-	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_rough.png", "metal_plate_rough");
-	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/metal_plate_AO.png", "metal_plate_ao");
-	std::shared_ptr<PBR_Material> metalPlate = std::make_shared<PBR_Material>();
-	metalPlate->SetTextures(application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_diff"),
-							application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_normal"),
-							application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_metallic"),
-							application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_rough"),
-							application->GetResourceManager()->LoadFromResources<Texture>("metal_plate_ao"));
-	metalPlate->SetTexCoordScale(2.0f);
-
-	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/Cobblestone/cobblestone_floor_08_diff_1k.png", "cobblestone_diff"); 
-	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/Cobblestone/cobblestone_floor_08_nor_1k.png", "cobblestone_normal");
-	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/Cobblestone/cobblestone_floor_08_rough_1k.png", "cobblestone_rough");
-	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/Cobblestone/cobblestone_floor_08_ao_1k.png", "cobblestone_ao");
-	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/Cobblestone/cobblestone_floor_08_disp_1k.png", "cobblestone_displacement");
-	std::shared_ptr<PBR_Material> cobble = std::make_shared<PBR_Material>();
-	cobble->SetAlbedoTex(application->GetResourceManager()->LoadFromResources<Texture>("cobblestone_diff"));
-	cobble->SetNormalTex(application->GetResourceManager()->LoadFromResources<Texture>("cobblestone_normal"));
-	cobble->SetMetallic(0.0f);
-	cobble->SetRoughnessTex(application->GetResourceManager()->LoadFromResources<Texture>("cobblestone_rough"));
-	cobble->SetAOTex(application->GetResourceManager()->LoadFromResources<Texture>("cobblestone_ao"));
-	cobble->SetDisplacementTex(application->GetResourceManager()->LoadFromResources<Texture>("cobblestone_displacement"));
-	cobble->SetTexCoordScale(1.0f);
-
+	application->GetSkybox()->SetSkybox("bg");
 
 	std::shared_ptr<PBR_Material> dielectric = std::make_shared<PBR_Material>();
 	dielectric->SetAlbedo(glm::vec3(0.2f, 0.0f, 0.0f));
@@ -88,13 +61,13 @@ int main(int argc, char *argv[])
 	std::shared_ptr<Entity> testSphere = application->AddEntity();
 	testSphere->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),
 										application->GetResourceManager()->LoadFromResources<VertexArray>("sphere"),
-										metalPlate);
+										application->GetResourceManager()->LoadFromResources<PBR_Material>("metal_plate_mat"));
+	testSphere->GetComponent<Renderer>()->SetTexCoordScale(2.0f);
 	std::shared_ptr<Entity> testSphere2 = application->AddEntity();
 	testSphere2->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),
 		application->GetResourceManager()->LoadFromResources<VertexArray>("sphere"),
 		dielectric);
-	testSphere2->GetTransform()->SetPos(glm::vec3(2.0f, 0.0f, 0.0f));
-	
+	testSphere2->GetTransform()->SetPos(glm::vec3(2.0f, 0.0f, 0.0f));	
 	std::shared_ptr<Entity> testSphere3 = application->AddEntity();
 	testSphere3->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),
 		application->GetResourceManager()->LoadFromResources<VertexArray>("sphere"),
@@ -104,10 +77,11 @@ int main(int argc, char *argv[])
 	std::shared_ptr<Entity> testPlane = application->AddEntity();
 	testPlane->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),
 		application->GetResourceManager()->LoadFromResources<VertexArray>("plane"),
-		cobble);
+		application->GetResourceManager()->LoadFromResources<PBR_Material>("cobble_mat"));
 	testPlane->GetTransform()->SetRotation(glm::vec3(-90.0f, 0.0f, 0.0f));
 	testPlane->GetTransform()->SetPos(glm::vec3(0.0f, -1.5f, 0.0f));
 	testPlane->GetTransform()->SetScale(glm::vec3(5.0f, 5.0f, 5.0f));
+	testPlane->GetComponent<Renderer>()->SetTexCoordScale(4.0f);
 
 	//std::shared_ptr<Entity> light = application->AddEntity();
 	//light->AddComponent<PointLight>();

@@ -1,6 +1,8 @@
 #ifndef PBR_MATERIAL_H
 #define PBR_MATERIAL_H
 
+#include "Resource.h"
+
 #include <memory>
 #include <vector>
 #include <GL/glew.h>
@@ -16,7 +18,7 @@ struct IBL_data
 	GLuint prefilterMapID;
 };
 
-class PBR_Material
+class PBR_Material : public Resource
 {
 private:
 	std::shared_ptr<Texture> m_albedo;
@@ -30,14 +32,16 @@ private:
 	float m_metallic_value = 0.0f;
 	float m_roughness_value = 0.5f;
 
-	float m_texCoordScale = 1.0f;
-
 	static std::vector<IBL_data> m_envMaps;
 	static bool brdfCheck;
 	static GLuint m_brdfID;
 
+	void SplitStringWhitespace(std::string& input, std::vector<std::string>& output);
 	static void MakeBRDFTex();
 public:
+	PBR_Material() {}
+	PBR_Material(std::string _path);
+
 	static void SetIBLData(std::string _name, GLuint _irradianceId, GLuint _prefilterId);
 	static GLuint GetIrradiance(std::string _name);
 	static GLuint GetPrefilter(std::string _name);
@@ -69,9 +73,6 @@ public:
 	void SetAlbedo(glm::vec3 value) { m_albedo_rgb = value; }
 	void SetMetallic(float value) { m_metallic_value = value; }
 	void SetRoughness(float value) { m_roughness_value = value; }
-
-	void SetTexCoordScale(float value) { m_texCoordScale = value; }
-	float GetTexCoordScale() { return m_texCoordScale; }
 };
 
 #endif

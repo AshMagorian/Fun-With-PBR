@@ -132,7 +132,7 @@ void Skybox::CreateSkybox(std::string _name, std::string _path)
 	CubemapTexture tex;
 
 	GLuint HDR_id = LoadHDRTexture(_path); 
-	
+	glDepthFunc(GL_LEQUAL);
 	tex.name = _name;
 	tex.id = MakeCubemapFromHDR(HDR_id, &captureFBO, &captureRBO);
 	m_cubemaps.push_back(tex);
@@ -140,6 +140,7 @@ void Skybox::CreateSkybox(std::string _name, std::string _path)
 	GLuint irradianceID = MakeIrradianceMap(captureFBO, captureRBO, tex.id);
 	GLuint prefilterID = MakePrefilterMap(captureFBO, captureRBO, tex.id);
 	PBR_Material::SetIBLData(tex.name, irradianceID, prefilterID);
+	glDepthFunc(GL_LESS);
 }
 /*
 Creates and returns a HDR environment map
@@ -402,6 +403,7 @@ void Skybox::SetSkybox(std::string _name)
 void Skybox::DrawSkybox()
 {
 	glDepthMask(GL_FALSE);
+	glDepthFunc(GL_LEQUAL);
 
 	SetShaderUniforms();
 	glBindVertexArray(vaID);
@@ -417,6 +419,7 @@ void Skybox::DrawSkybox()
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	glBindVertexArray(0);
 	glUseProgram(0);
+	glDepthFunc(GL_LESS);
 	
 }
 

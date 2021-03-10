@@ -94,12 +94,13 @@ void Application::Run()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, 1024, 768);
 
-		m_skybox->DrawSkybox();
+
 
 		for (std::list<std::shared_ptr<Entity>>::iterator i = entities.begin(); i != entities.end(); ++i)
 		{
 			(*i)->Display();
 		}
+		m_skybox->DrawSkybox();
 		m_input->ResetDeltaMouseValues();
 		glfwPollEvents();
 

@@ -100,7 +100,7 @@ void Renderer::BindPBRValues()
 	}
 
 	m_shaderProgram->SetUniform("in_MatBinary", matBinary);
-	m_shaderProgram->SetUniform("in_TexCoordScale", m_pbrMat->GetTexCoordScale());
+	m_shaderProgram->SetUniform("in_TexCoordScale", m_texCoordScale);
 	BindIBLMaps();
 }
 

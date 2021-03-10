@@ -1,10 +1,98 @@
 #include "PBR_Material.h"
 #include "ShaderProgram.h"
+#include "Texture.h"
+#include "Exception.h"
 #include <glm/ext.hpp>
+
 
 GLuint PBR_Material::m_brdfID = 0;
 bool PBR_Material::brdfCheck = false;
 std::vector<IBL_data> PBR_Material::m_envMaps;
+
+PBR_Material::PBR_Material(std::string _path)
+{
+	std::ifstream file(_path);
+	std::string line;
+	std::vector<std::string> splitLine;
+	if (!file.is_open())
+	{
+		throw Exception("PBR_Material not found, '" + _path + "' cannot be loaded");
+	}
+	else
+	{
+		std::getline(file, line);
+		std::string matName = line;
+		while (!file.eof())
+		{
+			std::getline(file, line);
+			if (line.length() < 1) continue;
+			SplitStringWhitespace(line, splitLine);
+			if (splitLine.size() < 1) continue;
+			
+			if (splitLine.at(0) == "diff")
+			{
+				m_albedo_rgb.x = atof(splitLine.at(1).c_str());
+				m_albedo_rgb.y = atof(splitLine.at(2).c_str());
+				m_albedo_rgb.z = atof(splitLine.at(3).c_str());
+			}
+			else if (splitLine.at(0) == "diff_map")
+			{
+				m_albedo = std::make_shared<Texture>("../src/resources/Textures/" + matName + "/" + splitLine.at(1));
+			}
+			else if (splitLine.at(0) == "n_map")
+			{
+				m_normal = std::make_shared<Texture>("../src/resources/Textures/" + matName + "/" + splitLine.at(1));
+			}
+			else if (splitLine.at(0) == "m")
+			{
+				m_metallic_value = atof(splitLine.at(1).c_str());
+			}
+			else if (splitLine.at(0) == "m_map")
+			{
+				m_metallic = std::make_shared<Texture>("../src/resources/Textures/" + matName + "/" + splitLine.at(1));
+			}
+			else if (splitLine.at(0) == "r")
+			{
+				m_roughness_value = atof(splitLine.at(1).c_str());
+			}
+			else if (splitLine.at(0) == "r_map")
+			{
+				m_roughness = std::make_shared<Texture>("../src/resources/Textures/" + matName + "/" + splitLine.at(1));
+			}
+			else if (splitLine.at(0) == "ao_map")
+			{
+				m_ao = std::make_shared<Texture>("../src/resources/Textures/" + matName + "/" + splitLine.at(1));
+			}
+			else if (splitLine.at(0) == "disp_map")
+			{
+				m_displacement = std::make_shared<Texture>("../src/resources/Textures/" + matName + "/" + splitLine.at(1));
+			}
+		}
+	}
+	file.close();
+}
+
+void PBR_Material::SplitStringWhitespace(std::string& input, std::vector<std::string>& output)
+{
+	std::string curr;
+	output.clear();
+	for (size_t i = 0; i < input.length(); i++)
+	{
+		if (input.at(i) == ' ' ||
+			input.at(i) == '\r' ||
+			input.at(i) == '\n' ||
+			input.at(i) == '\t')
+		{
+			if (curr.length() > 0)
+			{
+				output.push_back(curr);
+				curr = "";
+			}
+		}
+		else { curr += input.at(i); }
+	}
+	if (curr.length() > 0)	{ output.push_back(curr); }
+}
 
 void PBR_Material::SetTextures(std::shared_ptr<Texture> _albedo,
 								std::shared_ptr<Texture> _normal,

@@ -14,8 +14,8 @@ private:
 	std::shared_ptr<VertexArray> m_va;
 	std::shared_ptr<PBR_Material> m_pbrMat;
 	std::shared_ptr<Camera> m_cam;
-	
 	std::shared_ptr<Model> m_assimpModel;
+	float m_texCoordScale = 1.0f;
 
 	void BindPBRValues();
 	void BindIBLMaps();
@@ -34,6 +34,7 @@ public:
 	void SetPBRMaterial(std::shared_ptr<PBR_Material> _mat) { m_pbrMat = _mat; }
 	void SetShader(std::shared_ptr<ShaderProgram> _shader) { m_shaderProgram = _shader; }
 	void SetCamera(std::shared_ptr<Camera> _cam) { m_cam = _cam; }
+	void SetTexCoordScale(float _value) { m_texCoordScale = _value; }
 
 };
 #endif
