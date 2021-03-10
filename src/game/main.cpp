@@ -48,13 +48,15 @@ int main(int argc, char *argv[])
 	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/Cobblestone/cobblestone_floor_08_nor_1k.png", "cobblestone_normal");
 	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/Cobblestone/cobblestone_floor_08_rough_1k.png", "cobblestone_rough");
 	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/Cobblestone/cobblestone_floor_08_ao_1k.png", "cobblestone_ao");
+	application->GetResourceManager()->CreateResource<Texture>("../src/resources/Textures/Cobblestone/cobblestone_floor_08_disp_1k.png", "cobblestone_displacement");
 	std::shared_ptr<PBR_Material> cobble = std::make_shared<PBR_Material>();
 	cobble->SetAlbedoTex(application->GetResourceManager()->LoadFromResources<Texture>("cobblestone_diff"));
 	cobble->SetNormalTex(application->GetResourceManager()->LoadFromResources<Texture>("cobblestone_normal"));
 	cobble->SetMetallic(0.0f);
 	cobble->SetRoughnessTex(application->GetResourceManager()->LoadFromResources<Texture>("cobblestone_rough"));
 	cobble->SetAOTex(application->GetResourceManager()->LoadFromResources<Texture>("cobblestone_ao"));
-	cobble->SetTexCoordScale(8.0f);
+	cobble->SetDisplacementTex(application->GetResourceManager()->LoadFromResources<Texture>("cobblestone_displacement"));
+	cobble->SetTexCoordScale(1.0f);
 
 
 	std::shared_ptr<PBR_Material> dielectric = std::make_shared<PBR_Material>();

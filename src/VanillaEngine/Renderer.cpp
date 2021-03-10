@@ -95,7 +95,8 @@ void Renderer::BindPBRValues()
 		m_shaderProgram->SetUniform("in_Tex.ao", 1.0f);
 
 	if (m_pbrMat->GetDisplacement() != nullptr) {
-
+		m_shaderProgram->SetUniform("in_Material.texture_displacement1", m_pbrMat->GetDisplacement());
+		matBinary += 32;
 	}
 
 	m_shaderProgram->SetUniform("in_MatBinary", matBinary);

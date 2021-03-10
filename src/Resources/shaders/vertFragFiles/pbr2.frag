@@ -9,6 +9,7 @@ struct Material
 	sampler2D texture_metallic1;
 	sampler2D texture_roughness1;
 	sampler2D texture_ao1;
+	sampler2D texture_displacement1;
 };
 
 struct TexelValue
@@ -53,6 +54,7 @@ in VS_OUT {
 	mat3 TBN;
 } fs_in;
 
+uniform float in_TexCoordScale;
 uniform vec3 in_ViewPos;
 uniform int in_NoPointLights;
 uniform int in_NoSpotLights;
@@ -71,7 +73,8 @@ uniform samplerCube prefilterMap;
 uniform sampler2D   brdfLUT;  
 
 TexelValue CalcTexelValues();
-vec3 CalcNormal();
+vec3 CalcNormal(vec2 texCoord);
+vec2 ParallaxMapping(vec2 texCoord, vec3 viewDir);
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, TexelValue tex, vec3 F0);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, TexelValue tex, vec3 F0);
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, TexelValue tex);
@@ -133,36 +136,93 @@ TexelValue CalcTexelValues()
 {
 	int matBinary = in_MatBinary;
 	TexelValue rtn = in_Tex;
+	vec2 texCoord = fs_in.TexCoord;
+	
+	if(matBinary >= 32)
+	{	mat3 transposeTBN = transpose(fs_in.TBN );
+		vec3 tangentViewDir = normalize(transposeTBN * (in_ViewPos - fs_in.FragPos));
+		texCoord = ParallaxMapping(fs_in.TexCoord, tangentViewDir);
+		if(texCoord.x > in_TexCoordScale || texCoord.y > in_TexCoordScale || texCoord.x < 0.0 || texCoord.y < 0.0)
+			discard;
+		matBinary -= 32;
+	}
 	if(matBinary >= 16)
-	{	rtn.albedo    = pow(texture(in_Material.texture_diffuse1, fs_in.TexCoord).rgb, vec3(2.2));
+	{	rtn.albedo    = pow(texture(in_Material.texture_diffuse1, texCoord).rgb, vec3(2.2));
 		matBinary -= 16;
 	}
 	if(matBinary >= 8)
-	{	rtn.normal    = CalcNormal();
+	{	rtn.normal    = CalcNormal(texCoord);
 		matBinary -= 8;
 	}
 	else
 		rtn.normal    = normalize(fs_in.TBN * vec3(0.0, 0.0, 1.0));
 	if(matBinary >= 4)
-	{	rtn.metallic  = texture(in_Material.texture_metallic1, fs_in.TexCoord).r;
+	{	rtn.metallic  = texture(in_Material.texture_metallic1, texCoord).r;
 		matBinary -= 4;
 	}
 	if(matBinary >= 2)
-	{	rtn.roughness = texture(in_Material.texture_roughness1, fs_in.TexCoord).r;
+	{	rtn.roughness = texture(in_Material.texture_roughness1, texCoord).r;
 		matBinary -= 2;
 	}
 	if(matBinary >= 1)
-		rtn.ao        = texture(in_Material.texture_ao1, fs_in.TexCoord).r;
-return rtn;
+		rtn.ao        = texture(in_Material.texture_ao1, texCoord).r;
+	return rtn;
 }
 
-vec3 CalcNormal()
+vec3 CalcNormal(vec2 texCoord)
 {
-	vec3 normal = texture(in_Material.texture_normal1, fs_in.TexCoord).rgb;
+	vec3 normal = texture(in_Material.texture_normal1, texCoord).rgb;
 	normal = normal * 2.0 - 1.0;
 	normal = normalize(fs_in.TBN * normal);
 
 	return normal;
+}
+
+vec2 ParallaxMapping(vec2 texCoord, vec3 viewDir)
+{
+	float heightScale = 0.1;
+	//float height =  texture(in_Material.texture_displacement1, texCoord).r;    
+    //vec2 p = viewDir.xy / viewDir.z * (height * height_scale);
+    //return texCoord - p; 
+	
+	// number of depth layers
+    const float minLayers = 8;
+    const float maxLayers = 32;
+    float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));  
+    // calculate the size of each layer
+    float layerDepth = 1.0 / numLayers;
+    // depth of current layer
+    float currentLayerDepth = 0.0;
+    // the amount to shift the texture coordinates per layer (from vector P)
+    vec2 P = viewDir.xy / viewDir.z * heightScale; 
+    vec2 deltaTexCoords = P / numLayers;
+  
+    // get initial values
+    vec2  currentTexCoords     = texCoord;
+    float currentDepthMapValue = texture(in_Material.texture_displacement1, currentTexCoords).r;
+      
+    while(currentLayerDepth < currentDepthMapValue)
+    {
+        // shift texture coordinates along direction of P
+        currentTexCoords -= deltaTexCoords;
+        // get depthmap value at current texture coordinates
+        currentDepthMapValue = texture(in_Material.texture_displacement1, currentTexCoords).r;  
+        // get depth of next layer
+        currentLayerDepth += layerDepth;  
+    }
+    
+    // get texture coordinates before collision (reverse operations)
+    vec2 prevTexCoords = currentTexCoords + deltaTexCoords;
+
+    // get depth after and before collision for linear interpolation
+    float afterDepth  = currentDepthMapValue - currentLayerDepth;
+    float beforeDepth = texture(in_Material.texture_displacement1, prevTexCoords).r - currentLayerDepth + layerDepth;
+ 
+    // interpolation of texture coordinates
+    float weight = afterDepth / (afterDepth - beforeDepth);
+    vec2 finalTexCoords = prevTexCoords * weight + currentTexCoords * (1.0 - weight);
+
+    return finalTexCoords;
 }
 
 // calculates the color when using a directional light.
