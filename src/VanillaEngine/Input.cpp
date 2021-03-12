@@ -27,7 +27,7 @@ void Input::KeyCallback(GLFWwindow* _window, int _key, int _scancode, int _actio
 	case GLFW_RELEASE:
 		std::cout << "Key released: " << static_cast<char>(_key) << std::endl;
 		m_releasedKeys.push_back(_key);
-		for (int i = 0; i < m_keys.size(); i++)
+		for (unsigned int i = 0; i < m_keys.size(); i++)
 		{
 			if (m_keys.at(i) == _key)
 				m_keys.erase(m_keys.begin() + i);

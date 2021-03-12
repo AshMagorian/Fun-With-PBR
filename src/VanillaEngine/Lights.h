@@ -20,20 +20,21 @@ struct DirectionalLight
 class Lights
 {
 	friend class Application;
+	friend class SceneManager;
 private:
 	std::shared_ptr<DirectionalLight> m_directionalLight = std::make_shared<DirectionalLight>();
 	std::list<std::shared_ptr<PointLight>> m_pointLights;
 	std::list<std::shared_ptr<SpotLight>> m_spotLights;
 
-	std::list<std::shared_ptr<ShaderProgram>> m_shaderPrograms;
+	static std::list<std::shared_ptr<ShaderProgram>> m_shaderPrograms;
 
-	std::weak_ptr<Application> m_application;
+	static std::weak_ptr<Application> m_application;
 public:
 	Lights();
 	std::shared_ptr<DirectionalLight> GetDirectionalLight() { return m_directionalLight; }
 	void SetDirLightDirection(glm::vec3 _dir) { m_directionalLight->direction = _dir; }
 
-	void AddShaderProgram(std::shared_ptr<ShaderProgram> _shader) { m_shaderPrograms.push_back(_shader); }
+	static void AddShaderProgram(std::shared_ptr<ShaderProgram> _shader) { m_shaderPrograms.push_back(_shader); }
 
 	void UpdateLightShaderValues();
 

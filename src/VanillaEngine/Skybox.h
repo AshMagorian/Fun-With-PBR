@@ -20,7 +20,7 @@ class Skybox
 private:
 	GLuint textureID;
 	std::vector<CubemapTexture> m_cubemaps;
-	unsigned int m_currentMap = 0;
+	CubemapTexture m_currentMap;
 	GLuint vaID;
 
 	std::vector<std::string> m_texturesFaces;
@@ -40,22 +40,17 @@ public:
 	void Init(std::weak_ptr<Application>_app);
 
 	/*
-	*Creates a BoxTexture and pushes it back onto the m_BoxTextures vector
+	*Creates a BoxTexture from a HDR map
 	*/
 	void CreateSkybox(std::string _name, std::string _path);
 	void CreateSkybox(std::string _name, std::string _right, std::string _left, std::string _top, std::string _bottom, std::string _back, std::string _front);
 	void SetSkybox(std::string _name);
-	std::string GetCurrentMapName() { return m_cubemaps.at(m_currentMap).name; }
+	std::string GetCurrentMapName() { return m_currentMap.name; }
 
 	GLuint LoadHDRTexture(std::string _path);
 	GLuint MakeCubemapFromHDR(GLuint _hdr_id, GLuint* _captureFBO, GLuint* _captureRBO);
 	GLuint MakeIrradianceMap(GLuint _captureFBO, GLuint _captureRBO, GLuint _textureID);
 	GLuint MakePrefilterMap(GLuint _captureFBO, GLuint _captureRBO, GLuint _textureID);
-
-	/*
-	*Sets the named skybox as the current one
-	*/
-	//void SetSkybox(std::string _name);
 
 	void DrawSkybox();
 };

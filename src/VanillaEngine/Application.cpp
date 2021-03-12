@@ -56,30 +56,17 @@ std::shared_ptr<Application> const Application::Init(int _w, int _h)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	app->m_skybox->Init(app->self);
+	SceneManager::Init(app->self);
 
 	return app;
 }
 void Application::Run()
 {
-	m_lightManager->m_application = self;
-
 	while (!glfwWindowShouldClose(m_window))
 	{
 		m_time->StartOfFrame();
 
-		m_lightManager->UpdateLightShaderValues();
-
-		for (std::list<std::shared_ptr<Entity>>::iterator i = entities.begin(); i != entities.end(); ++i)
-		{
-			try
-			{
-				(*i)->Tick();
-			}
-			catch (Exception& e)
-			{
-				std::cout << "myEngine Exception: " << e.what() << std::endl;
-			}
-		}
+		SceneManager::UpdateScene();
 
 		try
 		{
@@ -92,15 +79,10 @@ void Application::Run()
 
 		glClearColor(0.6f, 0.4f, 0.6f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glViewport(0, 0, 1024, 768);
+		glViewport(0, 0, m_windowWidth, m_windowHeight);
 
+		SceneManager::DrawScene();
 
-
-		for (std::list<std::shared_ptr<Entity>>::iterator i = entities.begin(); i != entities.end(); ++i)
-		{
-			(*i)->Display();
-		}
-		m_skybox->DrawSkybox();
 		m_input->ResetDeltaMouseValues();
 		glfwPollEvents();
 
@@ -123,13 +105,4 @@ void Application::error_callback(int error, const char* description)
 float Application::GetDeltaTime()
 {
 	return m_time->GetDeltaTime();
-}
-std::shared_ptr<Entity> Application::AddEntity()
-{
-	std::shared_ptr<Entity> entity = std::make_shared<Entity>();
-	entity->m_self = entity;
-	entity->m_application = self;
-	entity->m_transform = entity->AddComponent<Transform>();
-	entities.push_back(entity);
-	return entity;
 }

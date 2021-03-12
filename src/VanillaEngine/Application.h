@@ -7,14 +7,11 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-
-
 class Entity;
 class Camera;
 class Environment;
 class Input;
 class Resources;
-class Lights;
 class Skybox;
 
 class Application
@@ -28,7 +25,6 @@ private:
 	std::shared_ptr<Environment> m_time = std::make_shared<Environment>(); ///< A pointer to the environment object so DeltaTime can be accessed
 	std::shared_ptr<Input> m_input = std::make_shared<Input>();
 	std::shared_ptr<Resources> m_resourceManager = std::make_shared<Resources>(); ///< A pointer to the resource manager for accesibility
-	std::shared_ptr<Lights> m_lightManager = std::make_shared<Lights>();
 	std::shared_ptr<Skybox> m_skybox = std::make_shared<Skybox>();
 
 	GLFWwindow* m_window = nullptr;
@@ -46,11 +42,8 @@ public:
 
 	std::shared_ptr<Camera> GetCamera() { return m_mainCamera; }
 	std::shared_ptr<Resources> GetResourceManager() { return m_resourceManager; }
-	std::shared_ptr<Lights> GetLightManager() { return m_lightManager; }
 	std::shared_ptr<Input> GetInput() { return m_input; }
 	std::shared_ptr<Skybox> GetSkybox() { return m_skybox; }
 	float GetDeltaTime();
-	std::shared_ptr<Entity> AddEntity();
-
 };
 #endif

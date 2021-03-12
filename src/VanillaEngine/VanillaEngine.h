@@ -22,4 +22,5 @@
 #include "SpotLight.h"
 #include "PBR_Material.h"
 #include "Skybox.h"
+#include "SceneManager.h"
 #endif

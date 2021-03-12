@@ -1,5 +1,8 @@
 #include "VanillaEngine.h"
 
+std::list<std::shared_ptr<ShaderProgram>> Lights::m_shaderPrograms;
+std::weak_ptr<Application> Lights::m_application;
+
 Lights::Lights()
 {
 	m_directionalLight->colour = glm::vec3(5.0f, 5.0f, 5.0f);
@@ -29,6 +32,8 @@ void Lights::UpdateLightShaderValues()
 				(*i)->SetUniform(buffer, (*j)->m_colour);
 			}
 		}
+		(*i)->SetUniform("in_NoPointLights", (int)m_pointLights.size());
+
 		//if (std::distance(m_spotLights.begin(), m_spotLights.end()) > 0)
 		//{
 		//	for (std::list<std::shared_ptr<SpotLight>>::iterator j = m_spotLights.begin(); j != m_spotLights.end(); ++j)
@@ -80,7 +85,7 @@ void Lights::AddPointLight(std::shared_ptr<Entity> _entity)
 		m_pointLights.push_back(rtn);
 		for (std::list<std::shared_ptr<ShaderProgram>>::iterator i = m_shaderPrograms.begin(); i != m_shaderPrograms.end(); ++i)
 		{
-			(*i)->SetUniform("in_NoPointLights", (int)m_pointLights.size());
+			//(*i)->SetUniform("in_NoPointLights", (int)m_pointLights.size());
 		}
 	}
 	catch (Exception& e)

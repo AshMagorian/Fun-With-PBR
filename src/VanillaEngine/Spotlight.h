@@ -5,6 +5,7 @@
 #include "Component.h"
 #include "Entity.h"
 #include "Application.h"
+#include "SceneManager.h"
 
 class SpotLight : public Component
 {
@@ -38,7 +39,8 @@ public:
 		m_cutOff = glm::cos(glm::radians(15.0f));
 		m_outerCutOff = glm::cos(glm::radians(25.0f));
 
-		GetApplication()->GetLightManager()->AddSpotLight(GetEntity());
+		//GetApplication()->GetLightManager()->AddSpotLight(GetEntity());
+		GetEntity()->GetScene()->lightManager->AddSpotLight(GetEntity());
 	}
 	void OnTick()
 	{

@@ -5,6 +5,7 @@
 #include "Component.h"
 #include "Entity.h"
 #include "Application.h"
+#include "SceneManager.h"
 
 class PointLight : public Component
 {
@@ -18,7 +19,8 @@ public:
 	{
 		m_position = GetEntity()->GetTransform()->GetPos();
 		m_colour = glm::vec3(20.0f, 20.0f, 20.0f);
-		GetApplication()->GetLightManager()->AddPointLight(GetEntity());
+		//GetApplication()->GetLightManager()->AddPointLight(GetEntity());
+		GetEntity()->GetScene()->lightManager->AddPointLight(GetEntity());
 	}
 
 	void OnTick()

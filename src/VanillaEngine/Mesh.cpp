@@ -91,6 +91,9 @@ void Mesh::Draw(std::shared_ptr<ShaderProgram> shader)
 
 	// Send data telling the shader which texture maps are being used
 	glUniform1i(glGetUniformLocation(shader->GetId(), "in_MatBinary"), matBinary);
+	// The texture coordinate scale for assimp models will always be 1.0
+	glUniform1f(glGetUniformLocation(shader->GetId(), "in_TexCoordScale"), 1.0f);
+	
 
 	// draw mesh
 	glBindVertexArray(VAO);

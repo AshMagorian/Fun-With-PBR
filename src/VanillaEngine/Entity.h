@@ -9,15 +9,18 @@
 class Application;
 class Component;
 class Transform;
+struct Scene;
 
 class Entity
 {
 	friend class Application;
-
+	friend class SceneManager;
+	friend struct Scene;
 private:
 	std::weak_ptr<Application> m_application; ///< A reference to the application
 	std::list<std::shared_ptr<Component>> m_components; ///< The collection of components stored in the entity
 	std::weak_ptr<Entity> m_self; ///< A reference to itself
+	std::weak_ptr<Scene> m_scene; ///< A reference to the scene
 	std::weak_ptr<Transform> m_transform; ///< The position, rotation adn scale of the entity
 
 	void Tick();
@@ -27,6 +30,8 @@ public:
 	~Entity();
 
 	std::shared_ptr<Application> GetApplication() { return m_application.lock(); }
+	std::shared_ptr<Scene> GetScene() { return m_scene.lock(); }
+
 
 	template <typename T, typename... A>
 	std::shared_ptr<T> AddComponent(A... args)

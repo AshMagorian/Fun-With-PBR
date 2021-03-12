@@ -7,51 +7,15 @@ void Skybox::Init(std::weak_ptr<Application>_app)
 	m_application = _app;
 	m_texturesFaces.resize(6);
 	InitBoxVertexArray();
-	try
-	{
-		m_shader = std::make_shared<ShaderProgram>("../src/resources/shaders/skybox.vert", "../src/resources/shaders/skybox.frag");
-		glUseProgram(m_shader->GetId());
-		glUniform1i(glGetUniformLocation(m_shader->GetId(), "skybox"), 0);
-		glUseProgram(0);
-	}
-	catch (Exception& e)
-	{
-		std::cout << "VanillaEngine Exception: " << e.what() << std::endl;
-	}
 
-	try
-	{
-		m_hdrShader = std::make_shared<ShaderProgram>("../src/resources/shaders/hdrCube.vert", "../src/resources/shaders/hdrCube.frag");
-		glUseProgram(m_hdrShader->GetId());
-		glUniform1i(glGetUniformLocation(m_hdrShader->GetId(), "equirectangularMap"), 0);
-		glUseProgram(0);
-	}
-	catch (Exception& e)
-	{
-		std::cout << "VanillaEngine Exception: " << e.what() << std::endl;
-	}
-	try
-	{
-		m_irradianceShader = std::make_shared<ShaderProgram>("../src/resources/shaders/skybox.vert", "../src/resources/shaders/irradiance.frag");
-		glUseProgram(m_irradianceShader->GetId());
-		glUniform1i(glGetUniformLocation(m_hdrShader->GetId(), "skybox"), 0);
-		glUseProgram(0);
-	}
-	catch (Exception& e)
-	{
-		std::cout << "VanillaEngine Exception: " << e.what() << std::endl;
-	}
-	try
-	{
-		m_prefilterShader = std::make_shared<ShaderProgram>("../src/resources/shaders/skybox.vert", "../src/resources/shaders/prefilter.frag");
-		glUseProgram(m_hdrShader->GetId());
-		glUniform1i(glGetUniformLocation(m_hdrShader->GetId(), "environmentMap"), 0);
-		glUseProgram(0);
-	}
-	catch (Exception& e)
-	{
-		std::cout << "VanillaEngine Exception: " << e.what() << std::endl;
-	}
+	m_shader = std::make_shared<ShaderProgram>("../src/resources/shaders/skybox.vert", "../src/resources/shaders/skybox.frag");
+	glUseProgram(m_shader->GetId());
+	glUniform1i(glGetUniformLocation(m_shader->GetId(), "skybox"), 0);
+	glUseProgram(0);
+
+	m_hdrShader = std::make_shared<ShaderProgram>("../src/resources/shaders/hdrCube.vert", "../src/resources/shaders/hdrCube.frag");
+	m_irradianceShader = std::make_shared<ShaderProgram>("../src/resources/shaders/skybox.vert", "../src/resources/shaders/irradiance.frag");
+	m_prefilterShader = std::make_shared<ShaderProgram>("../src/resources/shaders/skybox.vert", "../src/resources/shaders/prefilter.frag");
 }
 
 void Skybox::InitBoxVertexArray()
@@ -329,8 +293,8 @@ GLuint Skybox::MakePrefilterMap(GLuint _captureFBO, GLuint _captureRBO, GLuint _
 	for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
 	{
 		// Resize the framebuffer to account for the mipmap level size
-		unsigned int mipWidth = 128 * std::pow(0.5, mip);
-		unsigned int mipHeight = 128 * std::pow(0.5, mip);
+		unsigned int mipWidth = int(128 * std::pow(0.5, mip));
+		unsigned int mipHeight = int(128 * std::pow(0.5, mip));
 		glBindRenderbuffer(GL_RENDERBUFFER, _captureRBO);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
 		glViewport(0, 0, mipWidth, mipHeight);
@@ -391,11 +355,11 @@ void Skybox::CreateSkybox(std::string _name, std::string _right, std::string _le
 
 void Skybox::SetSkybox(std::string _name)
 {
-	for (int i = 0; i < m_cubemaps.size(); ++i)
+	for (unsigned int i = 0; i < m_cubemaps.size(); ++i)
 	{
 		if (_name == m_cubemaps[i].name)
 		{
-			m_currentMap = i;
+			m_currentMap = m_cubemaps[i];
 		}
 	}
 }
@@ -410,7 +374,7 @@ void Skybox::DrawSkybox()
 	glActiveTexture(GL_TEXTURE0);
 
 	glUseProgram(m_shader->GetId());
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemaps.at(m_currentMap).id);	
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_currentMap.id);	
 
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 

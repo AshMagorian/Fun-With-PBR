@@ -1,3 +1,4 @@
+#pragma once
 #include <VanillaEngine/VanillaEngine.h>
 
 class FirstPersonCameraControls : public Component

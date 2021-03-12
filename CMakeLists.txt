@@ -75,7 +75,8 @@ add_library(VanillaEngine
 	src/VanillaEngine/Skybox.h
 	src/VanillaEngine/SkyBox.cpp
 	src/VanillaEngine/PrimitiveShape.h
-
+	src/VanillaEngine/SceneManager.h
+	src/VanillaEngine/SceneManager.cpp
 )
 
 if(MSVC)
@@ -92,6 +93,8 @@ add_executable(game
 	src/game/main.cpp
 	src/game/FirstPersonCameraControls.h
 	src/game/FirstPersonCameraControls.cpp
+	src/game/SceneSwitcher.h
+	src/game/SceneSwitcher.cpp
 )
 
 target_link_libraries(game VanillaEngine)
