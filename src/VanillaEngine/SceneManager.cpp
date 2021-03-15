@@ -38,6 +38,7 @@ std::shared_ptr<Scene> SceneManager::GetScene(std::string _name)
 
 void SceneManager::SetCurrentScene(std::string _name)
 {
+	if (_name == m_currentScene->sceneName) { return; }
 	for (unsigned int i = 0; i < m_scenes.size(); ++i)
 	{
 		if (_name == m_scenes.at(i)->sceneName)
@@ -50,14 +51,25 @@ void SceneManager::SetCurrentScene(std::string _name)
 	std::cout << "Could not change scene! Scene: " << _name << " not found" << std::endl;
 }
 
+void SceneManager::SetStartupScene(std::string _name)
+{
+	for (unsigned int i = 0; i < m_scenes.size(); ++i)
+	{
+		if (_name == m_scenes.at(i)->sceneName)
+		{
+			m_currentScene = m_scenes.at(i);
+			m_app.lock()->GetSkybox()->SetSkybox(m_currentScene->cubemapName);
+			m_app.lock()->GetCamera()->SetCurrentCamera(m_currentScene->camera);
+			m_nextScene = m_currentScene;
+			m_isChangingScene = true;
+			return;
+		}
+	}
+	std::cout << "Could not set Startup scene! Scene: " << _name << " not found" << std::endl;
+}
+
 void SceneManager::UpdateScene()
 {
-	//Check if the scene is to be changed / Sets the scene on the first frame
-	if (m_isChangingScene == true)
-	{
-		ChangeScene();
-	}
-
 	m_currentScene->lightManager->UpdateLightShaderValues();
 
 	for (std::list<std::shared_ptr<Entity>>::iterator i = m_currentScene->entities.begin(); i != m_currentScene->entities.end(); ++i)
@@ -73,6 +85,12 @@ void SceneManager::DrawScene()
 		(*i)->Display();
 	}
 	m_app.lock()->GetSkybox()->DrawSkybox();
+
+	//Check if the scene is to be changed / Sets the scene on the first frame
+	if (m_isChangingScene == true)
+	{
+		ChangeScene();
+	}
 }
 
 std::shared_ptr<Entity> Scene::AddEntity()
@@ -91,5 +109,9 @@ void SceneManager::ChangeScene()
 	m_currentScene = m_nextScene;
 	m_app.lock()->GetSkybox()->SetSkybox(m_currentScene->cubemapName);
 	m_app.lock()->GetCamera()->SetCurrentCamera(m_currentScene->camera);
+	for (std::list<std::shared_ptr<Entity>>::iterator i = m_currentScene->entities.begin(); i != m_currentScene->entities.end(); ++i)
+	{
+		(*i)->OnSceneBegin();
+	}
 	m_isChangingScene = false;
 }

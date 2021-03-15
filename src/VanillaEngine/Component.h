@@ -20,9 +20,13 @@ private:
 	*/
 	virtual void OnInit() {}
 	/**
-	*\brief Runs on the first frame
+	*\brief Runs on the first frame of startup
 	*/
 	virtual void OnBegin() {}
+	/**
+	*\brief Runs on the first frame when the scene starts
+	*/
+	virtual void OnSceneBegin() {}
 	/**
 	*\brief Runs every frame
 	*/

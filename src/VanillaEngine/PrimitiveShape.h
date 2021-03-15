@@ -48,7 +48,6 @@ void ComputeTangentBasis(
 	float denominator = (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
 	if (denominator < 0.0001f && denominator > -0.0001f)
 		denominator = 0.0001f;
-	//denominator *= -1.0f;
 
 	float r = 1.0f / denominator;
 	tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;

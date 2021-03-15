@@ -10,6 +10,19 @@ Entity::~Entity()
 
 }
 
+void Entity::OnSceneBegin()
+{
+	for (std::list < std::shared_ptr<Component>>::iterator i = m_components.begin(); i != m_components.end(); ++i)
+	{
+		if ((*i)->m_began == false)
+		{
+			(*i)->OnBegin();
+			(*i)->m_began = true;
+		}
+		(*i)->OnSceneBegin();
+	}
+}
+
 void Entity::Tick()
 {
 	for (std::list < std::shared_ptr<Component>>::iterator i = m_components.begin(); i != m_components.end(); ++i)

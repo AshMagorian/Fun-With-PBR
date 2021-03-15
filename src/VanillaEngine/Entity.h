@@ -23,6 +23,7 @@ private:
 	std::weak_ptr<Scene> m_scene; ///< A reference to the scene
 	std::weak_ptr<Transform> m_transform; ///< The position, rotation adn scale of the entity
 
+	void OnSceneBegin();
 	void Tick();
 	void Display();
 public:

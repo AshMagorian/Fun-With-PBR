@@ -5,6 +5,15 @@ void FirstPersonCameraControls::OnBegin()
 	m_Transform = GetEntity()->GetTransform();
 	m_Input = GetApplication()->GetInput();
 	m_Camera = GetApplication()->GetCamera();
+
+	m_startPos = m_Transform->GetPos();
+	m_startRot = m_Transform->GetRotation();
+}
+
+void FirstPersonCameraControls::OnSceneBegin()
+{
+	GetEntity()->GetTransform()->SetPos(m_startPos);
+	GetEntity()->GetTransform()->SetRotation(m_startRot);
 }
 
 void FirstPersonCameraControls::OnTick()

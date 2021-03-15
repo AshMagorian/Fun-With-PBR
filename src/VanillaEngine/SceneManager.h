@@ -42,6 +42,7 @@ public:
 	static std::shared_ptr<Scene> CreateScene(std::string _name);
 	static std::shared_ptr<Scene> GetCurrentScene() { return m_currentScene; }
 	static std::shared_ptr<Scene> GetScene(std::string _name);
+	static void SetStartupScene(std::string _name);
 	static void SetCurrentScene(std::string _name);
 protected:
 	static std::weak_ptr<Application> m_app;

@@ -93,16 +93,21 @@ int main(int argc, char *argv[])
 
 	// Test Object from assimp
 	std::shared_ptr<Entity> assimpTest = scene2->AddEntity();
-	assimpTest->AddComponent<Renderer>("../src/resources/backpack/backpack.obj",
+	//assimpTest->AddComponent<Renderer>("../src/resources/backpack/backpack.obj",
+	//	application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
+	//assimpTest->AddComponent<Renderer>("../src/resources/Survival_BackPack_2/Survival_BackPack_2.fbx",
+	//	application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
+	assimpTest->AddComponent<Renderer>("../src/resources/Old_Antique_Standing_Globe_FBX/Old_Antique_Standing_Globe_.fbx",
 		application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
 	//assimpTest->AddComponent<Renderer>("../src/resources/Old_Antique_Standing_Globe_OBJ/Old_Antique_Standing_Globe_.obj",
 	//	application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
-	//assimpTest->GetTransform()->SetScale(glm::vec3(0.05f, 0.05f, 0.05f));
+
+	assimpTest->GetTransform()->SetScale(glm::vec3(0.02f, 0.02f, 0.02f));
 
 	std::shared_ptr<Entity> switcher2 = scene2->AddEntity();
 	switcher2->AddComponent<SceneSwitcher>();
 
-	SceneManager::SetCurrentScene("Scene1");
+	SceneManager::SetStartupScene("Scene2");
 	/**
 	*Runs the game loop from application
 	*/
