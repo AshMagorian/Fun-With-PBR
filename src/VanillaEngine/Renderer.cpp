@@ -96,6 +96,11 @@ void Renderer::BindPBRValues()
 
 	if (m_pbrMat->GetDisplacement() != nullptr) {
 		m_shaderProgram->SetUniform("in_Material.texture_displacement1", m_pbrMat->GetDisplacement());
+
+		m_shaderProgram->SetUniform("in_Parallax_ClipBorders", (int)m_parallax_clipBorders);
+		m_shaderProgram->SetUniform("in_Parallax_Height", m_parallax_height);
+		m_shaderProgram->SetUniform("in_Parallax_MinLayers", m_parallax_minLayers);
+		m_shaderProgram->SetUniform("in_Parallax_MaxLayers", m_parallax_maxLayers);
 		matBinary += 32;
 	}
 

@@ -17,6 +17,12 @@ private:
 	std::shared_ptr<Model> m_assimpModel;
 	float m_texCoordScale = 1.0f;
 
+	bool m_parallax_clipBorders = true;
+	float m_parallax_height = 0.1f;
+	int m_parallax_minLayers = 8;
+	int m_parallax_maxLayers = 32;
+
+
 	void BindPBRValues();
 	void BindIBLMaps();
 
@@ -35,6 +41,8 @@ public:
 	void SetShader(std::shared_ptr<ShaderProgram> _shader) { m_shaderProgram = _shader; }
 	void SetCamera(std::shared_ptr<Camera> _cam) { m_cam = _cam; }
 	void SetTexCoordScale(float _value) { m_texCoordScale = _value; }
+
+	void SetParallaxClipBorders(bool value) { m_parallax_clipBorders = value; }
 
 };
 #endif

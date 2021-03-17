@@ -19,10 +19,14 @@ void main()
 	//vs_out.Normal = mat3(in_Model) * in_Tangent;
 	
 	vec3 tmp = normalize(in_Tangent);
-	tmp.x / 2.0 + 1.0;
-	tmp.y / 2.0 + 1.0;
-	tmp.z / 2.0 + 1.0;
+	(tmp.x + 1.0) / 2.0;
+	(tmp.y + 1.0) / 2.0;
+	(tmp.z + 1.0) / 2.0;
 	
-	vs_out.Normal = tmp;
+	vec3 T = normalize(vec3(in_Model * vec4(in_Tangent, 0.0)));
+    vec3 N = normalize(vec3(in_Model * vec4(in_Normal, 0.0)));
+	vec3 B = cross(N, T);
+	
+	vs_out.Normal = T;
 
 }

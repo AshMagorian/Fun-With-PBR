@@ -60,8 +60,9 @@ int main(int argc, char *argv[])
 	std::shared_ptr<Entity> sphere = scene1->AddEntity();
 	sphere->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),
 		application->GetResourceManager()->LoadFromResources<VertexArray>("sphere"),
-		application->GetResourceManager()->LoadFromResources<PBR_Material>("metal_plate_mat"));
+		application->GetResourceManager()->LoadFromResources<PBR_Material>("cobble_mat"));
 	sphere->GetComponent<Renderer>()->SetTexCoordScale(2.0f);
+	sphere->GetComponent<Renderer>()->SetParallaxClipBorders(false);
 	std::shared_ptr<Entity> sphere2 = scene1->AddEntity();
 	sphere2->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),
 		application->GetResourceManager()->LoadFromResources<VertexArray>("sphere"),
@@ -107,7 +108,7 @@ int main(int argc, char *argv[])
 	std::shared_ptr<Entity> switcher2 = scene2->AddEntity();
 	switcher2->AddComponent<SceneSwitcher>();
 
-	SceneManager::SetStartupScene("Scene2");
+	SceneManager::SetStartupScene("Scene1");
 	/**
 	*Runs the game loop from application
 	*/

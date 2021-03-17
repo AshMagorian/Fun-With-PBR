@@ -55,6 +55,11 @@ in VS_OUT {
 } fs_in;
 
 uniform float in_TexCoordScale;
+uniform int in_Parallax_ClipBorders;
+uniform float in_Parallax_Height;
+uniform int in_Parallax_MinLayers;
+uniform int in_Parallax_MaxLayers;
+
 uniform vec3 in_ViewPos;
 uniform int in_NoPointLights;
 uniform int in_NoSpotLights;
@@ -142,8 +147,11 @@ TexelValue CalcTexelValues()
 	{	mat3 transposeTBN = transpose(fs_in.TBN );
 		vec3 tangentViewDir = normalize(transposeTBN * (in_ViewPos - fs_in.FragPos));
 		texCoord = ParallaxMapping(fs_in.TexCoord, tangentViewDir);
-		if(texCoord.x > in_TexCoordScale || texCoord.y > in_TexCoordScale || texCoord.x < 0.0 || texCoord.y < 0.0)
-			discard;
+		if (in_Parallax_ClipBorders == 1)
+		{
+			if(texCoord.x > in_TexCoordScale || texCoord.y > in_TexCoordScale || texCoord.x < 0.0 || texCoord.y < 0.0)
+				discard;
+		}
 		matBinary -= 32;
 	}
 	if(matBinary >= 16)
@@ -180,14 +188,14 @@ vec3 CalcNormal(vec2 texCoord)
 
 vec2 ParallaxMapping(vec2 texCoord, vec3 viewDir)
 {
-	float heightScale = 0.1;
+	float heightScale = in_Parallax_Height;
 	//float height =  texture(in_Material.texture_displacement1, texCoord).r;    
     //vec2 p = viewDir.xy / viewDir.z * (height * height_scale);
     //return texCoord - p; 
 	
 	// number of depth layers
-    const float minLayers = 8;
-    const float maxLayers = 32;
+    const float minLayers = in_Parallax_MinLayers;
+    const float maxLayers = in_Parallax_MaxLayers;
     float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));  
     // calculate the size of each layer
     float layerDepth = 1.0 / numLayers;

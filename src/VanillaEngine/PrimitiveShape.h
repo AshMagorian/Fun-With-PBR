@@ -46,12 +46,12 @@ void ComputeTangentBasis(
 	glm::vec2 deltaUV2 = v3.uv - v1.uv;
 
 	float denominator = (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-	if (denominator < 0.0001f && denominator > -0.0001f)
-		denominator = 0.0001f;
+	//if (denominator < 0.0001f && denominator > -0.0001f)
+	//	denominator = 0.0001f;
 
 	float r = 1.0f / denominator;
 	tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;
-	bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * r;
+	bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * r; 
 }
 
 GLuint PrimitiveShape::SetupSphere()
@@ -122,7 +122,7 @@ GLuint PrimitiveShape::SetupSphere()
 
 		for (int i = 0; i < indexCount - 2; i ++)
 		{
-			if ((i+1)%(test) == 0 )
+			if ((i + 1) % (test) == 0 )
 			{
 				duplicatePoints.push_back(i);
 			}
