@@ -11,7 +11,7 @@ class Application;
 class Component
 {
 	friend class Entity;
-
+	friend class DebugUIManager;
 private:
 	std::weak_ptr<Entity> m_entity; ///< a reference to the entity which owns this component
 	bool m_began; ///< Determines if onBegin should run
@@ -39,6 +39,11 @@ private:
 public:
 	Component();
 	virtual ~Component();
+
+	/**
+	*\brief Gives instructions on how to display debug UI elements
+	*/
+	virtual void OnShowUI() {}
 
 	std::shared_ptr<Entity> GetEntity();
 	std::shared_ptr<Application> GetApplication();

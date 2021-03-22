@@ -26,68 +26,8 @@ if(MSVC)
   )
 endif()
 
-add_library(VanillaEngine
-	src/VanillaEngine/VanillaEngine.h
-	src/VanillaEngine/Application.h
-	src/VanillaEngine/Application.cpp
-	src/VanillaEngine/Environment.h
-	src/VanillaEngine/Environment.cpp
-	src/VanillaEngine/Entity.h
-	src/VanillaEngine/Entity.cpp
-	src/VanillaEngine/Component.h
-	src/VanillaEngine/Component.cpp
-	src/VanillaEngine/ShaderProgram.h
-	src/VanillaEngine/ShaderProgram.cpp
-	src/VanillaEngine/VertexArray.h
-	src/VanillaEngine/VertexArray.cpp
-	src/VanillaEngine/VertexBuffer.h
-	src/VanillaEngine/VertexBuffer.cpp
-	src/VanillaEngine/Exception.h
-	src/VanillaEngine/Exception.cpp
-	src/VanillaEngine/Camera.h
-	src/VanillaEngine/Camera.cpp
-	src/VanillaEngine/Texture.h
-	src/VanillaEngine/Texture.cpp
-	src/VanillaEngine/stb_image.h
-	src/VanillaEngine/stb_image.cpp
-	src/VanillaEngine/Renderer.h
-	src/VanillaEngine/Renderer.cpp
-	src/VanillaEngine/Resource.h
-	src/VanillaEngine/Resource.cpp
-	src/VanillaEngine/Resources.h
-	src/VanillaEngine/Resources.cpp
-	src/VanillaEngine/Transform.h
-	src/VanillaEngine/Transform.cpp
-	src/VanillaEngine/Lights.h
-	src/VanillaEngine/Lights.cpp
-	src/VanillaEngine/PointLight.h
-	src/VanillaEngine/PointLight.cpp
-	src/VanillaEngine/Spotlight.h
-	src/VanillaEngine/Spotlight.cpp
-	src/VanillaEngine/Input.h
-	src/VanillaEngine/Input.cpp
-	src/VanillaEngine/PBR_Material.h
-	src/VanillaEngine/PBR_Material.cpp
-	src/VanillaEngine/Mesh.h
-	src/VanillaEngine/Mesh.cpp
-	src/VanillaEngine/Model.h
-	src/VanillaEngine/Model.cpp
-	src/VanillaEngine/Skybox.h
-	src/VanillaEngine/SkyBox.cpp
-	src/VanillaEngine/PrimitiveShape.h
-	src/VanillaEngine/SceneManager.h
-	src/VanillaEngine/SceneManager.cpp
-)
-
-if(MSVC)
-  target_link_libraries(VanillaEngine
-    glew32 opengl32 OpenAL32 ogg vorbis vorbisfile glfw3 assimp-vc141-mtd
-  )
-else()
-  target_link_libraries(VanillaEngine
-    GLU GLEW GL AL ogg vorbis vorbisfile glfw3 assimp-vc141-mtd
-  )
-endif()
+add_subdirectory(contrib)
+add_subdirectory(src)
 
 add_executable(game
 	src/game/main.cpp

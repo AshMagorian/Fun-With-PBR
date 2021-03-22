@@ -1,0 +1,66 @@
+add_library(VanillaEngine
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/VanillaEngine.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Application.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Application.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Environment.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Environment.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Entity.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Entity.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Component.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Component.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/ShaderProgram.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/ShaderProgram.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/VertexArray.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/VertexArray.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/VertexBuffer.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/VertexBuffer.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Exception.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Exception.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Camera.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Camera.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Texture.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Texture.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/stb_image.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/stb_image.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Renderer.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Renderer.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Resource.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Resource.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Resources.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Resources.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Transform.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Transform.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Lights.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Lights.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/PointLight.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/PointLight.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Spotlight.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Spotlight.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Input.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Input.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/PBR_Material.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/PBR_Material.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Mesh.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Mesh.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Model.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Model.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Skybox.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/SkyBox.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/PrimitiveShape.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/SceneManager.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/SceneManager.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/DebugUIManager.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/DebugUIManager.cpp
+)
+
+if(MSVC)
+  target_link_libraries(VanillaEngine
+    glew32 opengl32 OpenAL32 ogg vorbis vorbisfile glfw3 assimp-vc141-mtd
+  )
+else()
+  target_link_libraries(VanillaEngine
+    GLU GLEW GL AL ogg vorbis vorbisfile glfw3 assimp-vc141-mtd
+  )
+endif()
+
+target_include_directories (VanillaEngine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine")

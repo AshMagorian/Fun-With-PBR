@@ -23,4 +23,5 @@
 #include "PBR_Material.h"
 #include "Skybox.h"
 #include "SceneManager.h"
+#include "DebugUIManager.h"
 #endif

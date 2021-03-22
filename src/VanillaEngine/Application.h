@@ -16,6 +16,7 @@ class Skybox;
 
 class Application
 {
+	//friend class DebugUIManager;
 private:
 	bool running;
 	std::list<std::shared_ptr<Entity>> entities; ///< A list of all of teh entities stored in the application
