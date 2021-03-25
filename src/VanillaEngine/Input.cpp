@@ -1,14 +1,13 @@
 #include "VanillaEngine.h"
 
 std::vector<int> Input::m_keys, Input::m_pressedKeys, Input::m_releasedKeys;
+std::vector<int> Input::m_mouseButtons, Input::m_pressedMouseButtons, Input::m_releasedMouseButtons;
 float Input::m_deltaMouseX = 0.0f, Input::m_deltaMouseY = 0.0f;
 double Input::m_lastX = 0.0, Input::m_lastY = 0.0;
 bool Input::m_firstFrame = true, Input::m_FPSMouseEnabled = false;
 
 void Input::KeyCallback(GLFWwindow* _window, int _key, int _scancode, int _action, int _mods)
 {
-	ClearKeys();
-
 	switch (_action)
 	{
 	case GLFW_PRESS:
@@ -55,6 +54,28 @@ void Input::MouseCallback(GLFWwindow* _window, double xpos, double ypos)
 	}
 }
 
+void Input::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+	switch (action)
+	{
+	case GLFW_PRESS:
+
+		m_pressedMouseButtons.push_back(button);
+		m_mouseButtons.push_back(button);
+		break;
+	case GLFW_RELEASE:
+		m_releasedMouseButtons.push_back(button);
+		for (unsigned int i = 0; i < m_mouseButtons.size(); i++)
+		{
+			if (m_mouseButtons.at(i) == button)
+				m_mouseButtons.erase(m_mouseButtons.begin() + i);
+		}
+		break;
+	default: break;
+	}
+
+}
+
 void Input::EnableFPSMouse(bool _value)
 {
 	m_FPSMouseEnabled = _value;
@@ -96,7 +117,7 @@ bool Input::IsKeyPressed(int _key)
 	if (_key >= 97 && _key <= 122)
 	{
 		int key = _key - 32;
-		for (auto& k : m_keys)
+		for (auto& k : m_pressedKeys)
 			if (k == key)
 				return true;
 	}
@@ -114,7 +135,7 @@ bool Input::IsKeyReleased(int _key)
 	if (_key >= 97 && _key <= 122)
 	{
 		int key = _key - 32;
-		for (auto& k : m_keys)
+		for (auto& k : m_releasedKeys)
 			if (k == key)
 				return true;
 	}
@@ -125,4 +146,63 @@ bool Input::IsKeyReleased(int _key)
 				return true;
 	}
 	return false;
+}
+
+bool Input::IsMouseButton(char* button)
+{
+	int value = -1;
+	if (strcmp(button, "left") == 0) { value = GLFW_MOUSE_BUTTON_LEFT; }
+	if (strcmp(button, "right") == 0) { value = GLFW_MOUSE_BUTTON_RIGHT; }
+	if (strcmp(button, "middle") == 0) { value = GLFW_MOUSE_BUTTON_MIDDLE; }
+	if (value == -1)
+	{
+		std::cout << button << " not recognised" << std::endl;
+		return false;
+	}
+	for (auto& b : m_mouseButtons)
+		if (b == value)
+			return true;
+	return false;
+}
+bool Input::IsMouseButtonPressed(char* button)
+{
+	int value = -1;
+	if (strcmp(button, "left") == 0) { value = GLFW_MOUSE_BUTTON_LEFT; }
+	if (strcmp(button, "right") == 0) { value = GLFW_MOUSE_BUTTON_RIGHT; }
+	if (strcmp(button, "middle") == 0) { value = GLFW_MOUSE_BUTTON_MIDDLE; }
+	if (value == -1)
+	{
+		std::cout << button << " not recognised" << std::endl;
+		return false;
+	}
+	for (auto& b : m_pressedMouseButtons)
+		if (b == value)
+			return true;
+	return false;
+}
+bool Input::IsMouseButtonReleased(char* button)
+{
+	int value = -1;
+	if (strcmp(button, "left") == 0) { value = GLFW_MOUSE_BUTTON_LEFT; }
+	if (strcmp(button, "right") == 0) { value = GLFW_MOUSE_BUTTON_RIGHT; }
+	if (strcmp(button, "middle") == 0) { value = GLFW_MOUSE_BUTTON_MIDDLE; }
+	if (value == -1)
+	{
+		std::cout << button << " not recognised" << std::endl;
+		return false;
+	}
+	for (auto& b : m_releasedMouseButtons)
+		if (b == value)
+			return true;
+	return false;
+}
+
+void Input::ResetValues() 
+{ 
+	m_deltaMouseX = 0.0f; 
+	m_deltaMouseY = 0.0f; 
+	m_pressedKeys.clear();
+	m_releasedKeys.clear();
+	m_pressedMouseButtons.clear();
+	m_releasedMouseButtons.clear();
 }

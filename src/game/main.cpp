@@ -48,7 +48,8 @@ int main(int argc, char *argv[])
 	//light->AddComponent<PointLight>();
 	//light->GetTransform()->SetPos(glm::vec3(2.0f, 3.0f, 1.0f));
 
-	application->GetCamera()->SetFPSCamera(true);
+	//application->GetCamera()->SetFPSCamera(true);
+	//application->GetCamera()->SetWASD(true);
 
 	//*********************************************************************************************************************************
 
@@ -57,23 +58,23 @@ int main(int argc, char *argv[])
 	scene1->camera->GetTransform()->SetPos(glm::vec3(0.0f, 0.0f, 5.0f));
 	scene1->cubemapName = "bg";
 
-	std::shared_ptr<Entity> sphere = scene1->AddEntity();
+	std::shared_ptr<Entity> sphere = scene1->AddEntity("sphere");
 	sphere->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),
 		application->GetResourceManager()->LoadFromResources<VertexArray>("sphere"),
 		application->GetResourceManager()->LoadFromResources<PBR_Material>("cobble_mat"));
 	sphere->GetComponent<Renderer>()->SetTexCoordScale(2.0f);
 	sphere->GetComponent<Renderer>()->SetParallaxClipBorders(false);
-	std::shared_ptr<Entity> sphere2 = scene1->AddEntity();
+	std::shared_ptr<Entity> sphere2 = scene1->AddEntity("sphere2");
 	sphere2->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),
 		application->GetResourceManager()->LoadFromResources<VertexArray>("sphere"),
 		dielectric);
 	sphere2->GetTransform()->SetPos(glm::vec3(2.0f, 0.0f, 0.0f));
-	std::shared_ptr<Entity> sphere3 = scene1->AddEntity();
+	std::shared_ptr<Entity> sphere3 = scene1->AddEntity("sphere3");
 	sphere3->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),
 		application->GetResourceManager()->LoadFromResources<VertexArray>("sphere"),
 		metal);
 	sphere3->GetTransform()->SetPos(glm::vec3(-2.0f, 0.0f, 0.0f));
-	std::shared_ptr<Entity> plane = scene1->AddEntity();
+	std::shared_ptr<Entity> plane = scene1->AddEntity("plane");
 	plane->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"),
 		application->GetResourceManager()->LoadFromResources<VertexArray>("plane"),
 		application->GetResourceManager()->LoadFromResources<PBR_Material>("cobble_mat"));
@@ -82,7 +83,7 @@ int main(int argc, char *argv[])
 	plane->GetTransform()->SetScale(glm::vec3(5.0f, 5.0f, 5.0f));
 	plane->GetComponent<Renderer>()->SetTexCoordScale(4.0f);
 
-	std::shared_ptr<Entity> switcher1 = scene1->AddEntity();
+	std::shared_ptr<Entity> switcher1 = scene1->AddEntity("switcher");
 	switcher1->AddComponent<SceneSwitcher>();
 	
 	//**********************************************************************************************************************************
@@ -93,7 +94,7 @@ int main(int argc, char *argv[])
 	scene2->cubemapName = "bg2";
 
 	// Test Object from assimp
-	std::shared_ptr<Entity> assimpTest = scene2->AddEntity();
+	std::shared_ptr<Entity> assimpTest = scene2->AddEntity("assimpTest");
 	//assimpTest->AddComponent<Renderer>("../src/resources/backpack/backpack.obj",
 	//	application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
 	//assimpTest->AddComponent<Renderer>("../src/resources/Survival_BackPack_2/Survival_BackPack_2.fbx",
@@ -105,7 +106,7 @@ int main(int argc, char *argv[])
 
 	assimpTest->GetTransform()->SetScale(glm::vec3(0.02f, 0.02f, 0.02f));
 
-	std::shared_ptr<Entity> switcher2 = scene2->AddEntity();
+	std::shared_ptr<Entity> switcher2 = scene2->AddEntity("switcher");
 	switcher2->AddComponent<SceneSwitcher>();
 
 	SceneManager::SetStartupScene("Scene1");

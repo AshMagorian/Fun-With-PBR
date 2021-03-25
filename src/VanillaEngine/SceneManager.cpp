@@ -15,7 +15,7 @@ std::shared_ptr<Scene> SceneManager::CreateScene(std::string _name)
 {
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>();
 	scene->sceneName = _name;
-	scene->camera = scene->AddEntity();
+	scene->camera = scene->AddEntity("MainCamera");
 	scene->lightManager = std::make_shared<Lights>();
 	scene->lightManager->m_application = m_app;
 	scene->self = scene;
@@ -93,13 +93,32 @@ void SceneManager::DrawScene()
 	}
 }
 
-std::shared_ptr<Entity> Scene::AddEntity()
+std::shared_ptr<Entity> Scene::AddEntity(std::string _name)
 {
 	std::shared_ptr<Entity> entity = std::make_shared<Entity>();
 	entity->m_self = entity;
 	entity->m_scene = self;
 	entity->m_application = SceneManager::m_app;
 	entity->m_transform = entity->AddComponent<Transform>();
+
+	std::list<std::shared_ptr<Entity>>::iterator i;
+	int count = 0;
+	std::string name = _name;
+	do
+	{ 
+		for (i = entities.begin(); i != entities.end(); ++i)
+		{
+			if ((*i)->m_name == _name)
+			{
+				count++;
+				name = _name + std::to_string(count);
+				break;
+			}
+		}
+
+	} while (i != entities.end());
+
+	entity->m_name = name;
 	entities.push_back(entity);
 	return entity;
 }

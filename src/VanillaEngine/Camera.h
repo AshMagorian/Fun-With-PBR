@@ -15,6 +15,9 @@ class Camera
 private:
 	float m_viewAngle; ///< The viewing angle of the camera
 	bool m_isFPSCamera = false;
+	bool m_isWASDMovement = false;
+	float m_sensitivity = 0.1f;
+	float m_movementSpeed = 3.0f;
 
 	glm::mat4 m_viewMatrix; ///< The view matrix of the main camera
 	glm::mat4 m_projectionMatrix; ///< The projection matrix of the main camera
@@ -23,6 +26,7 @@ private:
 
 	void UpdateCameraVectors();
 	void UpdateMouseCameraRotation(float* _yaw, float* _pitch);
+	void UpdateWASDMovement();
 
 	glm::vec3 m_upVector;
 	glm::vec3 m_rightVector;
@@ -63,5 +67,8 @@ public:
 	glm::vec3 GetForwardVector() { return m_forwardVector; }
 
 	void SetFPSCamera(bool _value);
+	void SetWASD(bool _value);
+	void SetRotationSensitivity(float _value) { m_sensitivity = _value; }
+	void SetMovementSpeed(float _value) { m_movementSpeed = _value; }
 };
 #endif

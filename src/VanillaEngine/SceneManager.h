@@ -17,7 +17,7 @@ struct Scene
 	std::string cubemapName;
 	std::weak_ptr<Scene> self;
 
-	std::shared_ptr<Entity> AddEntity();
+	std::shared_ptr<Entity> AddEntity(std::string _name);
 };
 
 class SceneManager

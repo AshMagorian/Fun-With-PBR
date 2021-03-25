@@ -55,11 +55,11 @@ add_library(VanillaEngine
 
 if(MSVC)
   target_link_libraries(VanillaEngine
-    glew32 opengl32 OpenAL32 ogg vorbis vorbisfile glfw3 assimp-vc141-mtd
+    glew32 opengl32 OpenAL32 ogg vorbis vorbisfile glfw3 assimp-vc141-mtd imgui
   )
 else()
   target_link_libraries(VanillaEngine
-    GLU GLEW GL AL ogg vorbis vorbisfile glfw3 assimp-vc141-mtd
+    GLU GLEW GL AL ogg vorbis vorbisfile glfw3 assimp-vc141-mtd imgui
   )
 endif()
 

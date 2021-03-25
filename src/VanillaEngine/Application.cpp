@@ -6,6 +6,7 @@
 Application::Application() {}
 Application::~Application()
 {
+	DebugUIManager::End();
 	glfwDestroyWindow(m_window);
 	glfwTerminate();
 }
@@ -31,6 +32,7 @@ std::shared_ptr<Application> const Application::Init(int _w, int _h)
 	glfwSetErrorCallback(app->error_callback);
 	glfwSetKeyCallback(app->m_window, app->m_input->KeyCallback);
 	glfwSetCursorPosCallback(app->m_window, app->m_input->MouseCallback);
+	glfwSetMouseButtonCallback(app->m_window, app->m_input->MouseButtonCallback);
 
 	glfwMakeContextCurrent(app->m_window);
 	std::cout << glGetString(GL_VERSION) << std::endl;
@@ -52,6 +54,7 @@ std::shared_ptr<Application> const Application::Init(int _w, int _h)
 	}
 	catch (Exception& e) { std::cout << "VanillaEngine Exception: " << e.what() << std::endl; }
 
+	DebugUIManager::Init(app->m_window);
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
@@ -68,25 +71,21 @@ void Application::Run()
 	while (!glfwWindowShouldClose(m_window))
 	{
 		m_time->StartOfFrame();
+		DebugUIManager::NewFrame();
 
 		SceneManager::UpdateScene();
+		DebugUIManager::Tick(SceneManager::GetCurrentScene()->entities);
 
-		try
-		{
-			m_mainCamera->UpdateMatrix(m_windowWidth, m_windowHeight);
-		}
-		catch (Exception& e)
-		{
-			std::cout << "myEngine Exception: " << e.what() << std::endl;
-		}
+		m_mainCamera->UpdateMatrix(m_windowWidth, m_windowHeight);
 
 		glClearColor(0.6f, 0.4f, 0.6f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, m_windowWidth, m_windowHeight);
 
 		SceneManager::DrawScene();
+		DebugUIManager::Display();
 
-		m_input->ResetDeltaMouseValues();
+		m_input->ResetValues();
 		glfwPollEvents();
 
 		glfwSwapBuffers(m_window);

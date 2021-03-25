@@ -14,6 +14,7 @@ if(MSVC)
     contrib/msvc-windows-x86/vorbis/include
     contrib/msvc-windows-x86/GLFW/include
     contrib/msvc-windows-x86/assimp/include
+    contrib/imgui
   )
 
   link_directories(

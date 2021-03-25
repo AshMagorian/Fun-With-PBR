@@ -17,6 +17,7 @@ class Entity
 	friend class SceneManager;
 	friend struct Scene;
 private:
+	std::string m_name;
 	std::weak_ptr<Application> m_application; ///< A reference to the application
 	std::list<std::shared_ptr<Component>> m_components; ///< The collection of components stored in the entity
 	std::weak_ptr<Entity> m_self; ///< A reference to itself
@@ -69,5 +70,6 @@ public:
 
 	std::list<std::shared_ptr<Component>> GetComponents() { return m_components; }
 	std::shared_ptr<Transform> GetTransform() { return m_transform.lock(); }
+	std::string GetName() { return m_name; }
 };
 #endif
