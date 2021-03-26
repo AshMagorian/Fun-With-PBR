@@ -17,9 +17,10 @@ struct CubemapTexture
 
 class Skybox
 {
+	friend class DebugUIManager;
 private:
 	GLuint textureID;
-	std::vector<CubemapTexture> m_cubemaps;
+	static std::vector<CubemapTexture> m_cubemaps;
 	CubemapTexture m_currentMap;
 	GLuint vaID;
 

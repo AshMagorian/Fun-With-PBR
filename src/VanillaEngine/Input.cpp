@@ -14,17 +14,17 @@ void Input::KeyCallback(GLFWwindow* _window, int _key, int _scancode, int _actio
 		if (_key == GLFW_KEY_ESCAPE)
 			glfwSetWindowShouldClose(_window, GLFW_TRUE);
 		if(glfwGetKey(_window, _key))
-			std::cout << "Key pressed: " << static_cast<char>(_key) << std::endl;
+			//std::cout << "Key pressed: " << static_cast<char>(_key) << std::endl;
 		m_pressedKeys.push_back(_key);
 		if (std::find(m_keys.begin(), m_keys.end(), _key) != m_keys.end())
 		{
-			std::cout << "Ignoring key: " << static_cast<char>(_key) << std::endl;
+			//std::cout << "Ignoring key: " << static_cast<char>(_key) << std::endl;
 		}
 		else
 			m_keys.push_back(_key);
 		break;
 	case GLFW_RELEASE:
-		std::cout << "Key released: " << static_cast<char>(_key) << std::endl;
+		//std::cout << "Key released: " << static_cast<char>(_key) << std::endl;
 		m_releasedKeys.push_back(_key);
 		for (unsigned int i = 0; i < m_keys.size(); i++)
 		{

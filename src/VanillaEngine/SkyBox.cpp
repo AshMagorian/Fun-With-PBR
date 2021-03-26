@@ -2,6 +2,8 @@
 #include "stb_image.h"
 #include <iostream>
 
+std::vector<CubemapTexture> Skybox::m_cubemaps;
+
 void Skybox::Init(std::weak_ptr<Application>_app)
 {
 	m_application = _app;

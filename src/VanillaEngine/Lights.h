@@ -15,6 +15,7 @@ struct DirectionalLight
 {
 	glm::vec3 colour;
 	glm::vec3 direction;
+	float intensity;
 };
 
 class Lights

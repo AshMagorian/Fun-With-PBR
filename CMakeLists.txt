@@ -34,8 +34,6 @@ add_executable(game
 	src/game/main.cpp
 	src/game/FirstPersonCameraControls.h
 	src/game/FirstPersonCameraControls.cpp
-	src/game/SceneSwitcher.h
-	src/game/SceneSwitcher.cpp
 )
 
 target_link_libraries(game VanillaEngine)

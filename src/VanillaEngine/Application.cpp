@@ -54,13 +54,12 @@ std::shared_ptr<Application> const Application::Init(int _w, int _h)
 	}
 	catch (Exception& e) { std::cout << "VanillaEngine Exception: " << e.what() << std::endl; }
 
-	DebugUIManager::Init(app->m_window);
-
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	DebugUIManager::Init(app->m_window, app->self);
 	app->m_skybox->Init(app->self);
 	SceneManager::Init(app->self);
 
@@ -72,9 +71,11 @@ void Application::Run()
 	{
 		m_time->StartOfFrame();
 		DebugUIManager::NewFrame();
+		//Update window dimensions
+		glfwGetWindowSize(m_window, &m_windowWidth, &m_windowHeight);
 
 		SceneManager::UpdateScene();
-		DebugUIManager::Tick(SceneManager::GetCurrentScene()->entities);
+		DebugUIManager::Tick(SceneManager::GetCurrentScene()->entities, m_windowWidth, m_windowHeight);
 
 		m_mainCamera->UpdateMatrix(m_windowWidth, m_windowHeight);
 

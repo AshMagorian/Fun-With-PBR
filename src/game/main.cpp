@@ -1,7 +1,6 @@
 #include <VanillaEngine/VanillaEngine.h>
 
 #include "FirstPersonCameraControls.h"
-#include "SceneSwitcher.h"
 
 #define WINDOW_WIDTH 1920 
 #define WINDOW_HEIGHT 1080 
@@ -31,7 +30,6 @@ int main(int argc, char *argv[])
 
 	application->GetSkybox()->CreateSkybox("bg", "../src/resources/Textures/MonValley_A_LookoutPoint_2k.hdr");
 	application->GetSkybox()->CreateSkybox("bg2", "../src/resources/Textures/Mt-Washington-Gold-Room_Ref.hdr");
-	application->GetSkybox()->SetSkybox("bg");
 
 	std::shared_ptr<PBR_Material> dielectric = std::make_shared<PBR_Material>();
 	dielectric->SetAlbedo(glm::vec3(0.2f, 0.0f, 0.0f));
@@ -47,9 +45,6 @@ int main(int argc, char *argv[])
 	//std::shared_ptr<Entity> light = application->AddEntity();
 	//light->AddComponent<PointLight>();
 	//light->GetTransform()->SetPos(glm::vec3(2.0f, 3.0f, 1.0f));
-
-	//application->GetCamera()->SetFPSCamera(true);
-	//application->GetCamera()->SetWASD(true);
 
 	//*********************************************************************************************************************************
 
@@ -82,9 +77,6 @@ int main(int argc, char *argv[])
 	plane->GetTransform()->SetPos(glm::vec3(0.0f, -1.5f, 0.0f));
 	plane->GetTransform()->SetScale(glm::vec3(5.0f, 5.0f, 5.0f));
 	plane->GetComponent<Renderer>()->SetTexCoordScale(4.0f);
-
-	std::shared_ptr<Entity> switcher1 = scene1->AddEntity("switcher");
-	switcher1->AddComponent<SceneSwitcher>();
 	
 	//**********************************************************************************************************************************
 
@@ -99,15 +91,12 @@ int main(int argc, char *argv[])
 	//	application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
 	//assimpTest->AddComponent<Renderer>("../src/resources/Survival_BackPack_2/Survival_BackPack_2.fbx",
 	//	application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
-	assimpTest->AddComponent<Renderer>("../src/resources/Old_Antique_Standing_Globe_FBX/Old_Antique_Standing_Globe_.fbx",
-		application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
-	//assimpTest->AddComponent<Renderer>("../src/resources/Old_Antique_Standing_Globe_OBJ/Old_Antique_Standing_Globe_.obj",
+	//assimpTest->AddComponent<Renderer>("../src/resources/Old_Antique_Standing_Globe_FBX/Old_Antique_Standing_Globe_.fbx",
 	//	application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
+	assimpTest->AddComponent<Renderer>("../src/resources/Old_Antique_Standing_Globe_OBJ/Old_Antique_Standing_Globe_.obj",
+		application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
 
 	assimpTest->GetTransform()->SetScale(glm::vec3(0.02f, 0.02f, 0.02f));
-
-	std::shared_ptr<Entity> switcher2 = scene2->AddEntity("switcher");
-	switcher2->AddComponent<SceneSwitcher>();
 
 	SceneManager::SetStartupScene("Scene1");
 	/**

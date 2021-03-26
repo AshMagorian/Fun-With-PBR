@@ -34,6 +34,7 @@ void Renderer::OnDisplay()
 	if (m_shaderProgram)
 	{
 		m_shaderProgram->SetUniform("in_Model", GetEntity()->GetTransform()->GetModelMatrix());
+		m_shaderProgram->SetUniform("in_NormalMtx", GetEntity()->GetTransform()->GetNormalMatrix());
 		if (m_va)
 		{
 			if (m_pbrMat)

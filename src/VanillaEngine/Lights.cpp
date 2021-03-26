@@ -5,8 +5,9 @@ std::weak_ptr<Application> Lights::m_application;
 
 Lights::Lights()
 {
-	m_directionalLight->colour = glm::vec3(5.0f, 5.0f, 5.0f);
+	m_directionalLight->colour = glm::vec3(1.0f, 1.0f, 1.0f);
 	m_directionalLight->direction = glm::vec3(-0.2f, -1.0f, -0.3f);
+	m_directionalLight->intensity = 2.0f;
 }
 
 void Lights::UpdateLightShaderValues()
@@ -16,7 +17,7 @@ void Lights::UpdateLightShaderValues()
 		(*i)->SetUniform("in_ViewPos", m_application.lock()->GetCamera()->GetCurrentCamera()->GetTransform()->GetPos());
 		
 		(*i)->SetUniform("in_DirLight.direction", m_directionalLight->direction);
-		(*i)->SetUniform("in_DirLight.color", m_directionalLight->colour);
+		(*i)->SetUniform("in_DirLight.color", m_directionalLight->colour * m_directionalLight->intensity);
 
 		if (std::distance(m_pointLights.begin(), m_pointLights.end()) > 0)
 		{

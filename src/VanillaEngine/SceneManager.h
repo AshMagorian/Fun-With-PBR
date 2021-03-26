@@ -24,6 +24,7 @@ class SceneManager
 {
 	friend class Application;
 	friend struct Scene;
+	friend class DebugUIManager;
 private:
 	static std::vector<std::shared_ptr<Scene>> m_scenes;
 

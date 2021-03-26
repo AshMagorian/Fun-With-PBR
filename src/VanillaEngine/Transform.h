@@ -2,6 +2,9 @@
 #define TRANSFORM_H
 #include "Component.h"
 #include "glm/glm.hpp"
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
 
 /**
 *The transform component is included in every entity. About 90% of entities will need to access transform and there
@@ -21,6 +24,7 @@ public:
 	~Transform() {}
 
 	void OnTick();
+	void OnShowUI();
 
 
 	glm::vec3 GetPos() { return m_position; }
@@ -33,6 +37,7 @@ public:
 
 	glm::mat4 GetModelMatrix();
 	glm::mat4 GetRotationMatrix();
+	glm::mat4 GetNormalMatrix();
 
 protected:
 	glm::mat4 m_model; ///< The model matrix
