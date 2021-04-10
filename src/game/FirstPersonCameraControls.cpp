@@ -1,4 +1,5 @@
 #include "FirstPersonCameraControls.h"
+MAKE_PROTOTYPE(FirstPersonCameraControls)
 
 void FirstPersonCameraControls::OnBegin()
 {
@@ -24,4 +25,10 @@ void FirstPersonCameraControls::OnTick()
 		GetApplication()->GetCamera()->SetFPSCamera(true);
 	if (GetApplication()->GetInput()->IsMouseButtonReleased("right"))
 		GetApplication()->GetCamera()->SetFPSCamera(false);
+}
+
+std::shared_ptr<Component> FirstPersonCameraControls::Clone()
+{
+	std::shared_ptr<Component> rtn = std::make_shared<FirstPersonCameraControls>(*this);
+	return rtn;
 }

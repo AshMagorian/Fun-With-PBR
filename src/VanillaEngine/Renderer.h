@@ -9,6 +9,7 @@ class Model;
 
 class Renderer : public Component
 {
+	IMPLEMENT_CLONE(Renderer)
 private:
 	std::shared_ptr<ShaderProgram> m_shaderProgram;
 	std::shared_ptr<VertexArray> m_va;
@@ -35,6 +36,7 @@ public:
 	void OnInit(std::string _path, std::shared_ptr<ShaderProgram> _shader);
 	void OnTick();
 	void OnDisplay();
+	void OnShowUI();
 
 	void SetMesh(std::shared_ptr<VertexArray> _va) { m_va = _va; }
 	void SetPBRMaterial(std::shared_ptr<PBR_Material> _mat) { m_pbrMat = _mat; }

@@ -13,6 +13,7 @@
 */
 class Transform : public Component
 {
+	IMPLEMENT_CLONE(Transform)
 private:
 
 	glm::vec3 m_position = glm::vec3(0.0f, 0.0f, 0.0f); ///< The position of the entity

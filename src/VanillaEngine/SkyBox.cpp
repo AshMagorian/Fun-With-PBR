@@ -98,9 +98,42 @@ void Skybox::CreateSkybox(std::string _name, std::string _path)
 	CubemapTexture tex;
 
 	GLuint HDR_id = LoadHDRTexture(_path); 
+	GLuint previewID;
 	glDepthFunc(GL_LEQUAL);
 	tex.name = _name;
-	tex.id = MakeCubemapFromHDR(HDR_id, &captureFBO, &captureRBO);
+	tex.id = MakeCubemapFromHDR(HDR_id, &captureFBO, &captureRBO, &previewID);
+
+	// ************** Create preview ID ********************
+	unsigned int fbo;
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	glGenTextures(1, &previewID);
+	glBindTexture(GL_TEXTURE_2D, previewID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 512, 512, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, previewID, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, HDR_id);
+	glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
+
+	glm::mat4 captureView = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+	glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+	glUseProgram(m_hdrShader->GetId());
+	glUniform1i(glGetUniformLocation(m_hdrShader->GetId(), "equirectangularMap"), 0);
+	glUniformMatrix4fv(glGetUniformLocation(m_hdrShader->GetId(), "in_Projection"), 1, GL_FALSE, glm::value_ptr(captureProjection));
+	glUniformMatrix4fv(glGetUniformLocation(m_hdrShader->GetId(), "in_View"), 1, GL_FALSE, glm::value_ptr(captureView));
+	glBindVertexArray(vaID);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDeleteFramebuffers(1, &fbo);
+	// ****************************************************
+
+	tex.preview_id = previewID;
 	m_cubemaps.push_back(tex);
 
 	GLuint irradianceID = MakeIrradianceMap(captureFBO, captureRBO, tex.id);
@@ -140,7 +173,7 @@ GLuint Skybox::LoadHDRTexture(std::string _path)
 /*
 Uses the HDR environment map to create a cube map
 */
-GLuint Skybox::MakeCubemapFromHDR(GLuint _hdr_id, GLuint* _captureFBO, GLuint* _captureRBO)
+GLuint Skybox::MakeCubemapFromHDR(GLuint _hdr_id, GLuint* _captureFBO, GLuint* _captureRBO, GLuint* _preview_id)
 {
 	glGenFramebuffers(1, _captureFBO);
 	glGenRenderbuffers(1, _captureRBO);
@@ -182,7 +215,6 @@ GLuint Skybox::MakeCubemapFromHDR(GLuint _hdr_id, GLuint* _captureFBO, GLuint* _
 	glUniform1i(glGetUniformLocation(m_hdrShader->GetId(), "equirectangularMap"), 0);
 	glUniformMatrix4fv(glGetUniformLocation(m_hdrShader->GetId(), "in_Projection"), 1, GL_FALSE, glm::value_ptr(captureProjection));
 
-	
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _hdr_id);
 
@@ -198,6 +230,7 @@ GLuint Skybox::MakeCubemapFromHDR(GLuint _hdr_id, GLuint* _captureFBO, GLuint* _
 		glBindVertexArray(vaID);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	return envCubemap;

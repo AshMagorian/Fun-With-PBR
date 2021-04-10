@@ -1,6 +1,7 @@
 #include "Transform.h"
 #include "Entity.h"
 #include <glm/ext.hpp>
+MAKE_PROTOTYPE(Transform)
 
 void Transform::OnTick()
 {

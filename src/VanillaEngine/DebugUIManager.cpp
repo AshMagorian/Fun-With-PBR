@@ -81,9 +81,9 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 		ImGui::ColorPicker3("Colour", &(SceneManager::GetCurrentScene()->lightManager->GetDirectionalLight()->colour.x));
 		ImGui::DragFloat("Intensity", &(SceneManager::GetCurrentScene()->lightManager->GetDirectionalLight()->intensity), 0.05);
 	}
+	// Skybox selector
 	if (ImGui::CollapsingHeader("Skybox"))
 	{
-		// Skybox selector
 		const int numCubeMaps = Skybox::m_cubemaps.size();
 		std::vector<char*> maps;
 		for (size_t i = 0; i < numCubeMaps; ++i)
@@ -97,7 +97,17 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 			SceneManager::GetCurrentScene()->cubemapName = maps.at(item_current);
 			m_app.lock()->GetSkybox()->SetSkybox(maps.at(item_current));
 		}
+		GLuint id = Skybox::m_cubemaps[item_current].preview_id;
+
+		ImVec2 uv_min = ImVec2(0.0f, 0.0f);                 // Top-left
+		ImVec2 uv_max = ImVec2(1.0f, 1.0f);                 // Lower-right
+		ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);   // No tint
+		ImVec4 border_col = ImVec4(1.0f, 1.0f, 1.0f, 0.5f); // 50% opaque white
+		
+		ImGui::Image((void*)(intptr_t)id, ImVec2(200, 200), uv_min, uv_max, tint_col, border_col);
+		
 	}
+
 	ImGui::End();
 	
 	if (m_entityWindow == true)
@@ -123,11 +133,20 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 				{
 					(*j)->OnShowUI();
 				}
+
+				if (ImGui::CollapsingHeader("Add Component (Coming soon!)"))
+				{
+					for (auto it = Component::protoTable().cbegin(); it != Component::protoTable().cend(); ++it)
+					{
+						ImGui::Text((it->first).c_str());
+					}
+				}
 				ImGui::End();
 				resetWindow = false;
 			}
 		}
 	}
+
 }
 
 void DebugUIManager::Display()

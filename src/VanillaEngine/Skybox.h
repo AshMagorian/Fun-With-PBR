@@ -13,6 +13,7 @@ struct CubemapTexture
 {
 	std::string name;
 	GLuint id;
+	GLuint preview_id;
 };
 
 class Skybox
@@ -49,7 +50,7 @@ public:
 	std::string GetCurrentMapName() { return m_currentMap.name; }
 
 	GLuint LoadHDRTexture(std::string _path);
-	GLuint MakeCubemapFromHDR(GLuint _hdr_id, GLuint* _captureFBO, GLuint* _captureRBO);
+	GLuint MakeCubemapFromHDR(GLuint _hdr_id, GLuint* _captureFBO, GLuint* _captureRBO, GLuint* _preview_id);
 	GLuint MakeIrradianceMap(GLuint _captureFBO, GLuint _captureRBO, GLuint _textureID);
 	GLuint MakePrefilterMap(GLuint _captureFBO, GLuint _captureRBO, GLuint _textureID);
 

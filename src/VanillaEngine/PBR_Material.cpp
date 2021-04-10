@@ -1,7 +1,4 @@
-#include "PBR_Material.h"
-#include "ShaderProgram.h"
-#include "Texture.h"
-#include "Exception.h"
+#include <VanillaEngine.h>
 #include <glm/ext.hpp>
 
 
@@ -186,4 +183,41 @@ GLuint PBR_Material::GetPrefilter(std::string _name)
 		}
 	}
 	return NULL;
+}
+
+void PBR_Material::ShowUI()
+{
+	if (ImGui::TreeNode("PBR Material"))
+	{
+		if (m_albedo != nullptr) {
+			ImGui::Text(("Albedo texture: " + m_albedo->GetPath()).c_str());
+			ImGui::Image((void*)(intptr_t)m_albedo->getId(), ImVec2(100, 100));
+		}
+		else
+			ImGui::ColorPicker3("Colour", &(m_albedo_rgb.x));
+
+		if (m_normal != nullptr){
+			ImGui::Text(("Normal texture: " + m_normal->GetPath()).c_str());
+			ImGui::Image((void*)(intptr_t)m_normal->getId(), ImVec2(100, 100));
+		}
+
+		if (m_metallic != nullptr) {
+			ImGui::Text(("Metallic texture: " + m_metallic->GetPath()).c_str());
+			ImGui::Image((void*)(intptr_t)m_metallic->getId(), ImVec2(100, 100));
+		}
+		else
+			ImGui::DragFloat("Metallic", &m_metallic_value, 0.005f, 0.0f, 1.0f);
+		if (m_roughness != nullptr) {
+			ImGui::Text(("Roughness texture: " + m_roughness->GetPath()).c_str());
+			ImGui::Image((void*)(intptr_t)m_roughness->getId(), ImVec2(100, 100));
+			ImGui::DragFloat("Roughness Adjustment", &m_roughnessAdjustment, 0.005f, -1.0f, 1.0f);
+		}
+		else
+			ImGui::DragFloat("Roughness", &m_roughness_value, 0.005f, 0.0f, 1.0f);
+		if (m_ao != nullptr) {
+			ImGui::Text(("ao texture: " + m_ao->GetPath()).c_str());
+			ImGui::Image((void*)(intptr_t)m_ao->getId(), ImVec2(100, 100));
+		}
+		ImGui::TreePop();
+	}
 }

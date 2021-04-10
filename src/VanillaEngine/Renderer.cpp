@@ -1,6 +1,8 @@
 #include "VanillaEngine.h"
 #include "Model.h"
 
+MAKE_PROTOTYPE(Renderer)
+
 Renderer::Renderer() {}
 Renderer::~Renderer() {}
 
@@ -83,6 +85,7 @@ void Renderer::BindPBRValues()
 
 	if (m_pbrMat->GetRoughness() != nullptr) {
 		m_shaderProgram->SetUniform("in_Material.texture_roughness1", m_pbrMat->GetRoughness());
+
 		matBinary += 2;
 	}
 	else
@@ -126,4 +129,42 @@ void Renderer::BindIBLMaps()
 	glUniform1i(glGetUniformLocation(m_shaderProgram->GetId(), "brdfLUT"), 8);
 	glActiveTexture(GL_TEXTURE8);
 	glBindTexture(GL_TEXTURE_2D, PBR_Material::GetBRDF());
+}
+
+void Renderer::OnShowUI()
+{
+	if (ImGui::CollapsingHeader("Renderer"))
+	{
+		if (m_shaderProgram)
+		{
+			ImGui::Text(("Shader: " + m_shaderProgram->GetName()).c_str());
+		}
+		else
+		{
+			//option to add shader
+		}
+
+		if (m_va)
+		{
+			ImGui::Text(("Mesh: " + m_va->GetName()).c_str());
+
+		}
+		else if (m_assimpModel)
+		{
+
+		}
+		else
+		{
+			//Option to add mesh
+		}
+
+		if (m_pbrMat)
+		{
+			m_pbrMat->ShowUI();
+		}
+		else
+		{
+			//option to add material (premade or custom)
+		}
+	}
 }

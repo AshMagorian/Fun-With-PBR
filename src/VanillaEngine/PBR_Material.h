@@ -31,6 +31,7 @@ private:
 	glm::vec3 m_albedo_rgb = glm::vec3(1.0f, 1.0f, 1.0f);
 	float m_metallic_value = 0.0f;
 	float m_roughness_value = 0.5f;
+	float m_roughnessAdjustment = 0.0f;
 
 	static std::vector<IBL_data> m_envMaps;
 	static bool brdfCheck;
@@ -41,6 +42,8 @@ private:
 public:
 	PBR_Material() {}
 	PBR_Material(std::string _path);
+
+	void ShowUI();
 
 	static void SetIBLData(std::string _name, GLuint _irradianceId, GLuint _prefilterId);
 	static GLuint GetIrradiance(std::string _name);

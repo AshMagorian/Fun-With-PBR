@@ -39,6 +39,7 @@ Texture::Texture(std::string path)
 	{
 		std::cout << "myEngine Exception: " << e.what() << std::endl;
 	}
+	this->SetPath(path);
 
 	size.x = w;
 	size.y = h;

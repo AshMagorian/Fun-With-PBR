@@ -3,6 +3,7 @@
 
 class FirstPersonCameraControls : public Component
 {
+	IMPLEMENT_CLONE(FirstPersonCameraControls)
 private:
 	std::shared_ptr<Transform> m_Transform; ///< The transform component 
 
@@ -15,4 +16,5 @@ public:
 	void OnBegin();
 	void OnSceneBegin();
 	void OnTick();
+	virtual std::shared_ptr<Component> Clone();
 };
