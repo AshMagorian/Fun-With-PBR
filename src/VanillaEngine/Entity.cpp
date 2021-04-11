@@ -45,3 +45,13 @@ void Entity::Display()
 		(*i)->OnDisplay();
 	}
 }
+
+std::shared_ptr<Component> Entity::AddComponentPrototype(std::string _name)
+{
+	std::shared_ptr<Component> rtn = Component::MakeProduct(_name);
+	rtn->m_entity = m_self;
+	rtn->m_began = false;
+	m_components.push_back(rtn);
+	rtn->OnInit();
+	return rtn;
+}

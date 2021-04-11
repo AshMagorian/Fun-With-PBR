@@ -72,6 +72,21 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 				resetWindow = true;
 			}
 		}
+		if (ImGui::Button("Add Entity"))
+			ImGui::OpenPopup("entity_popup");
+		if (ImGui::BeginPopup("entity_popup"))
+		{
+			ImGui::Text("New Entity Name");
+			ImGui::Separator();
+			static char entityName[64] = ""; ImGui::InputText("", entityName, 64);
+			if (ImGui::Button("Add"))
+			{
+				SceneManager::GetCurrentScene()->AddEntity(entityName);
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
+
 	}
 	// Directional light
 	if (ImGui::CollapsingHeader("Directional Light"))
@@ -134,14 +149,25 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 					(*j)->OnShowUI();
 				}
 
-				if (ImGui::CollapsingHeader("Add Component (Coming soon!)"))
+				if (ImGui::Button("Add Component"))
+					ImGui::OpenPopup("my_select_popup");
+				if (ImGui::BeginPopup("my_select_popup"))
 				{
+					ImGui::Text("Components");
+					ImGui::Separator();
+					
 					for (auto it = Component::protoTable().cbegin(); it != Component::protoTable().cend(); ++it)
 					{
-						ImGui::Text((it->first).c_str());
+						if (ImGui::Selectable((it->first).c_str()))
+						{
+							(*i)->AddComponentPrototype((it->first));
+						}
 					}
+					ImGui::EndPopup();
 				}
+
 				ImGui::End();
+
 				resetWindow = false;
 			}
 		}

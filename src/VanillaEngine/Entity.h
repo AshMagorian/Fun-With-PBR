@@ -33,7 +33,8 @@ public:
 
 	std::shared_ptr<Application> GetApplication() { return m_application.lock(); }
 	std::shared_ptr<Scene> GetScene() { return m_scene.lock(); }
-
+	
+	std::shared_ptr<Component> AddComponentPrototype(std::string _name);
 
 	template <typename T, typename... A>
 	std::shared_ptr<T> AddComponent(A... args)

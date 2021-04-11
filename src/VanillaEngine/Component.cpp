@@ -1,6 +1,5 @@
 #include "VanillaEngine.h"
 
-//std::map<std::string, std::shared_ptr<Component>> Component::protoTable;
 
 Component::Component() {}
 Component::~Component() {}

@@ -6,6 +6,14 @@ MAKE_PROTOTYPE(Renderer)
 Renderer::Renderer() {}
 Renderer::~Renderer() {}
 
+void Renderer::OnInit()
+{
+	m_shaderProgram = GetApplication()->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader");
+	m_va = GetApplication()->GetResourceManager()->LoadFromResources<VertexArray>("sphere");
+	m_pbrMat = std::make_shared<PBR_Material>();
+	m_cam = GetApplication()->GetCamera();
+}
+
 void Renderer::OnInit(std::shared_ptr<ShaderProgram> _shader, std::shared_ptr<VertexArray> _va, std::shared_ptr<PBR_Material> _mat)
 {
 	m_shaderProgram = _shader;
