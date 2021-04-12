@@ -141,38 +141,36 @@ void Renderer::BindIBLMaps()
 
 void Renderer::OnShowUI()
 {
-	if (ImGui::CollapsingHeader("Renderer"))
+
+	if (m_shaderProgram)
 	{
-		if (m_shaderProgram)
-		{
-			ImGui::Text(("Shader: " + m_shaderProgram->GetName()).c_str());
-		}
-		else
-		{
-			//option to add shader
-		}
+		ImGui::Text(("Shader: " + m_shaderProgram->GetName()).c_str());
+	}
+	else
+	{
+		//option to add shader
+	}
 
-		if (m_va)
-		{
-			ImGui::Text(("Mesh: " + m_va->GetName()).c_str());
+	if (m_va)
+	{
+		ImGui::Text(("Mesh: " + m_va->GetName()).c_str());
 
-		}
-		else if (m_assimpModel)
-		{
+	}
+	else if (m_assimpModel)
+	{
 
-		}
-		else
-		{
-			//Option to add mesh
-		}
+	}
+	else
+	{
+		//Option to add mesh
+	}
 
-		if (m_pbrMat)
-		{
-			m_pbrMat->ShowUI();
-		}
-		else
-		{
-			//option to add material (premade or custom)
-		}
+	if (m_pbrMat)
+	{
+		m_pbrMat->ShowUI();
+	}
+	else
+	{
+		//option to add material (premade or custom)
 	}
 }

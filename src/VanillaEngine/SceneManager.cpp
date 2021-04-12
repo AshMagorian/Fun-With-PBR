@@ -108,14 +108,14 @@ std::shared_ptr<Entity> Scene::AddEntity(std::string _name)
 	{ 
 		for (i = entities.begin(); i != entities.end(); ++i)
 		{
-			if ((*i)->m_name == _name)
+			if ((*i)->m_name == name)
 			{
 				count++;
-				name = _name + std::to_string(count);
+				name = _name + "(" + std::to_string(count) + ")";
 				break;
 			}
 		}
-
+	
 	} while (i != entities.end());
 
 	entity->m_name = name;

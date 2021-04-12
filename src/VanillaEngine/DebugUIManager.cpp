@@ -144,10 +144,24 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 				ImGui::Begin((*i)->GetName().c_str(), &m_entityWindow);
 
 				std::list<std::shared_ptr<Component>> components = (*i)->GetComponents();
+				std::shared_ptr<Component> componentToDelete = nullptr;
 				for (std::list<std::shared_ptr<Component>>::iterator j = components.begin(); j != components.end(); ++j)
 				{
-					(*j)->OnShowUI();
+					std::string componentName = typeid(*(*j)).name();
+					ImGui::PushID(componentName.c_str());
+					componentName = componentName.substr(componentName.find_first_of(" \t")+1);
+					if (ImGui::CollapsingHeader(componentName.c_str()))
+					{
+						(*j)->OnShowUI();
+						if (ImGui::SmallButton("Remove Component"))
+							componentToDelete = (*j);
+					}
+
+					ImGui::Separator();
+					ImGui::PopID();
 				}
+				if (componentToDelete!= nullptr)
+					(*i)->RemoveComponent(componentToDelete);
 
 				if (ImGui::Button("Add Component"))
 					ImGui::OpenPopup("my_select_popup");

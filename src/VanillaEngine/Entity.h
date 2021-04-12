@@ -14,6 +14,7 @@ struct Scene;
 class Entity
 {
 	friend class Application;
+	friend class DebugUIManager;
 	friend class SceneManager;
 	friend struct Scene;
 private:
@@ -24,6 +25,8 @@ private:
 	std::weak_ptr<Scene> m_scene; ///< A reference to the scene
 	std::weak_ptr<Transform> m_transform; ///< The position, rotation adn scale of the entity
 
+	std::shared_ptr<Component> AddComponentPrototype(std::string _name);
+	void RemoveComponent(std::shared_ptr<Component> _item) { m_components.remove(_item); }
 	void OnSceneBegin();
 	void Tick();
 	void Display();
@@ -34,7 +37,7 @@ public:
 	std::shared_ptr<Application> GetApplication() { return m_application.lock(); }
 	std::shared_ptr<Scene> GetScene() { return m_scene.lock(); }
 	
-	std::shared_ptr<Component> AddComponentPrototype(std::string _name);
+
 
 	template <typename T, typename... A>
 	std::shared_ptr<T> AddComponent(A... args)

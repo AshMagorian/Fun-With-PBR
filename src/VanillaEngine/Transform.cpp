@@ -51,11 +51,10 @@ glm::mat4 Transform::GetNormalMatrix()
 
 void Transform::OnShowUI()
 {
-	if (ImGui::CollapsingHeader("Transform"))
-	{
-		ImGui::Text("    x        y         z");
-		ImGui::DragFloat3("Position", &m_position.x, 0.005f);
-		ImGui::DragFloat3("Rotation", &m_rotation.x, 0.05f);
-		ImGui::DragFloat3("Scale", &m_scale.x, 0.005f);
-	}
+
+	ImGui::Text("    x        y         z");
+	ImGui::DragFloat3("Position", &m_position.x, 0.005f);
+	ImGui::DragFloat3("Rotation", &m_rotation.x, 0.05f);
+	ImGui::DragFloat3("Scale", &m_scale.x, 0.005f);
+
 }
