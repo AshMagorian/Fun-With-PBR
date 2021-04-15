@@ -171,10 +171,16 @@ void ShaderProgram::Draw(std::shared_ptr<VertexArray> vertexArray)
 void ShaderProgram::SetUniform(std::string uniform, glm::vec2 value)
 {
 	GLint uniformId = glGetUniformLocation(id, uniform.c_str());
-
-	if (uniformId == -1)
+	try
 	{
-		throw Exception(uniform + " not found");
+		if (uniformId == -1)
+		{
+			throw Exception(uniform + " not found");
+		}
+	}
+	catch(Exception& e)
+	{
+		return;
 	}
 
 	glUseProgram(id);
@@ -185,10 +191,16 @@ void ShaderProgram::SetUniform(std::string uniform, glm::vec2 value)
 void ShaderProgram::SetUniform(std::string uniform, glm::vec3 value)
 {
 	GLint uniformId = glGetUniformLocation(id, uniform.c_str());
-
-	if (uniformId == -1)
+	try
 	{
-		throw Exception( uniform + " not found");
+		if (uniformId == -1)
+		{
+			throw Exception(uniform + " not found");
+		}
+	}
+	catch (Exception& e)
+	{
+		return;
 	}
 
 	glUseProgram(id);
@@ -198,10 +210,16 @@ void ShaderProgram::SetUniform(std::string uniform, glm::vec3 value)
 void ShaderProgram::SetUniform(std::string uniform, glm::vec4 value)
 {
 	GLint uniformId = glGetUniformLocation(id, uniform.c_str());
-
-	if (uniformId == -1)
+	try
 	{
-		throw Exception(uniform + " not found");
+		if (uniformId == -1)
+		{
+			throw Exception(uniform + " not found");
+		}
+	}
+	catch (Exception& e)
+	{
+		return;
 	}
 
 	glUseProgram(id);
@@ -211,10 +229,16 @@ void ShaderProgram::SetUniform(std::string uniform, glm::vec4 value)
 void ShaderProgram::SetUniform(std::string uniform, float value)
 {
 	GLint uniformId = glGetUniformLocation(id, uniform.c_str());
-
-	if (uniformId == -1)
+	try
 	{
-		throw Exception(uniform + " not found");
+		if (uniformId == -1)
+		{
+			throw Exception(uniform + " not found");
+		}
+	}
+	catch (Exception& e)
+	{
+		return;
 	}
 
 	glUseProgram(id);
@@ -224,10 +248,16 @@ void ShaderProgram::SetUniform(std::string uniform, float value)
 void ShaderProgram::SetUniform(std::string uniform, int value)
 {
 	GLint uniformId = glGetUniformLocation(id, uniform.c_str());
-
-	if (uniformId == -1)
+	try
 	{
-		throw Exception(uniform + " not found");
+		if (uniformId == -1)
+		{
+			throw Exception(uniform + " not found");
+		}
+	}
+	catch (Exception& e)
+	{
+		return;
 	}
 
 	glUseProgram(id);
@@ -237,10 +267,16 @@ void ShaderProgram::SetUniform(std::string uniform, int value)
 void ShaderProgram::SetUniform(std::string uniform, glm::mat4 value)
 {
 	GLint uniformId = glGetUniformLocation(id, uniform.c_str());
-
-	if (uniformId == -1)
+	try
 	{
-		throw Exception(uniform + " not found");
+		if (uniformId == -1)
+		{
+			throw Exception(uniform + " not found");
+		}
+	}
+	catch (Exception& e)
+	{
+		return;
 	}
 
 	glUseProgram(id);
@@ -251,10 +287,16 @@ void ShaderProgram::SetUniform(std::string uniform, glm::mat4 value)
 void ShaderProgram::SetUniform(std::string uniform, std::shared_ptr<Texture> texture)
 {
 	GLint uniformId = glGetUniformLocation(id, uniform.c_str());
-
-	if (uniformId == -1)
+	try
 	{
-		throw Exception(uniform + " not found");
+		if (uniformId == -1)
+		{
+			throw Exception(uniform + " not found");
+		}
+	}
+	catch (Exception& e)
+	{
+		return;
 	}
 	//Tries to find the correct sampler in the vector
 	for (size_t i = 0; i < samplers.size(); i++)

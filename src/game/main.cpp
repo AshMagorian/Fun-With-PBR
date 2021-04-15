@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
 	application->GetResourceManager()->CreateResource<ShaderProgram>("../src/resources/shaders/pbrShader.txt", "pbr_shader");
 	application->GetResourceManager()->CreateResource<ShaderProgram>("../src/resources/shaders/test.txt", "test_shader");
 	application->GetResourceManager()->CreateResource<ShaderProgram>("../src/resources/shaders/NormalDebug.txt", "normal_debug_shader");
+	application->GetResourceManager()->CreateResource<ShaderProgram>("../src/resources/shaders/TangentDebug.txt", "tangent_debug_shader");
 
 	application->GetResourceManager()->CreateResource<VertexArray>("../src/resources/Cube.obj", "cube");
 	application->GetResourceManager()->CreateResource<VertexArray>("plane", "plane");
@@ -19,6 +20,8 @@ int main(int argc, char *argv[])
 
 	application->GetResourceManager()->CreateResource<PBR_Material>("../src/resources/Textures/Cobblestone/cobblestone.txt", "cobble_mat");
 	application->GetResourceManager()->CreateResource<PBR_Material>("../src/resources/Textures/metal_plate/metal_plate.txt", "metal_plate_mat");
+
+	application->GetResourceManager()->CreateResource<Model>("../src/resources/backpack/backpack.obj", "backpack_obj");
 
 	//application->GetSkybox()->CreateSkybox("bg",
 	//	"../src/resources/textures/right.jpg",
@@ -99,6 +102,7 @@ int main(int argc, char *argv[])
 	assimpTest->GetTransform()->SetScale(glm::vec3(0.02f, 0.02f, 0.02f));
 
 	SceneManager::SetStartupScene("Scene1");
+
 	/**
 	*Runs the game loop from application
 	*/

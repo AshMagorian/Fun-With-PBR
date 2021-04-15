@@ -79,7 +79,7 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 			ImGui::Text("New Entity Name");
 			ImGui::Separator();
 			static char entityName[64] = ""; ImGui::InputText("", entityName, 64);
-			if (ImGui::Button("Add"))
+			if (ImGui::Button("Add") && entityName[0] != NULL)
 			{
 				SceneManager::GetCurrentScene()->AddEntity(entityName);
 				ImGui::CloseCurrentPopup();
@@ -94,14 +94,14 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 		ImGui::Text("    x        y         z");
 		ImGui::DragFloat3("Direction", &(SceneManager::GetCurrentScene()->lightManager->GetDirectionalLight()->direction.x), 0.005f);
 		ImGui::ColorPicker3("Colour", &(SceneManager::GetCurrentScene()->lightManager->GetDirectionalLight()->colour.x));
-		ImGui::DragFloat("Intensity", &(SceneManager::GetCurrentScene()->lightManager->GetDirectionalLight()->intensity), 0.05);
+		ImGui::DragFloat("Intensity", &(SceneManager::GetCurrentScene()->lightManager->GetDirectionalLight()->intensity), 0.05f);
 	}
 	// Skybox selector
 	if (ImGui::CollapsingHeader("Skybox"))
 	{
 		const int numCubeMaps = Skybox::m_cubemaps.size();
 		std::vector<char*> maps;
-		for (size_t i = 0; i < numCubeMaps; ++i)
+		for (int i = 0; i < numCubeMaps; ++i)
 			maps.push_back(&Skybox::m_cubemaps.at(i).name[0]);
 		const char* mapsArr[100];
 		std::copy(maps.begin(), maps.end(), mapsArr);

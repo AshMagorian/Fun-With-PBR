@@ -25,6 +25,7 @@ public:
 
 	int GetComponents() { return VBcomponents; }
 	int GetDataSize() { return data.size(); }
+	std::vector<GLfloat> GetData() { return data; }
 	GLuint GetId();
 };
 #endif

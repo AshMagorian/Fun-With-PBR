@@ -1,0 +1,2 @@
+../src/resources/shaders/vertFragFiles/TangentDebug.vert
+../src/resources/shaders/vertFragFiles/TangentDebug.frag

@@ -18,15 +18,16 @@ public:
 	{
 		try
 		{
-			std::shared_ptr<T> rtn;
+			std::shared_ptr<T> tmp;
 			for (std::list<std::shared_ptr<Resource>>::iterator i = m_resources.begin(); i != m_resources.end(); ++i)
 			{
 				if (_name == (*i)->GetName())
 				{
-					rtn = std::dynamic_pointer_cast<T>(*i);
-					if (rtn)
+					tmp = std::dynamic_pointer_cast<T>(*i);
+					if (tmp)
 					{
 						std::cout << (*i)->GetName() << " loaded" << std::endl;
+						std::shared_ptr<T> rtn = std::make_shared<T>(*tmp);
 						return rtn;
 					}
 				}
@@ -41,7 +42,7 @@ public:
 		{
 			std::cout << "exception: " << e.what() << std::endl;
 		}
-		return NULL;
+		return nullptr;
 	}
 
 	/**
@@ -87,6 +88,18 @@ public:
 		_res->SetName(_name);
 		m_resources.push_back(_res);
 		std::cout << _name << " created" << std::endl;
+	}
+
+	template<typename T>
+	void GetAll(std::list<std::shared_ptr<T>> *_resources)
+	{
+		std::shared_ptr<T> tmp;
+		for (std::list<std::shared_ptr<Resource>>::iterator i = m_resources.begin(); i != m_resources.end(); ++i)
+		{
+			tmp = std::dynamic_pointer_cast<T>(*i);
+			if (tmp)
+				_resources->push_back(tmp);
+		}
 	}
 };
 #endif

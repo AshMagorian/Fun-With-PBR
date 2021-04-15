@@ -28,9 +28,9 @@ PBR_Material::PBR_Material(std::string _path)
 			
 			if (splitLine.at(0) == "diff")
 			{
-				m_albedo_rgb.x = atof(splitLine.at(1).c_str());
-				m_albedo_rgb.y = atof(splitLine.at(2).c_str());
-				m_albedo_rgb.z = atof(splitLine.at(3).c_str());
+				m_albedo_rgb.x = (float)atof(splitLine.at(1).c_str());
+				m_albedo_rgb.y = (float)atof(splitLine.at(2).c_str());
+				m_albedo_rgb.z = (float)atof(splitLine.at(3).c_str());
 			}
 			else if (splitLine.at(0) == "diff_map")
 			{
@@ -42,7 +42,7 @@ PBR_Material::PBR_Material(std::string _path)
 			}
 			else if (splitLine.at(0) == "m")
 			{
-				m_metallic_value = atof(splitLine.at(1).c_str());
+				m_metallic_value = (float)atof(splitLine.at(1).c_str());
 			}
 			else if (splitLine.at(0) == "m_map")
 			{
@@ -50,7 +50,7 @@ PBR_Material::PBR_Material(std::string _path)
 			}
 			else if (splitLine.at(0) == "r")
 			{
-				m_roughness_value = atof(splitLine.at(1).c_str());
+				m_roughness_value = (float)atof(splitLine.at(1).c_str());
 			}
 			else if (splitLine.at(0) == "r_map")
 			{
@@ -187,36 +187,64 @@ GLuint PBR_Material::GetPrefilter(std::string _name)
 
 void PBR_Material::ShowUI()
 {
-	if (ImGui::TreeNode("PBR Material"))
+	if (ImGui::TreeNode("Albedo"))
 	{
 		if (m_albedo != nullptr) {
 			ImGui::Text(("Albedo texture: " + m_albedo->GetPath()).c_str());
 			ImGui::Image((void*)(intptr_t)m_albedo->getId(), ImVec2(100, 100));
+			if (ImGui::SmallButton("Remove texture##albedo"))
+				m_albedo = nullptr;
 		}
 		else
 			ImGui::ColorPicker3("Colour", &(m_albedo_rgb.x));
+		ImGui::TreePop();
+	}
 
-		if (m_normal != nullptr){
+	if (ImGui::TreeNode("Normal"))
+	{
+		if (m_normal != nullptr) {
 			ImGui::Text(("Normal texture: " + m_normal->GetPath()).c_str());
 			ImGui::Image((void*)(intptr_t)m_normal->getId(), ImVec2(100, 100));
+			if (ImGui::SmallButton("Remove texture##normal"))
+				m_normal = nullptr;
 		}
+		ImGui::TreePop();
+	}
 
+	if (ImGui::TreeNode("Metallic"))
+	{
 		if (m_metallic != nullptr) {
 			ImGui::Text(("Metallic texture: " + m_metallic->GetPath()).c_str());
 			ImGui::Image((void*)(intptr_t)m_metallic->getId(), ImVec2(100, 100));
+			if (ImGui::SmallButton("Remove texture##met"))
+				m_metallic = nullptr;
 		}
 		else
 			ImGui::DragFloat("Metallic", &m_metallic_value, 0.005f, 0.0f, 1.0f);
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("Roughness"))
+	{
 		if (m_roughness != nullptr) {
 			ImGui::Text(("Roughness texture: " + m_roughness->GetPath()).c_str());
 			ImGui::Image((void*)(intptr_t)m_roughness->getId(), ImVec2(100, 100));
+			if (ImGui::SmallButton("Remove texture##rough"))
+				m_roughness = nullptr;
 			ImGui::DragFloat("Roughness Adjustment", &m_roughnessAdjustment, 0.005f, -1.0f, 1.0f);
 		}
 		else
 			ImGui::DragFloat("Roughness", &m_roughness_value, 0.005f, 0.0f, 1.0f);
+		ImGui::TreePop();
+	}
+	
+	if (ImGui::TreeNode("Ambient Occlusion"))
+	{
 		if (m_ao != nullptr) {
 			ImGui::Text(("ao texture: " + m_ao->GetPath()).c_str());
 			ImGui::Image((void*)(intptr_t)m_ao->getId(), ImVec2(100, 100));
+			if (ImGui::SmallButton("Remove texture##ao"))
+				m_ao = nullptr;
 		}
 		ImGui::TreePop();
 	}

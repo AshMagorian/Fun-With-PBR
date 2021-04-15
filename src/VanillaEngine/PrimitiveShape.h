@@ -22,12 +22,21 @@ public:
 	static int GetIndexCount() { return PrimitiveShape::indexCount; }
 
 	static GLuint SetupPlane();
+	static void ComputeTangentBasis(
+		//inputs
+		TempVertex v1,
+		TempVertex v2,
+		TempVertex v3,
+		// outputs
+		glm::vec3& tangent,
+		glm::vec3& bitangent
+	);
 };
 GLuint PrimitiveShape::plane_id = 0;
 GLuint PrimitiveShape::id = 0;
 int PrimitiveShape::indexCount = 0;
 
-void ComputeTangentBasis(
+void PrimitiveShape::ComputeTangentBasis(
 	//inputs
 	TempVertex v1,
 	TempVertex v2,

@@ -146,9 +146,22 @@ void Renderer::OnShowUI()
 	{
 		ImGui::Text(("Shader: " + m_shaderProgram->GetName()).c_str());
 	}
-	else
+	ImGui::SameLine(150); 
+	if (ImGui::SmallButton("Select Shader"))
+		ImGui::OpenPopup("shader_popup");
+	if (ImGui::BeginPopup("shader_popup"))
 	{
-		//option to add shader
+		ImGui::Text("Shaders");
+		ImGui::Separator();
+
+		std::list<std::shared_ptr<ShaderProgram>> list;
+		GetApplication()->GetResourceManager()->GetAll(&list);
+		for (std::list<std::shared_ptr<ShaderProgram>>::iterator i = list.begin(); i != list.end(); ++i)
+		{
+			if (ImGui::Selectable((*i)->GetName().c_str()))
+				m_shaderProgram = (*i);
+		}
+		ImGui::EndPopup();
 	}
 
 	if (m_va)
@@ -158,19 +171,89 @@ void Renderer::OnShowUI()
 	}
 	else if (m_assimpModel)
 	{
-
+		ImGui::Text(("Assimp Mesh: " + m_assimpModel->GetName()).c_str());
 	}
-	else
+	ImGui::SameLine(150);
+	if (ImGui::SmallButton("Select Mesh"))
+		ImGui::OpenPopup("mesh_popup");
+	if (ImGui::BeginPopup("mesh_popup"))
 	{
-		//Option to add mesh
+		ImGui::Text("Meshes");
+		ImGui::Separator();
+
+		std::list<std::shared_ptr<VertexArray>> list;
+		GetApplication()->GetResourceManager()->GetAll(&list);
+		for (std::list<std::shared_ptr<VertexArray>>::iterator i = list.begin(); i != list.end(); ++i)
+		{
+			if (ImGui::Selectable((*i)->GetName().c_str()))
+			{
+				m_assimpModel = nullptr;
+				m_va = (*i);
+			}
+		}
+
+		ImGui::Text("Assimp Meshes");
+		ImGui::Separator();
+
+		std::list<std::shared_ptr<Model>> list2;
+		GetApplication()->GetResourceManager()->GetAll(&list2);
+		for (std::list<std::shared_ptr<Model>>::iterator i = list2.begin(); i != list2.end(); ++i)
+		{
+			if (ImGui::Selectable((*i)->GetName().c_str()))
+			{
+				m_va = nullptr;
+				m_assimpModel = (*i);
+			}
+		}
+
+		ImGui::EndPopup();
 	}
 
 	if (m_pbrMat)
 	{
-		m_pbrMat->ShowUI();
+		if (ImGui::TreeNode("PBR Material"))
+		{
+			ImGui::DragFloat("TexCoord Scale", &m_texCoordScale, 0.01f);
+			m_pbrMat->ShowUI();
+			if (ImGui::TreeNode("Displacement"))
+			{
+				if (m_pbrMat->GetDisplacement() != nullptr)
+				{
+					ImGui::Text(("displacement texture: " + m_pbrMat->GetDisplacement()->GetPath()).c_str());
+					ImGui::Image((void*)(intptr_t)m_pbrMat->GetDisplacement()->getId(), ImVec2(100, 100));
+					if (ImGui::SmallButton("Remove texture##disp"))
+						m_pbrMat->SetDisplacementTex(nullptr);
+
+					if (ImGui::RadioButton("Parallax clipBorders", m_parallax_clipBorders))
+						m_parallax_clipBorders = !m_parallax_clipBorders;
+					ImGui::DragFloat("Parallax height", &m_parallax_height, 0.001f);
+					ImGui::InputInt("Parallax min layers", &m_parallax_minLayers);
+					ImGui::InputInt("Parallax max layers", &m_parallax_maxLayers);
+				}
+				ImGui::TreePop();
+			}
+			ImGui::TreePop();
+		}
+		else
+		{
+			ImGui::SameLine(150);
+			if (ImGui::SmallButton("Select PBR Material##b"))
+				ImGui::OpenPopup("pbr_popup");
+		}
 	}
-	else
+
+	if (ImGui::BeginPopup("pbr_popup"))
 	{
-		//option to add material (premade or custom)
+		ImGui::Text("PBR Materials");
+		ImGui::Separator();
+
+		std::list<std::shared_ptr<PBR_Material>> list;
+		GetApplication()->GetResourceManager()->GetAll(&list);
+		for (std::list<std::shared_ptr<PBR_Material>>::iterator i = list.begin(); i != list.end(); ++i)
+		{
+			if (ImGui::Selectable((*i)->GetName().c_str()))
+				m_pbrMat = (*i);
+		}
+		ImGui::EndPopup();
 	}
 }

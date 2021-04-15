@@ -25,6 +25,7 @@ Texture::Texture(int width, int height)
 */
 Texture::Texture(std::string path)
 {
+	//stbi_set_flip_vertically_on_load(true);
 	int w = 0;
 	int h = 0;
 	int channels = 0;

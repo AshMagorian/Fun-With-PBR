@@ -24,4 +24,5 @@
 #include "Skybox.h"
 #include "SceneManager.h"
 #include "DebugUIManager.h"
+#include "Model.h"
 #endif

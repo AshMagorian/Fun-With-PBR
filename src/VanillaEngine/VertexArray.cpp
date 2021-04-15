@@ -186,9 +186,31 @@ VertexArray::VertexArray(std::string path)
 		}
 	}
 
+	std::shared_ptr<VertexBuffer> tangentBuffer = std::make_shared<VertexBuffer>();
+	TempVertex v1, v2, v3;
+	glm::vec3 tmpTangent, tmpBitangent;
+	std::vector<float> pos = positionBuffer->GetData();
+	std::vector<float> uv = texCoordBuffer->GetData();
+	int j = 0;
+	for (size_t i = 0; i < positionBuffer->GetDataSize(); i += 9)
+	{
+		v1.vector.x = pos[i]; v1.vector.y = pos[i + 1]; v1.vector.z = pos[i + 2];
+		v1.uv.x = uv[j++]; v1.uv.y = uv[j++];
+		v2.vector.x = pos[i + 3]; v2.vector.y = pos[i + 4]; v2.vector.z = pos[i + 5];
+		v2.uv.x = uv[j++]; v2.uv.y = uv[j++];
+		v3.vector.x = pos[i + 6]; v3.vector.y = pos[i + 7]; v3.vector.z = pos[i + 8];
+		v3.uv.x = uv[j++]; v3.uv.y = uv[j++];
+
+		PrimitiveShape::ComputeTangentBasis(v1, v2, v3, tmpTangent, tmpBitangent);
+		tangentBuffer->add(tmpTangent);
+		tangentBuffer->add(tmpTangent);
+		tangentBuffer->add(tmpTangent);
+	}
+
 	SetBuffer("in_Position", positionBuffer);
 	if (texCoordBuffer) SetBuffer("in_TexCoord", texCoordBuffer);
 	if (normalBuffer) SetBuffer("in_Normal", normalBuffer);
+	if (tangentBuffer) SetBuffer("in_Tangent", tangentBuffer);
 
 	vertexCount = buffers.at(0)->GetDataSize() / buffers.at(0)->GetComponents();
 }
@@ -214,6 +236,10 @@ void VertexArray::SetBuffer(std::string attribute, std::shared_ptr<VertexBuffer>
 	else if (attribute == "in_Normal")
 	{
 		buffers.at(3) = buffer;
+	}
+	else if (attribute == "in_Tangent")
+	{
+		buffers.at(4) = buffer;
 	}
 
 	else

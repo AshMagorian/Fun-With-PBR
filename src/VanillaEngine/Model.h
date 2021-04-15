@@ -6,8 +6,9 @@
 #include <assimp/postprocess.h>
 
 #include "Mesh.h"
+#include "Resource.h"
 
-class Model
+class Model : public Resource
 {
 private:
 	std::vector<AssimpTexture> textures_loaded;
@@ -23,9 +24,9 @@ private:
 	unsigned int TextureFromFile(const char *path, const std::string &directory, bool gamma = false);
 
 public:
-	Model(char *path)
+	Model(std::string path)
 	{
-		LoadModel(path);
+		LoadModel(path.c_str());
 	}
 	void Draw(std::shared_ptr<ShaderProgram> shader);
 };
