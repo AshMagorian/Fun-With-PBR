@@ -5,7 +5,7 @@ class ShaderProgram;
 class VertexArray;
 class Texture;
 class PBR_Material;
-class Model;
+class AssimpModel;
 
 class Renderer : public Component
 {
@@ -15,7 +15,7 @@ private:
 	std::shared_ptr<VertexArray> m_va;
 	std::shared_ptr<PBR_Material> m_pbrMat;
 	std::shared_ptr<Camera> m_cam;
-	std::shared_ptr<Model> m_assimpModel;
+	std::shared_ptr<AssimpModel> m_assimpModel;
 	float m_texCoordScale = 1.0f;
 
 	bool m_parallax_clipBorders = true;
@@ -34,6 +34,7 @@ public:
 	void OnInit();
 	void OnInit(std::shared_ptr<ShaderProgram> _shader, std::shared_ptr<VertexArray> _va, std::shared_ptr<PBR_Material> _mat);
 	void OnInit(std::string _path, std::shared_ptr<ShaderProgram> _shader);
+	void OnInit(std::shared_ptr<AssimpModel> _assimp, std::shared_ptr<ShaderProgram> _shader);
 	void OnTick();
 	void OnDisplay();
 	void OnShowUI();

@@ -40,10 +40,10 @@ add_library(VanillaEngine
 	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Input.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/PBR_Material.h
 	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/PBR_Material.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Mesh.h
-	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Mesh.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Model.h
-	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Model.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/AssimpMesh.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/AssimpMesh.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/AssimpModel.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/AssimpModel.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/Skybox.h
 	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/SkyBox.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/PrimitiveShape.h

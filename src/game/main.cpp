@@ -21,7 +21,11 @@ int main(int argc, char *argv[])
 	application->GetResourceManager()->CreateResource<PBR_Material>("../src/resources/Textures/Cobblestone/cobblestone.txt", "cobble_mat");
 	application->GetResourceManager()->CreateResource<PBR_Material>("../src/resources/Textures/metal_plate/metal_plate.txt", "metal_plate_mat");
 
-	application->GetResourceManager()->CreateResource<Model>("../src/resources/backpack/backpack.obj", "backpack_obj");
+	std::shared_ptr<AssimpModel> backpack_obj = std::make_shared<AssimpModel>("../src/resources/backpack/backpack.obj", FLIP_TEXTURES);
+	application->GetResourceManager()->CreateResource<AssimpModel>(backpack_obj, "backpack_obj");
+	std::shared_ptr<AssimpModel> globe_obj = std::make_shared<AssimpModel>("../src/resources/Old_Antique_Standing_Globe_OBJ/Old_Antique_Standing_Globe_.obj", 0);
+	application->GetResourceManager()->CreateResource<AssimpModel>(globe_obj, "globe_obj");
+
 
 	//application->GetSkybox()->CreateSkybox("bg",
 	//	"../src/resources/textures/right.jpg",
@@ -96,7 +100,7 @@ int main(int argc, char *argv[])
 	//	application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
 	//assimpTest->AddComponent<Renderer>("../src/resources/Old_Antique_Standing_Globe_FBX/Old_Antique_Standing_Globe_.fbx",
 	//	application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
-	assimpTest->AddComponent<Renderer>("../src/resources/Old_Antique_Standing_Globe_OBJ/Old_Antique_Standing_Globe_.obj",
+	assimpTest->AddComponent<Renderer>(application->GetResourceManager()->LoadFromResources<AssimpModel>("globe_obj") ,
 		application->GetResourceManager()->LoadFromResources<ShaderProgram>("pbr_shader"));
 
 	assimpTest->GetTransform()->SetScale(glm::vec3(0.02f, 0.02f, 0.02f));

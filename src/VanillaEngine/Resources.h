@@ -82,12 +82,13 @@ public:
 		catch (Exception& e)
 		{
 			std::cout << "myEngine Exception: " << e.what() << std::endl;
-			return;
+			return nullptr;
 		}
 		_res->SetPath(_name);
 		_res->SetName(_name);
 		m_resources.push_back(_res);
 		std::cout << _name << " created" << std::endl;
+		return _res;
 	}
 
 	template<typename T>

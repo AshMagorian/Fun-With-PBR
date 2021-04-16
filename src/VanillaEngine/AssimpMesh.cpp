@@ -1,8 +1,8 @@
-#include "Mesh.h"
+#include "AssimpMesh.h"
 #include "ShaderProgram.h"
 #include "PBR_Material.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<AssimpTexture> textures)
+AssimpMesh::AssimpMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<AssimpTexture> textures)
 {
 	this->vertices = vertices;
 	this->indices = indices;
@@ -11,7 +11,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
 	SetupMesh();
 }
 
-void Mesh::SetupMesh()
+void AssimpMesh::SetupMesh()
 {
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -41,7 +41,7 @@ void Mesh::SetupMesh()
 	glBindVertexArray(0);
 }
 
-void Mesh::Draw(std::shared_ptr<ShaderProgram> shader)
+void AssimpMesh::Draw(std::shared_ptr<ShaderProgram> shader)
 {
 	glUseProgram(shader->GetId());
 

@@ -23,7 +23,7 @@ struct AssimpTexture
 	std::string path;
 };
 
-class Mesh
+class AssimpMesh
 {
 private:
 	unsigned int VAO, VBO, EBO;
@@ -34,7 +34,7 @@ public:
 	std::vector<unsigned int> indices;
 	std::vector<AssimpTexture> textures;
 
-	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<AssimpTexture> textures);
+	AssimpMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<AssimpTexture> textures);
 
 	void Draw(std::shared_ptr<ShaderProgram> shader);
 

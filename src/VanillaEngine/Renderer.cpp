@@ -1,5 +1,5 @@
 #include "VanillaEngine.h"
-#include "Model.h"
+#include "AssimpModel.h"
 
 MAKE_PROTOTYPE(Renderer)
 
@@ -13,7 +13,6 @@ void Renderer::OnInit()
 	m_pbrMat = std::make_shared<PBR_Material>();
 	m_cam = GetApplication()->GetCamera();
 }
-
 void Renderer::OnInit(std::shared_ptr<ShaderProgram> _shader, std::shared_ptr<VertexArray> _va, std::shared_ptr<PBR_Material> _mat)
 {
 	m_shaderProgram = _shader;
@@ -21,12 +20,17 @@ void Renderer::OnInit(std::shared_ptr<ShaderProgram> _shader, std::shared_ptr<Ve
 	m_pbrMat = _mat;
 	m_cam = GetApplication()->GetCamera();
 }
-
 void Renderer::OnInit(std::string _path, std::shared_ptr<ShaderProgram> _shader)
 {
 	//Convert the path to char*
 	char* p = &_path[0];
-	m_assimpModel = std::make_shared<Model>(p);
+	m_assimpModel = std::make_shared<AssimpModel>(p);
+	m_shaderProgram = _shader;
+	m_cam = GetApplication()->GetCamera();
+}
+void Renderer::OnInit(std::shared_ptr<AssimpModel> _assimp, std::shared_ptr<ShaderProgram> _shader)
+{
+	m_assimpModel =_assimp;
 	m_shaderProgram = _shader;
 	m_cam = GetApplication()->GetCamera();
 }
@@ -45,7 +49,13 @@ void Renderer::OnDisplay()
 	{
 		m_shaderProgram->SetUniform("in_Model", GetEntity()->GetTransform()->GetModelMatrix());
 		m_shaderProgram->SetUniform("in_NormalMtx", GetEntity()->GetTransform()->GetNormalMatrix());
-		if (m_va)
+		if (m_assimpModel)
+		{
+			//Render using assimp
+			BindIBLMaps();
+			m_assimpModel->Draw(m_shaderProgram);
+		}
+		else if (m_va)
 		{
 			if (m_pbrMat)
 			{
@@ -53,12 +63,7 @@ void Renderer::OnDisplay()
 			}
 			m_shaderProgram->Draw(m_va);
 		}
-		else if (m_assimpModel)
-		{
-			//Render using assimp
-			BindIBLMaps();
-			m_assimpModel->Draw(m_shaderProgram);
-		}
+
 	}
 	else
 	{
@@ -164,14 +169,14 @@ void Renderer::OnShowUI()
 		ImGui::EndPopup();
 	}
 
-	if (m_va)
+	if (m_assimpModel)
+	{
+		ImGui::Text(("Assimp Mesh: " + m_assimpModel->GetName()).c_str());
+	}
+	else if (m_va)
 	{
 		ImGui::Text(("Mesh: " + m_va->GetName()).c_str());
 
-	}
-	else if (m_assimpModel)
-	{
-		ImGui::Text(("Assimp Mesh: " + m_assimpModel->GetName()).c_str());
 	}
 	ImGui::SameLine(150);
 	if (ImGui::SmallButton("Select Mesh"))
@@ -188,28 +193,27 @@ void Renderer::OnShowUI()
 			if (ImGui::Selectable((*i)->GetName().c_str()))
 			{
 				m_assimpModel = nullptr;
-				m_va = (*i);
+				m_va = std::make_shared<VertexArray>(*(*i));
 			}
 		}
-
+		ImGui::Separator();
 		ImGui::Text("Assimp Meshes");
 		ImGui::Separator();
 
-		std::list<std::shared_ptr<Model>> list2;
+		std::list<std::shared_ptr<AssimpModel>> list2;
 		GetApplication()->GetResourceManager()->GetAll(&list2);
-		for (std::list<std::shared_ptr<Model>>::iterator i = list2.begin(); i != list2.end(); ++i)
+		for (std::list<std::shared_ptr<AssimpModel>>::iterator i = list2.begin(); i != list2.end(); ++i)
 		{
 			if (ImGui::Selectable((*i)->GetName().c_str()))
 			{
 				m_va = nullptr;
-				m_assimpModel = (*i);
+				m_assimpModel = std::make_shared<AssimpModel>(*(*i));
 			}
 		}
-
 		ImGui::EndPopup();
 	}
 
-	if (m_pbrMat)
+	if (m_pbrMat && !m_assimpModel)
 	{
 		if (ImGui::TreeNode("PBR Material"))
 		{
@@ -241,7 +245,6 @@ void Renderer::OnShowUI()
 				ImGui::OpenPopup("pbr_popup");
 		}
 	}
-
 	if (ImGui::BeginPopup("pbr_popup"))
 	{
 		ImGui::Text("PBR Materials");
@@ -252,7 +255,7 @@ void Renderer::OnShowUI()
 		for (std::list<std::shared_ptr<PBR_Material>>::iterator i = list.begin(); i != list.end(); ++i)
 		{
 			if (ImGui::Selectable((*i)->GetName().c_str()))
-				m_pbrMat = (*i);
+				m_pbrMat = GetApplication()->GetResourceManager()->LoadFromResources<PBR_Material>((*i)->GetName());
 		}
 		ImGui::EndPopup();
 	}

@@ -1,12 +1,22 @@
-#include "Model.h"
+#include "AssimpModel.h"
 
 #include <assimp/pbrmaterial.h>
 #include  "stb_image.h"
 
 #include <iostream>
-void Model::LoadModel(std::string path)
+
+AssimpModel::AssimpModel(std::string path, int flip)
 {
-	stbi_set_flip_vertically_on_load(true);
+	if (flip == FLIP_TEXTURES)
+		stbi_set_flip_vertically_on_load(true);
+	else
+		stbi_set_flip_vertically_on_load(false);
+	LoadModel(path.c_str());
+}
+
+void AssimpModel::LoadModel(std::string path)
+{
+	//stbi_set_flip_vertically_on_load(true);
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
@@ -18,7 +28,7 @@ void Model::LoadModel(std::string path)
 	directory = path.substr(0, path.find_last_of('/'));
 	ProcessNode(scene->mRootNode, scene);
 }
-void Model::ProcessNode(aiNode *node, const aiScene *scene)
+void AssimpModel::ProcessNode(aiNode *node, const aiScene *scene)
 {
 	// process all the node's meshes (if any)
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -32,7 +42,7 @@ void Model::ProcessNode(aiNode *node, const aiScene *scene)
 		ProcessNode(node->mChildren[i], scene);
 	}
 }
-Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
+AssimpMesh AssimpModel::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
@@ -99,9 +109,9 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 		textures.insert(textures.end(), aoMaps.begin(), aoMaps.end());
 	}
 
-	return Mesh(vertices, indices, textures);
+	return AssimpMesh(vertices, indices, textures);
 }
-std::vector<AssimpTexture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
+std::vector<AssimpTexture> AssimpModel::LoadMaterialTextures(aiMaterial *mat, aiTextureType type,
 	std::string typeName)
 {
 	std::vector<AssimpTexture> textures;
@@ -134,7 +144,7 @@ std::vector<AssimpTexture> Model::LoadMaterialTextures(aiMaterial *mat, aiTextur
 	return textures;
 }
 
-unsigned int Model::TextureFromFile(const char *path, const std::string &directory, bool gamma)
+unsigned int AssimpModel::TextureFromFile(const char *path, const std::string &directory, bool gamma)
 {
 	std::string filename = std::string(path);
 	filename = directory + '/' + filename;
@@ -174,7 +184,7 @@ unsigned int Model::TextureFromFile(const char *path, const std::string &directo
 	return textureID;
 }
 
-void Model::Draw(std::shared_ptr<ShaderProgram> shader)
+void AssimpModel::Draw(std::shared_ptr<ShaderProgram> shader)
 {
 	for (unsigned int i = 0; i < meshes.size(); i++)
 		meshes[i].Draw(shader);
