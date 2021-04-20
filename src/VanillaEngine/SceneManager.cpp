@@ -80,17 +80,25 @@ void SceneManager::UpdateScene()
 
 void SceneManager::DrawScene()
 {
-	for (std::list<std::shared_ptr<Entity>>::iterator i = m_currentScene->entities.begin(); i != m_currentScene->entities.end(); ++i)
+	std::list<std::shared_ptr<Entity>>entityList = m_currentScene->entities; // A temporary list of entities which can be edited
+	std::list<std::shared_ptr<Entity>>outlineList = m_app.lock()->GetOutlineRenderer()->GetList(); // A list of the entities which have outlines
+	//Display all of the outlined entities first and then remove them from the other list
+	for (std::list<std::shared_ptr<Entity>>::iterator i = outlineList.begin(); i != outlineList.end(); ++i)
+	{
+		(*i)->Display();
+		entityList.remove((*i));
+	}
+	//Display the rest of the entities
+	for (std::list<std::shared_ptr<Entity>>::iterator i = entityList.begin(); i != entityList.end(); ++i)
 	{
 		(*i)->Display();
 	}
-	m_app.lock()->GetSkybox()->DrawSkybox();
 
+	m_app.lock()->GetSkybox()->DrawSkybox();
+	m_app.lock()->GetOutlineRenderer()->RenderOutlines();
 	//Check if the scene is to be changed / Sets the scene on the first frame
 	if (m_isChangingScene == true)
-	{
 		ChangeScene();
-	}
 }
 
 std::shared_ptr<Entity> Scene::AddEntity(std::string _name)

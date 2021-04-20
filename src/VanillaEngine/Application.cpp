@@ -59,9 +59,16 @@ std::shared_ptr<Application> const Application::Init(int _w, int _h)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	//Stencil initiation
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	glStencilMask(0x00);
+
 	DebugUIManager::Init(app->m_window, app->self);
 	app->m_skybox->Init(app->self);
 	SceneManager::Init(app->self);
+	app->m_outlineRenderer->Init(app->self);
 
 	return app;
 }
@@ -74,13 +81,13 @@ void Application::Run()
 		//Update window dimensions
 		glfwGetWindowSize(m_window, &m_windowWidth, &m_windowHeight);
 
+		m_mainCamera->UpdateMatrix(m_windowWidth, m_windowHeight);
+
 		SceneManager::UpdateScene();
 		DebugUIManager::Tick(SceneManager::GetCurrentScene()->entities, m_windowWidth, m_windowHeight);
 
-		m_mainCamera->UpdateMatrix(m_windowWidth, m_windowHeight);
-
 		glClearColor(0.6f, 0.4f, 0.6f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glViewport(0, 0, m_windowWidth, m_windowHeight);
 
 		SceneManager::DrawScene();

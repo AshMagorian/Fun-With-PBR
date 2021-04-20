@@ -51,6 +51,8 @@ add_library(VanillaEngine
 	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/SceneManager.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/DebugUIManager.h
 	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/DebugUIManager.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/OutlineRenderer.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/OutlineRenderer.cpp
 )
 
 if(MSVC)

@@ -156,6 +156,8 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 						if (ImGui::SmallButton("Remove Component"))
 							componentToDelete = (*j);
 					}
+					if(componentName == "Renderer")
+						(*i)->GetComponent<Renderer>()->DrawOutline();
 
 					ImGui::Separator();
 					ImGui::PopID();
@@ -181,12 +183,10 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 				}
 
 				ImGui::End();
-
 				resetWindow = false;
 			}
 		}
 	}
-
 }
 
 void DebugUIManager::Display()

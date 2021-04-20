@@ -47,6 +47,7 @@ void Renderer::OnDisplay()
 {
 	if (m_shaderProgram)
 	{
+
 		m_shaderProgram->SetUniform("in_Model", GetEntity()->GetTransform()->GetModelMatrix());
 		m_shaderProgram->SetUniform("in_NormalMtx", GetEntity()->GetTransform()->GetNormalMatrix());
 		if (m_assimpModel)
@@ -58,10 +59,18 @@ void Renderer::OnDisplay()
 		else if (m_va)
 		{
 			if (m_pbrMat)
-			{
 				BindPBRValues();
+			if (m_drawOutline)
+			{
+				glStencilFunc(GL_ALWAYS, 1, 0xFF); // all fragments should pass the stencil test
+				glStencilMask(0xFF); // enable writing to the stencil buffer
+				m_shaderProgram->Draw(m_va);
+				glStencilFunc(GL_ALWAYS, 0, 0xFF);
+				glStencilMask(0x00);
+				m_drawOutline = false;
 			}
-			m_shaderProgram->Draw(m_va);
+			else
+				m_shaderProgram->Draw(m_va);
 		}
 
 	}
@@ -144,9 +153,15 @@ void Renderer::BindIBLMaps()
 	glBindTexture(GL_TEXTURE_2D, PBR_Material::GetBRDF());
 }
 
+void Renderer::DrawOutline()
+{ 
+	m_drawOutline = true; 
+	GetApplication()->GetOutlineRenderer()->AddToList(GetEntity()); 
+}
+
+
 void Renderer::OnShowUI()
 {
-
 	if (m_shaderProgram)
 	{
 		ImGui::Text(("Shader: " + m_shaderProgram->GetName()).c_str());

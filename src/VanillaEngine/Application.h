@@ -13,6 +13,7 @@ class Environment;
 class Input;
 class Resources;
 class Skybox;
+class OutlineRenderer;
 
 class Application
 {
@@ -22,11 +23,12 @@ private:
 	std::list<std::shared_ptr<Entity>> entities; ///< A list of all of teh entities stored in the application
 	std::weak_ptr<Application> self; ///< A Stores weak pointer to itself
 
-	std::shared_ptr<Camera> m_mainCamera = std::make_shared<Camera>(); ///< A pointer to the main camera in the game
-	std::shared_ptr<Environment> m_time = std::make_shared<Environment>(); ///< A pointer to the environment object so DeltaTime can be accessed
+	std::shared_ptr<Camera> m_mainCamera = std::make_shared<Camera>(); // A pointer to the main camera in the game
+	std::shared_ptr<Environment> m_time = std::make_shared<Environment>(); // A pointer to the environment object so DeltaTime can be accessed
 	std::shared_ptr<Input> m_input = std::make_shared<Input>();
-	std::shared_ptr<Resources> m_resourceManager = std::make_shared<Resources>(); ///< A pointer to the resource manager for accesibility
+	std::shared_ptr<Resources> m_resourceManager = std::make_shared<Resources>(); // A pointer to the resource manager for accesibility
 	std::shared_ptr<Skybox> m_skybox = std::make_shared<Skybox>();
+	std::shared_ptr<OutlineRenderer> m_outlineRenderer = std::make_shared<OutlineRenderer>();
 
 	GLFWwindow* m_window = nullptr;
 
@@ -45,6 +47,7 @@ public:
 	std::shared_ptr<Resources> GetResourceManager() { return m_resourceManager; }
 	std::shared_ptr<Input> GetInput() { return m_input; }
 	std::shared_ptr<Skybox> GetSkybox() { return m_skybox; }
+	std::shared_ptr<OutlineRenderer> GetOutlineRenderer() { return m_outlineRenderer; }
 	float GetDeltaTime();
 };
 #endif

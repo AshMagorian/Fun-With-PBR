@@ -25,4 +25,5 @@
 #include "SceneManager.h"
 #include "DebugUIManager.h"
 #include "AssimpModel.h"
+#include "OutlineRenderer.h"
 #endif

@@ -9,7 +9,8 @@ class AssimpModel;
 
 class Renderer : public Component
 {
-	IMPLEMENT_CLONE(Renderer)
+	IMPLEMENT_CLONE(Renderer)	
+	friend class OutlineRenderer;
 private:
 	std::shared_ptr<ShaderProgram> m_shaderProgram;
 	std::shared_ptr<VertexArray> m_va;
@@ -23,6 +24,7 @@ private:
 	int m_parallax_minLayers = 8;
 	int m_parallax_maxLayers = 32;
 
+	bool m_drawOutline = false;
 
 	void BindPBRValues();
 	void BindIBLMaps();
@@ -44,6 +46,7 @@ public:
 	void SetShader(std::shared_ptr<ShaderProgram> _shader) { m_shaderProgram = _shader; }
 	void SetCamera(std::shared_ptr<Camera> _cam) { m_cam = _cam; }
 	void SetTexCoordScale(float _value) { m_texCoordScale = _value; }
+	void DrawOutline();
 
 	void SetParallaxClipBorders(bool value) { m_parallax_clipBorders = value; }
 
