@@ -37,6 +37,7 @@ public:
 	AssimpMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<AssimpTexture> textures);
 
 	void Draw(std::shared_ptr<ShaderProgram> shader);
+	void DrawOutline(std::shared_ptr<ShaderProgram> shader);
 
 };
 

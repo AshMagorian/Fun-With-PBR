@@ -108,3 +108,13 @@ void AssimpMesh::Draw(std::shared_ptr<ShaderProgram> shader)
 	glBindVertexArray(0);
 	glUseProgram(0);
 }
+
+void AssimpMesh::DrawOutline(std::shared_ptr<ShaderProgram> shader)
+{
+	glUseProgram(shader->GetId());
+	// draw mesh
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+	glUseProgram(0);
+}

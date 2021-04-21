@@ -13,8 +13,10 @@ class DebugUIManager
 private:
 
 	static bool m_entityWindow;
-	static std::string m_currentEntity;
+	static std::shared_ptr<Entity> m_currentEntity;
 	static std::weak_ptr<Application> m_app;
+
+	static bool m_resetEntityWindowSize;
 
 	static void Init(GLFWwindow* _window, std::weak_ptr<Application> _app);
 	static void NewFrame();

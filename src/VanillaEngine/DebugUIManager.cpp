@@ -5,8 +5,9 @@
 #include <imgui/imgui_impl_opengl3.h>
 
 bool DebugUIManager::m_entityWindow = false;
-std::string DebugUIManager::m_currentEntity = "";
+std::shared_ptr<Entity> DebugUIManager::m_currentEntity = nullptr;
 std::weak_ptr<Application>DebugUIManager::m_app;
+bool DebugUIManager::m_resetEntityWindowSize = false;
 
 void DebugUIManager::Init(GLFWwindow* _window, std::weak_ptr<Application> _app)
 {
@@ -58,18 +59,18 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 
 	//Core window with scene selection, entities tab and skybox
 
-	bool resetWindow = false;
+	//bool resetWindow = false;
 	if (ImGui::CollapsingHeader("Entities"))
 	{
 		for (std::list<std::shared_ptr<Entity>>::iterator it = _entities.begin(); it != _entities.end(); ++it)
 		{
 			std::string tmp = (*it)->GetName();
 			char* label = &tmp[0];
-			if (ImGui::Selectable(label, m_currentEntity == (*it)->GetName() && m_entityWindow == true))
+			if (ImGui::Selectable(label, m_currentEntity == (*it) && m_entityWindow == true))
 			{
-				m_currentEntity = (*it)->GetName();
+				m_currentEntity = (*it);
 				m_entityWindow = true;
-				resetWindow = true;
+				m_resetEntityWindowSize = true;
 			}
 		}
 		if (ImGui::Button("Add Entity"))
@@ -127,21 +128,34 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 	
 	if (m_entityWindow == true)
 	{
+		bool deleteFlag = false;
 		for (std::list<std::shared_ptr<Entity>>::iterator i = _entities.begin(); i != _entities.end(); ++i)
 		{
 			//Add to entities list on core?
 			//if Window == true, display window with components
-			if ((*i)->GetName() == m_currentEntity)
+			if ((*i) == m_currentEntity)
 			{
 				ImVec2 size{ 300.0f, 600.0f };
 				ImVec2 pos{(float)_width - size.x, 0.0f};
-				if (resetWindow)
+				if (m_resetEntityWindowSize)
 				{
 					ImGui::SetNextWindowSize(size);
 					ImGui::SetNextWindowPos(pos);
+					m_resetEntityWindowSize = false;
 				}
 
-				ImGui::Begin((*i)->GetName().c_str(), &m_entityWindow);
+				ImGui::Begin((*i)->GetName().c_str(), &m_entityWindow, ImGuiWindowFlags_MenuBar);
+				if (ImGui::BeginMenuBar())
+				{
+					if (ImGui::BeginMenu("Menu"))
+					{
+						if (ImGui::MenuItem("Delete Entity"))
+							deleteFlag = true;
+						ImGui::EndMenu();
+					}
+					ImGui::EndMenuBar();
+				}
+
 
 				std::list<std::shared_ptr<Component>> components = (*i)->GetComponents();
 				std::shared_ptr<Component> componentToDelete = nullptr;
@@ -182,10 +196,27 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 					ImGui::EndPopup();
 				}
 
+
+				if (ImGui::Button("Rename Entity"))
+					ImGui::OpenPopup("rename_popup");
+				if (ImGui::BeginPopup("rename_popup"))
+				{
+					ImGui::Text("New Name");
+					ImGui::Separator();
+					static char newName[64] = ""; ImGui::InputText("", newName, 64);
+					if (ImGui::Button("confirm") && newName[0] != NULL)
+					{
+						SceneManager::GetCurrentScene()->NameEntity(newName, (*i));
+						m_resetEntityWindowSize = true;
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
+				}
 				ImGui::End();
-				resetWindow = false;
 			}
 		}
+		if (deleteFlag == true)
+			SceneManager::m_currentScene->entities.remove(m_currentEntity);
 	}
 }
 

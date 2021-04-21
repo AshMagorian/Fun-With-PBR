@@ -22,14 +22,23 @@ void OutlineRenderer::RenderOutlines()
 	glm::mat4 tmp;
 	for (std::list<std::shared_ptr<Entity>>::iterator it = m_list.begin(); it != m_list.end(); ++it)
 	{
-		//Get the model matrix and scale it by 1.1 before binding it to the shader
-		tmp = (*it)->GetTransform()->GetModelMatrix();
-		tmp = glm::scale(tmp, glm::vec3(1.02f, 1.02f, 1.02f));
-		m_outlineShader->SetUniform("in_Model", tmp);
-
+		glm::vec3 inverseScale = 1.0f / (*it)->GetTransform()->GetScale();
 		//draw function
-		if ((*it)->GetComponent<Renderer>()->m_va)
+		if ((*it)->GetComponent<Renderer>()->m_assimpModel)
 		{
+
+			m_outlineShader->SetUniform("inverseScale", inverseScale);
+			m_outlineShader->SetUniform("in_Model", (*it)->GetTransform()->GetModelMatrix());
+			m_outlineShader->SetUniform("assimpMesh", 1);
+			(*it)->GetComponent<Renderer>()->m_assimpModel->DrawOutline(m_outlineShader);
+		}
+		else if ((*it)->GetComponent<Renderer>()->m_va)
+		{
+			tmp = (*it)->GetTransform()->GetModelMatrix();
+
+			tmp = glm::scale(tmp, glm::vec3(1.0f, 1.0f, 1.0f) +(0.02f * inverseScale));
+			m_outlineShader->SetUniform("in_Model", tmp);
+			m_outlineShader->SetUniform("assimpMesh", 0);
 			m_outlineShader->Draw((*it)->GetComponent<Renderer>()->m_va);
 		}
 	}

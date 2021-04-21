@@ -108,12 +108,18 @@ std::shared_ptr<Entity> Scene::AddEntity(std::string _name)
 	entity->m_scene = self;
 	entity->m_application = SceneManager::m_app;
 	entity->m_transform = entity->AddComponent<Transform>();
+	NameEntity(_name, entity);
+	entities.push_back(entity);
+	return entity;
+}
 
+void Scene::NameEntity(std::string _name, std::shared_ptr<Entity> _entity)
+{
 	std::list<std::shared_ptr<Entity>>::iterator i;
 	int count = 0;
 	std::string name = _name;
 	do
-	{ 
+	{
 		for (i = entities.begin(); i != entities.end(); ++i)
 		{
 			if ((*i)->m_name == name)
@@ -123,12 +129,9 @@ std::shared_ptr<Entity> Scene::AddEntity(std::string _name)
 				break;
 			}
 		}
-	
-	} while (i != entities.end());
 
-	entity->m_name = name;
-	entities.push_back(entity);
-	return entity;
+	} while (i != entities.end());
+	_entity->m_name = name;
 }
 
 void SceneManager::ChangeScene()

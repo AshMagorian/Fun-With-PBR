@@ -33,5 +33,6 @@ public:
 	AssimpModel(std::string path, int flip);
 
 	void Draw(std::shared_ptr<ShaderProgram> shader);
+	void DrawOutline(std::shared_ptr<ShaderProgram> shader);
 };
 #endif

@@ -18,6 +18,10 @@ struct Scene
 	std::weak_ptr<Scene> self;
 
 	std::shared_ptr<Entity> AddEntity(std::string _name);
+	/*
+	Gives the entity a new name. If the name already exists in the current scene, a number is added to the end of the name
+	*/
+	void NameEntity(std::string _name, std::shared_ptr<Entity> _entity);
 };
 
 class SceneManager

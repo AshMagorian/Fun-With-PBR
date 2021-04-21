@@ -189,3 +189,8 @@ void AssimpModel::Draw(std::shared_ptr<ShaderProgram> shader)
 	for (unsigned int i = 0; i < meshes.size(); i++)
 		meshes[i].Draw(shader);
 }
+void AssimpModel::DrawOutline(std::shared_ptr<ShaderProgram> shader)
+{
+	for (unsigned int i = 0; i < meshes.size(); i++)
+		meshes[i].DrawOutline(shader);
+}

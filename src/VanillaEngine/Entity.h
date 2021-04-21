@@ -75,5 +75,6 @@ public:
 	std::list<std::shared_ptr<Component>> GetComponents() { return m_components; }
 	std::shared_ptr<Transform> GetTransform() { return m_transform.lock(); }
 	std::string GetName() { return m_name; }
+	void SetName(std::string _name) { m_name = _name; }
 };
 #endif

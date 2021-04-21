@@ -4,7 +4,11 @@
 MAKE_PROTOTYPE(Renderer)
 
 Renderer::Renderer() {}
-Renderer::~Renderer() {}
+Renderer::~Renderer() 
+{
+	if (m_drawOutline == true)
+		GetApplication()->GetOutlineRenderer()->m_list.remove(GetEntity());
+}
 
 void Renderer::OnInit()
 {
@@ -54,7 +58,17 @@ void Renderer::OnDisplay()
 		{
 			//Render using assimp
 			BindIBLMaps();
-			m_assimpModel->Draw(m_shaderProgram);
+			if (m_drawOutline)
+			{
+				glStencilFunc(GL_ALWAYS, 1, 0xFF); // all fragments should pass the stencil test
+				glStencilMask(0xFF); // enable writing to the stencil buffer
+				m_assimpModel->Draw(m_shaderProgram);
+				glStencilFunc(GL_ALWAYS, 0, 0xFF);
+				glStencilMask(0x00);
+				m_drawOutline = false;
+			}
+			else
+			 m_assimpModel->Draw(m_shaderProgram);
 		}
 		else if (m_va)
 		{
