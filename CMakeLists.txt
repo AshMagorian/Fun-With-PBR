@@ -8,22 +8,24 @@ contrib
 
 if(MSVC)
   include_directories(
-    contrib/msvc-windows-x86/glew/include
-    contrib/msvc-windows-x86/openal-soft/include
-    contrib/msvc-windows-x86/ogg/include
-    contrib/msvc-windows-x86/vorbis/include
-    contrib/msvc-windows-x86/GLFW/include
-    contrib/msvc-windows-x86/assimp/include
-    contrib/imgui
+    ${CMAKE_SOURCE_DIR}/contrib/glew/include
+    ${CMAKE_SOURCE_DIR}/contrib/openal-soft/include
+    ${CMAKE_SOURCE_DIR}/contrib/ogg/include
+    ${CMAKE_SOURCE_DIR}/contrib/vorbis/include
+    ${CMAKE_SOURCE_DIR}/contrib/GLFW/include
+    ${CMAKE_SOURCE_DIR}/contrib/assimp/include
+    ${CMAKE_SOURCE_DIR}/contrib/imgui
+	${CMAKE_SOURCE_DIR}/contrib/jsoncpp/include
   )
 
   link_directories(
-    ${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/glew/lib
-    ${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/openal-soft/lib
-    ${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/ogg/lib
-    ${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/vorbis/lib
-    ${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/GLFW/lib
-    ${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/assimp/lib
+    ${CMAKE_SOURCE_DIR}/contrib/glew/lib
+    ${CMAKE_SOURCE_DIR}/contrib/openal-soft/lib
+    ${CMAKE_SOURCE_DIR}/contrib/ogg/lib
+    ${CMAKE_SOURCE_DIR}/contrib/vorbis/lib
+    ${CMAKE_SOURCE_DIR}/contrib/GLFW/lib
+    ${CMAKE_SOURCE_DIR}/contrib/assimp/lib
+	${CMAKE_SOURCE_DIR}/contrib/jsoncpp/lib
   )
 endif()
 
@@ -41,10 +43,11 @@ target_link_libraries(game VanillaEngine)
 if(MSVC)
   add_custom_command(TARGET game POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
-	  "${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/glew/bin/glew32.dll"
-	  "${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/openal-soft/bin/OpenAL32.dll"
-	  "${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/GLFW/bin/glfw3.dll"
-	  "${CMAKE_SOURCE_DIR}/contrib/msvc-windows-x86/assimp/bin/assimp-vc141-mtd.dll"
+	  "${CMAKE_SOURCE_DIR}/contrib/glew/bin/glew32.dll"
+	  "${CMAKE_SOURCE_DIR}/contrib/openal-soft/bin/OpenAL32.dll"
+	  "${CMAKE_SOURCE_DIR}/contrib/GLFW/bin/glfw3.dll"
+	  "${CMAKE_SOURCE_DIR}/contrib/assimp/bin/assimp-vc141-mtd.dll"
+	  "${CMAKE_SOURCE_DIR}/contrib/jsoncpp/bin/jsoncpp.dll"
 	  "$<TARGET_FILE_DIR:game>"
   )
 endif()

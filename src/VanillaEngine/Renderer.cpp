@@ -289,3 +289,126 @@ void Renderer::OnShowUI()
 		ImGui::EndPopup();
 	}
 }
+
+void Renderer::OnSave(Json::Value& val)
+{
+	SAVE_TYPE(Renderer);
+	SAVE_VALUE("shaderProgram", m_shaderProgram->GetName());
+	if (m_va != nullptr)
+		SAVE_VALUE("va", m_va->GetName());
+	else
+		SAVE_VALUE("va",0);
+	if (m_assimpModel != nullptr)
+		SAVE_VALUE("assimp", m_assimpModel->GetName());
+	else
+		SAVE_VALUE("assimp", 0);
+
+	// PBR
+	Json::Value json_pbrMat;
+	json_pbrMat["path"] = m_pbrMat->GetName();
+	if (m_pbrMat->GetAlbedo() != nullptr)
+		json_pbrMat["albedo"] = m_pbrMat->GetAlbedo()->GetName();
+	else
+	{
+		json_pbrMat["albedo"][0] = m_pbrMat->GetAlbedoValue().x;
+		json_pbrMat["albedo"][1] = m_pbrMat->GetAlbedoValue().y;
+		json_pbrMat["albedo"][2] = m_pbrMat->GetAlbedoValue().z;
+	}
+	if (m_pbrMat->GetNormal() != nullptr)
+		json_pbrMat["normal"] = m_pbrMat->GetNormal()->GetName();
+	else
+		json_pbrMat["normal"] = 0;
+	if (m_pbrMat->GetMetallic() != nullptr)
+		json_pbrMat["metallic"] = m_pbrMat->GetMetallic()->GetName();
+	else
+		json_pbrMat["metallic"] = m_pbrMat->GetMetallicValue();
+	if (m_pbrMat->GetRoughness() != nullptr)
+		json_pbrMat["roughness"] = m_pbrMat->GetRoughness()->GetName();
+	else
+		json_pbrMat["roughness"] = m_pbrMat->GetRoughnessValue();
+	if (m_pbrMat->GetAO() != nullptr)
+		json_pbrMat["ao"] = m_pbrMat->GetAO()->GetName();
+	else
+		json_pbrMat["ao"] = 0;
+	if (m_pbrMat->GetDisplacement() != nullptr)
+		json_pbrMat["displacement"] = m_pbrMat->GetDisplacement()->GetName();
+	else
+		json_pbrMat["displacement"] = 0;
+	SAVE_VALUE("pbrMat", json_pbrMat);
+
+	SAVE_VALUE("texCoordScale", m_texCoordScale);
+	SAVE_VALUE("parallaxClipBorders", m_parallax_clipBorders);
+	SAVE_VALUE("parallaxHeight", m_parallax_height);
+	SAVE_VALUE("parallaxMin", m_parallax_minLayers);
+	SAVE_VALUE("parallaxMax", m_parallax_maxLayers);
+}
+
+void Renderer::OnLoad(Json::Value& val)
+{
+	std::shared_ptr<Resources> resourceManager = GetApplication()->GetResourceManager();
+	m_shaderProgram = resourceManager->LoadFromResources<ShaderProgram>(val["shaderProgram"].asString());
+	if (val["va"].isString())
+		m_va = resourceManager->LoadFromResources<VertexArray>(val["va"].asString());
+	if (val["assimp"].isString())
+		m_assimpModel = resourceManager->LoadFromResources<AssimpModel>(val["assimp"].asString());
+
+	// PBR
+	Json::Value json_pbrMat = val["pbrMat"];
+	if (!json_pbrMat["path"].asString().empty())
+		m_pbrMat = resourceManager->LoadFromResources<PBR_Material>(json_pbrMat["path"].asString());
+
+	if (json_pbrMat["albedo"].isString())
+	{
+		if (!json_pbrMat["albedo"].asString().empty())
+		m_pbrMat->SetAlbedoTex(resourceManager->LoadFromResources<Texture>(json_pbrMat["albedo"].asString()));
+	}
+	else
+	{
+		glm::vec3 tmp; 
+		tmp.x = json_pbrMat["albedo"][0].asFloat();
+		tmp.y = json_pbrMat["albedo"][1].asFloat();
+		tmp.z = json_pbrMat["albedo"][2].asFloat();
+		m_pbrMat->SetAlbedo(tmp);
+	}
+
+	if (json_pbrMat["normal"].isString())
+	{
+		if (!json_pbrMat["normal"].asString().empty())
+			m_pbrMat->SetNormalTex(resourceManager->LoadFromResources<Texture>(json_pbrMat["normal"].asString()));
+	}
+		
+
+	if (json_pbrMat["metallic"].isString())
+	{
+		if (!json_pbrMat["metallic"].asString().empty())
+			m_pbrMat->SetMetallicTex(resourceManager->LoadFromResources<Texture>(json_pbrMat["metallic"].asString()));
+	}
+	else
+		m_pbrMat->SetMetallic(json_pbrMat["metallic"].asFloat());
+
+	if (json_pbrMat["roughness"].isString())
+	{
+		if (!json_pbrMat["roughness"].asString().empty())
+			m_pbrMat->SetRoughnessTex(resourceManager->LoadFromResources<Texture>(json_pbrMat["roughness"].asString()));
+	}
+	else
+		m_pbrMat->SetRoughness(json_pbrMat["roughness"].asFloat());
+
+	if (json_pbrMat["ao"].isString())
+	{
+		if (!json_pbrMat["ao"].asString().empty())
+			m_pbrMat->SetAOTex(resourceManager->LoadFromResources<Texture>(json_pbrMat["ao"].asString()));
+	}
+
+	if (json_pbrMat["displacement"].isString())
+	{
+		if (!json_pbrMat["displacement"].asString().empty())
+			m_pbrMat->SetDisplacementTex(resourceManager->LoadFromResources<Texture>(json_pbrMat["displacement"].asString()));
+	}
+		
+	LOAD_FLOAT("texCoordScale", m_texCoordScale);
+	LOAD_BOOL("parallaxClipBorders", m_parallax_clipBorders);
+	LOAD_FLOAT("parallaxHeight", m_parallax_height);
+	LOAD_INT("parallaxMin", m_parallax_minLayers);
+	LOAD_INT("parallaxMax", m_parallax_maxLayers);
+}

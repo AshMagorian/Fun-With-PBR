@@ -16,5 +16,7 @@ public:
 	void OnBegin();
 	void OnSceneBegin();
 	void OnTick();
+	void OnSave(Json::Value& val);
+	void OnLoad(Json::Value& val);
 	virtual std::shared_ptr<Component> Clone();
 };

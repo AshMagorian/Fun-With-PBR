@@ -58,3 +58,18 @@ void Transform::OnShowUI()
 	ImGui::DragFloat3("Scale", &m_scale.x, 0.005f);
 
 }
+
+void Transform::OnSave(Json::Value& val)
+{
+	SAVE_TYPE(Transform);
+	SAVE_VEC3("position", m_position);
+	SAVE_VEC3("rotation", m_rotation);
+	SAVE_VEC3("scale", m_scale);
+}
+
+void Transform::OnLoad(Json::Value& val)
+{
+	LOAD_VEC3("position", m_position);
+	LOAD_VEC3("rotation", m_rotation);
+	LOAD_VEC3("scale", m_scale);
+}

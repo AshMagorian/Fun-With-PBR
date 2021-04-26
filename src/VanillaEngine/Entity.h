@@ -17,6 +17,7 @@ class Entity
 	friend class DebugUIManager;
 	friend class SceneManager;
 	friend struct Scene;
+	friend class SaveManager;
 private:
 	std::string m_name;
 	std::weak_ptr<Application> m_application; ///< A reference to the application

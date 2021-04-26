@@ -32,3 +32,12 @@ std::shared_ptr<Component> FirstPersonCameraControls::Clone()
 	std::shared_ptr<Component> rtn = std::make_shared<FirstPersonCameraControls>(*this);
 	return rtn;
 }
+
+void FirstPersonCameraControls::OnSave(Json::Value& val)
+{
+	SAVE_TYPE(FirstPersonCameraControls);
+}
+void FirstPersonCameraControls::OnLoad(Json::Value& val)
+{
+
+}

@@ -53,15 +53,17 @@ add_library(VanillaEngine
 	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/DebugUIManager.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/OutlineRenderer.h
 	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/OutlineRenderer.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/SaveManager.h
+	${CMAKE_CURRENT_SOURCE_DIR}/VanillaEngine/SaveManager.cpp
 )
 
 if(MSVC)
   target_link_libraries(VanillaEngine
-    glew32 opengl32 OpenAL32 ogg vorbis vorbisfile glfw3 assimp-vc141-mtd imgui
+    glew32 opengl32 OpenAL32 ogg vorbis vorbisfile glfw3 assimp-vc141-mtd imgui jsoncpp
   )
 else()
   target_link_libraries(VanillaEngine
-    GLU GLEW GL AL ogg vorbis vorbisfile glfw3 assimp-vc141-mtd imgui
+    GLU GLEW GL AL ogg vorbis vorbisfile glfw3 assimp-vc141-mtd imgui jsoncpp
   )
 endif()
 

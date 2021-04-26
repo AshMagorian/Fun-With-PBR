@@ -14,8 +14,10 @@ private:
 
 	static bool m_entityWindow;
 	static std::shared_ptr<Entity> m_currentEntity;
+	static std::shared_ptr<SceneManager> m_sceneManager;
 	static std::weak_ptr<Application> m_app;
 
+	static bool m_newScene;
 	static bool m_resetEntityWindowSize;
 
 	static void Init(GLFWwindow* _window, std::weak_ptr<Application> _app);

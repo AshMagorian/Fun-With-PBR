@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
 	//*********************************************************************************************************************************
 
-	std::shared_ptr<Scene> scene1 = SceneManager::CreateScene("Scene1");
+	std::shared_ptr<Scene> scene1 = application->GetSceneManager()->CreateScene("Scene1");
 	scene1->camera->AddComponent<FirstPersonCameraControls>();
 	scene1->camera->GetTransform()->SetPos(glm::vec3(0.0f, 0.0f, 5.0f));
 	scene1->cubemapName = "bg";
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 	
 	//**********************************************************************************************************************************
 
-	std::shared_ptr<Scene> scene2 = SceneManager::CreateScene("Scene2");
+	std::shared_ptr<Scene> scene2 = application->GetSceneManager()->CreateScene("Scene2");
 	scene2->camera->AddComponent<FirstPersonCameraControls>();
 	scene2->camera->GetTransform()->SetPos(glm::vec3(0.0f, 0.0f, 5.0f));
 	scene2->cubemapName = "bg2";
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 
 	assimpTest->GetTransform()->SetScale(glm::vec3(0.02f, 0.02f, 0.02f));
 
-	SceneManager::SetStartupScene("Scene1");
+	application->GetSceneManager()->SetStartupScene("Scene1");
 
 	/**
 	*Runs the game loop from application

@@ -5,12 +5,35 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <json.h>
 
 #define IMPLEMENT_CLONE(TYPE) \
     std::shared_ptr<Component> Clone() const { return std::make_shared<TYPE>(*this); }
 #define MAKE_PROTOTYPE(TYPE) \
     std::shared_ptr<Component> TYPE ## _myProtoype = \
       Component::AddPrototype(#TYPE, std::make_shared<TYPE>());
+#define SAVE_TYPE(TYPE) \
+	val["componentType"] = #TYPE
+#define SAVE_VEC3(name, value)  \
+	val[name][0] = value.x; \
+	val[name][1] = value.y; \
+	val[name][2] = value.z 
+#define SAVE_VALUE(name, value) \
+	val[name] = value
+
+#define LOAD_VEC3(name, value) \
+	value.x = val[name][0].asFloat(); \
+	value.y = val[name][1].asFloat(); \
+	value.z = val[name][2].asFloat()
+#define LOAD_STRING(name, value) \
+	value = val[name].asString()
+#define LOAD_INT(name, value) \
+	value = val[name].asInt()
+#define LOAD_FLOAT(name, value) \
+	value = val[name].asFloat()
+#define LOAD_BOOL(name, value) \
+	value = val[name].asBool()
+
 
 class Entity;
 class Application;
@@ -19,6 +42,7 @@ class Component
 {
 	friend class Entity;
 	friend class DebugUIManager;
+	friend class SaveManager;
 private:
 	std::weak_ptr<Entity> m_entity; // a reference to the entity which owns this component
 
@@ -50,6 +74,14 @@ private:
 	*\brief Calls the rendering functions (Only useful for the Render class)
 	*/
 	virtual void OnDisplay() {}
+	/**
+	*\brief Saves the desired data of the component to a Json file
+	*/
+	virtual void OnSave(Json::Value& val) {}
+	/**
+	*\brief Loads the desired data of the component to a Json file
+	*/
+	virtual void OnLoad(Json::Value& val) {}
 	/**
 	*\brief Virtual funstion which clones the desired Component
 	*/

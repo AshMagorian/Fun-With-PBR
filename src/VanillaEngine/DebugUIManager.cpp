@@ -1,4 +1,5 @@
 #include <VanillaEngine/VanillaEngine.h>
+#include "SaveManager.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
@@ -6,12 +7,15 @@
 
 bool DebugUIManager::m_entityWindow = false;
 std::shared_ptr<Entity> DebugUIManager::m_currentEntity = nullptr;
+std::shared_ptr<SceneManager> DebugUIManager::m_sceneManager = nullptr;
 std::weak_ptr<Application>DebugUIManager::m_app;
+bool DebugUIManager::m_newScene = true;
 bool DebugUIManager::m_resetEntityWindowSize = false;
 
 void DebugUIManager::Init(GLFWwindow* _window, std::weak_ptr<Application> _app)
 {
 	m_app = _app;
+	m_sceneManager = m_app.lock()->GetSceneManager();
 	// Setup ImGui 
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -30,27 +34,51 @@ void DebugUIManager::NewFrame()
 
 void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _width, int _height)
 {
-	ImGui::ShowDemoWindow();
+	std::shared_ptr<Scene> currentScene = m_sceneManager->GetCurrentScene();
+	//ImGui::ShowDemoWindow();
+	if (m_newScene)
+		ImGui::SetNextWindowSize(ImVec2(300.0f, 600.0f));
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::Begin("Core", NULL, ImGuiWindowFlags_MenuBar);
-
+	std::string coreTitle = "Core (" + currentScene->sceneName + ")";
+	ImGui::Begin(&coreTitle[0], NULL, ImGuiWindowFlags_MenuBar);
+	m_newScene = false;
 	if (ImGui::BeginMenuBar())
 	{
 		if (ImGui::BeginMenu("Menu"))
 		{
 			if (ImGui::BeginMenu("Change Scene")) 
 			{
-				for (size_t i = 0; i < SceneManager::m_scenes.size(); ++i)
+				for (size_t i = 0; i < m_sceneManager->m_scenes.size(); ++i)
 				{
-					std::string tmp = SceneManager::m_scenes.at(i)->sceneName;
+					std::string tmp = m_sceneManager->m_scenes.at(i)->sceneName;
 					if (ImGui::MenuItem(&tmp[0]))
 					{
-						SceneManager::SetCurrentScene(tmp);
+						m_sceneManager->SetCurrentScene(tmp);
+						m_newScene = true;
 					}
 				}
 
 				ImGui::EndMenu();
 			}
+			if (ImGui::MenuItem("Save Scene"))
+			{
+				m_app.lock()->GetSaveManager()->SaveScene();
+			}
+			if (ImGui::BeginMenu("Load Scene"))
+			{
+				std::vector<std::string> names = m_app.lock()->GetSaveManager()->GetScenes();
+				for (size_t i = 0; i < names.size(); ++i)
+				{
+					std::string tmp = names.at(i);
+					if (ImGui::MenuItem(&tmp[0]))
+					{
+						m_app.lock()->GetSaveManager()->LoadScene(tmp);
+						m_newScene = true;
+					}
+				}
+				ImGui::EndMenu();
+			}
+
 			
 			ImGui::EndMenu();
 		}
@@ -82,7 +110,7 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 			static char entityName[64] = ""; ImGui::InputText("", entityName, 64);
 			if (ImGui::Button("Add") && entityName[0] != NULL)
 			{
-				SceneManager::GetCurrentScene()->AddEntity(entityName);
+				currentScene->AddEntity(entityName);
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
@@ -93,9 +121,9 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 	if (ImGui::CollapsingHeader("Directional Light"))
 	{
 		ImGui::Text("    x        y         z");
-		ImGui::DragFloat3("Direction", &(SceneManager::GetCurrentScene()->lightManager->GetDirectionalLight()->direction.x), 0.005f);
-		ImGui::ColorPicker3("Colour", &(SceneManager::GetCurrentScene()->lightManager->GetDirectionalLight()->colour.x));
-		ImGui::DragFloat("Intensity", &(SceneManager::GetCurrentScene()->lightManager->GetDirectionalLight()->intensity), 0.05f);
+		ImGui::DragFloat3("Direction", &(currentScene->lightManager->GetDirectionalLight()->direction.x), 0.005f);
+		ImGui::ColorPicker3("Colour", &(currentScene->lightManager->GetDirectionalLight()->colour.x));
+		ImGui::DragFloat("Intensity", &(currentScene->lightManager->GetDirectionalLight()->intensity), 0.05f);
 	}
 	// Skybox selector
 	if (ImGui::CollapsingHeader("Skybox"))
@@ -110,7 +138,7 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 		ImGui::Combo("skybox", &item_current, mapsArr, maps.size());
 		if (ImGui::Button("Apply"))
 		{
-			SceneManager::GetCurrentScene()->cubemapName = maps.at(item_current);
+			currentScene->cubemapName = maps.at(item_current);
 			m_app.lock()->GetSkybox()->SetSkybox(maps.at(item_current));
 		}
 		GLuint id = Skybox::m_cubemaps[item_current].preview_id;
@@ -206,7 +234,7 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 					static char newName[64] = ""; ImGui::InputText("", newName, 64);
 					if (ImGui::Button("confirm") && newName[0] != NULL)
 					{
-						SceneManager::GetCurrentScene()->NameEntity(newName, (*i));
+						currentScene->NameEntity(newName, (*i));
 						m_resetEntityWindowSize = true;
 						ImGui::CloseCurrentPopup();
 					}
@@ -216,7 +244,7 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 			}
 		}
 		if (deleteFlag == true)
-			SceneManager::m_currentScene->entities.remove(m_currentEntity);
+			currentScene->entities.remove(m_currentEntity);
 	}
 }
 

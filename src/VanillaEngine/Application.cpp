@@ -1,4 +1,5 @@
 #include "VanillaEngine.h"
+#include "SaveManager.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
@@ -67,7 +68,8 @@ std::shared_ptr<Application> const Application::Init(int _w, int _h)
 
 	DebugUIManager::Init(app->m_window, app->self);
 	app->m_skybox->Init(app->self);
-	SceneManager::Init(app->self);
+	app->m_sceneManager->Init(app->self);
+	app->m_saveManager->Init(app->self);
 	app->m_outlineRenderer->Init(app->self);
 
 	return app;
@@ -83,14 +85,14 @@ void Application::Run()
 
 		m_mainCamera->UpdateMatrix(m_windowWidth, m_windowHeight);
 
-		SceneManager::UpdateScene();
-		DebugUIManager::Tick(SceneManager::GetCurrentScene()->entities, m_windowWidth, m_windowHeight);
+		m_sceneManager->UpdateScene();
+		DebugUIManager::Tick(m_sceneManager->GetCurrentScene()->entities, m_windowWidth, m_windowHeight);
 
 		glClearColor(0.6f, 0.4f, 0.6f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glViewport(0, 0, m_windowWidth, m_windowHeight);
 
-		SceneManager::DrawScene();
+		m_sceneManager->DrawScene();
 		DebugUIManager::Display();
 
 		m_input->ResetValues();

@@ -40,6 +40,8 @@ public:
 	void OnTick();
 	void OnDisplay();
 	void OnShowUI();
+	void OnSave(Json::Value& val);
+	void OnLoad(Json::Value& val);
 
 	void SetMesh(std::shared_ptr<VertexArray> _va) { m_va = _va; }
 	void SetPBRMaterial(std::shared_ptr<PBR_Material> _mat) { m_pbrMat = _mat; }

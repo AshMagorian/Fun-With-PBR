@@ -13,6 +13,8 @@ class Environment;
 class Input;
 class Resources;
 class Skybox;
+class SceneManager;
+class SaveManager;
 class OutlineRenderer;
 
 class Application
@@ -28,6 +30,8 @@ private:
 	std::shared_ptr<Input> m_input = std::make_shared<Input>();
 	std::shared_ptr<Resources> m_resourceManager = std::make_shared<Resources>(); // A pointer to the resource manager for accesibility
 	std::shared_ptr<Skybox> m_skybox = std::make_shared<Skybox>();
+	std::shared_ptr<SceneManager> m_sceneManager = std::make_shared<SceneManager>();
+	std::shared_ptr<SaveManager> m_saveManager = std::make_shared<SaveManager>();
 	std::shared_ptr<OutlineRenderer> m_outlineRenderer = std::make_shared<OutlineRenderer>();
 
 	GLFWwindow* m_window = nullptr;
@@ -47,6 +51,8 @@ public:
 	std::shared_ptr<Resources> GetResourceManager() { return m_resourceManager; }
 	std::shared_ptr<Input> GetInput() { return m_input; }
 	std::shared_ptr<Skybox> GetSkybox() { return m_skybox; }
+	std::shared_ptr<SceneManager> GetSceneManager() { return m_sceneManager; }
+	std::shared_ptr<SaveManager> GetSaveManager() { return m_saveManager; }
 	std::shared_ptr<OutlineRenderer> GetOutlineRenderer() { return m_outlineRenderer; }
 	float GetDeltaTime();
 };

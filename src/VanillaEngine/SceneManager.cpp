@@ -1,11 +1,5 @@
 #include <VanillaEngine/VanillaEngine.h>
 
-std::vector<std::shared_ptr<Scene>> SceneManager::m_scenes;
-std::shared_ptr<Scene> SceneManager::m_currentScene;
-std::shared_ptr<Scene> SceneManager::m_nextScene;
-std::weak_ptr<Application> SceneManager::m_app;
-bool SceneManager::m_isChangingScene = false;
-
 void SceneManager::Init(std::weak_ptr<Application>_app)
 {
 	m_app = _app;
@@ -14,11 +8,13 @@ void SceneManager::Init(std::weak_ptr<Application>_app)
 std::shared_ptr<Scene> SceneManager::CreateScene(std::string _name)
 {
 	std::shared_ptr<Scene> scene = std::make_shared<Scene>();
-	scene->sceneName = _name;
+	scene->app = m_app;
+	scene->self = scene;
+	NameScene(_name, scene);
 	scene->camera = scene->AddEntity("MainCamera");
 	scene->lightManager = std::make_shared<Lights>();
 	scene->lightManager->m_application = m_app;
-	scene->self = scene;
+
 	m_scenes.push_back(scene);
 	return scene;
 }
@@ -49,6 +45,22 @@ void SceneManager::SetCurrentScene(std::string _name)
 		}
 	}
 	std::cout << "Could not change scene! Scene: " << _name << " not found" << std::endl;
+}
+
+void SceneManager::SetCurrentScene(std::shared_ptr<Scene> _scene)
+{
+	m_nextScene = _scene;
+	m_isChangingScene = true;
+
+	for (unsigned int i = 0; i < m_scenes.size(); ++i)
+	{
+		if (m_currentScene->sceneName == m_scenes.at(i)->sceneName)
+		{
+			m_scenes.at(i) = _scene;
+			return;
+		}
+	}
+	
 }
 
 void SceneManager::SetStartupScene(std::string _name)
@@ -106,7 +118,7 @@ std::shared_ptr<Entity> Scene::AddEntity(std::string _name)
 	std::shared_ptr<Entity> entity = std::make_shared<Entity>();
 	entity->m_self = entity;
 	entity->m_scene = self;
-	entity->m_application = SceneManager::m_app;
+	entity->m_application = app;
 	entity->m_transform = entity->AddComponent<Transform>();
 	NameEntity(_name, entity);
 	entities.push_back(entity);
@@ -132,6 +144,34 @@ void Scene::NameEntity(std::string _name, std::shared_ptr<Entity> _entity)
 
 	} while (i != entities.end());
 	_entity->m_name = name;
+}
+void SceneManager::NameScene(std::string _name, std::shared_ptr<Scene> _scene)
+{
+	unsigned int i = 0;
+	std::string name = _name;
+	do
+	{
+		for (i = 0; i < m_scenes.size(); ++i)
+		{
+			if (m_scenes[i]->sceneName == name)
+			{
+				name = _name + "(" + std::to_string(i + 1) + ")";
+				break;
+			}
+		}
+
+	} while (i < m_scenes.size());
+	_scene->sceneName = name;
+}
+
+std::shared_ptr<Entity> Scene::GetEntity(std::string _name)
+{
+	for (std::list<std::shared_ptr<Entity>>::iterator i = entities.begin(); i != entities.end(); ++i)
+	{
+		if ((*i)->m_name == _name)
+			return (*i);
+	}
+	std::cout << "Entity '" << _name << "' not found" << std::endl;
 }
 
 void SceneManager::ChangeScene()

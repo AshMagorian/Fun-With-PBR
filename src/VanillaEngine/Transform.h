@@ -26,7 +26,8 @@ public:
 
 	void OnTick();
 	void OnShowUI();
-
+	void OnSave(Json::Value& val);
+	void OnLoad(Json::Value& val);
 
 	glm::vec3 GetPos() { return m_position; }
 	glm::vec3 GetRotation() { return m_rotation; }

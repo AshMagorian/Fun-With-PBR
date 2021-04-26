@@ -80,7 +80,7 @@ GLuint PrimitiveShape::SetupSphere()
 
 		const unsigned int X_SEGMENTS = 64 ;
 		const unsigned int Y_SEGMENTS = 64 ;
-		const float PI = 3.14159265359;
+		const float PI = 3.14159265359f;
 		for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
 		{
 			for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
@@ -156,7 +156,7 @@ GLuint PrimitiveShape::SetupSphere()
 
 		}
 		//search duplicates
-		for (int i = 0; i < duplicatePoints.size(); i++)
+		for (size_t i = 0; i < duplicatePoints.size(); i++)
 		{
 			int index = duplicatePoints[i];
 			int p = indices[index];
@@ -204,13 +204,13 @@ GLuint PrimitiveShape::SetupSphere()
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 		float stride = (3 + 2 + 3 + 3) * sizeof(float);
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, (GLsizei)stride, (void*)0);
 		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, (GLsizei)stride, (void*)(3 * sizeof(float)));
 		glEnableVertexAttribArray(3);
-		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float)));
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, (GLsizei)stride, (void*)(5 * sizeof(float)));
 		glEnableVertexAttribArray(4);
-		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, stride, (void*)(8 * sizeof(float)));
+		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, (GLsizei)stride, (void*)(8 * sizeof(float)));
 	}
 	return id;
 }

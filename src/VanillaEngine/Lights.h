@@ -22,6 +22,7 @@ class Lights
 {
 	friend class Application;
 	friend class SceneManager;
+	friend class SaveManager;
 private:
 	std::shared_ptr<DirectionalLight> m_directionalLight = std::make_shared<DirectionalLight>();
 	std::list<std::shared_ptr<PointLight>> m_pointLights;

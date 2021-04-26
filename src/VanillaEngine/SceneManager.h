@@ -16,12 +16,14 @@ struct Scene
 	std::shared_ptr<Lights> lightManager;
 	std::string cubemapName;
 	std::weak_ptr<Scene> self;
+	std::weak_ptr<Application> app;
 
 	std::shared_ptr<Entity> AddEntity(std::string _name);
 	/*
 	Gives the entity a new name. If the name already exists in the current scene, a number is added to the end of the name
 	*/
 	void NameEntity(std::string _name, std::shared_ptr<Entity> _entity);
+	std::shared_ptr<Entity> GetEntity(std::string _name);
 };
 
 class SceneManager
@@ -29,26 +31,30 @@ class SceneManager
 	friend class Application;
 	friend struct Scene;
 	friend class DebugUIManager;
+	friend class SaveManager;
 private:
-	static std::vector<std::shared_ptr<Scene>> m_scenes;
+	std::vector<std::shared_ptr<Scene>> m_scenes;
 
-	static std::shared_ptr<Scene> m_currentScene;
-	static std::shared_ptr<Scene> m_nextScene;
-	static bool m_isChangingScene;
+	std::shared_ptr<Scene> m_currentScene;
+	std::shared_ptr<Scene> m_nextScene;
+	bool m_isChangingScene = false;
 
 
-	static void Init(std::weak_ptr<Application>_app);
-	static void UpdateScene();
-	static void DrawScene();
-	static void ChangeScene();
+	void Init(std::weak_ptr<Application>_app);
+	void UpdateScene();
+	void DrawScene();
+	void ChangeScene();
+	void NameScene(std::string _name, std::shared_ptr<Scene> _scene);
 
 public:
 
-	static std::shared_ptr<Scene> CreateScene(std::string _name);
-	static std::shared_ptr<Scene> GetCurrentScene() { return m_currentScene; }
-	static std::shared_ptr<Scene> GetScene(std::string _name);
-	static void SetStartupScene(std::string _name);
-	static void SetCurrentScene(std::string _name);
+	std::shared_ptr<Scene> CreateScene(std::string _name);
+	std::shared_ptr<Scene> GetCurrentScene() { return m_currentScene; }
+	std::shared_ptr<Scene> GetScene(std::string _name);
+	void SetStartupScene(std::string _name);
+	void SetCurrentScene(std::string _name);
+	void SetCurrentScene(std::shared_ptr<Scene> _scene);
+
 protected:
-	static std::weak_ptr<Application> m_app;
+	std::weak_ptr<Application> m_app;
 };

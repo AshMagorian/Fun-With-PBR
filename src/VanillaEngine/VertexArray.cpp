@@ -192,7 +192,7 @@ VertexArray::VertexArray(std::string path)
 	std::vector<float> pos = positionBuffer->GetData();
 	std::vector<float> uv = texCoordBuffer->GetData();
 	int j = 0;
-	for (size_t i = 0; i < positionBuffer->GetDataSize(); i += 9)
+	for (int i = 0; i < positionBuffer->GetDataSize(); i += 9)
 	{
 		v1.vector.x = pos[i]; v1.vector.y = pos[i + 1]; v1.vector.z = pos[i + 2];
 		v1.uv.x = uv[j++]; v1.uv.y = uv[j++];
