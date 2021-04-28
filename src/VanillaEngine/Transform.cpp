@@ -56,6 +56,15 @@ void Transform::OnShowUI()
 	ImGui::DragFloat3("Position", &m_position.x, 0.005f);
 	ImGui::DragFloat3("Rotation", &m_rotation.x, 0.05f);
 	ImGui::DragFloat3("Scale", &m_scale.x, 0.005f);
+	float scaleIncrement = m_scale.x;
+	ImGui::DragFloat("Uniform Scale", &scaleIncrement, 0.005f);
+	if (scaleIncrement != m_scale.x)
+	{
+		scaleIncrement = scaleIncrement - m_scale.x;
+		m_scale.x += scaleIncrement;
+		m_scale.y += scaleIncrement;
+		m_scale.z += scaleIncrement;
+	}
 
 }
 

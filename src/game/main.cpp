@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[])
 {
-	std::shared_ptr<Application> application = Application::Init(WINDOW_WIDTH, WINDOW_HEIGHT);
+	std::shared_ptr<Application> application = Application::Init(WINDOW_WIDTH, WINDOW_HEIGHT, DEBUG_ON);
 
 	application->GetResourceManager()->CreateResource<ShaderProgram>("../src/resources/shaders/pbrShader.txt", "pbr_shader");
 	application->GetResourceManager()->CreateResource<ShaderProgram>("../src/resources/shaders/test.txt", "test_shader");
@@ -25,8 +25,7 @@ int main(int argc, char *argv[])
 	application->GetResourceManager()->CreateResource<AssimpModel>(backpack_obj, "backpack_obj");
 	std::shared_ptr<AssimpModel> globe_obj = std::make_shared<AssimpModel>("../src/resources/Old_Antique_Standing_Globe_OBJ/Old_Antique_Standing_Globe_.obj", 0);
 	application->GetResourceManager()->CreateResource<AssimpModel>(globe_obj, "globe_obj");
-
-
+	
 	//application->GetSkybox()->CreateSkybox("bg",
 	//	"../src/resources/textures/right.jpg",
 	//	"../src/resources/textures/left.jpg",

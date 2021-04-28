@@ -5,13 +5,6 @@
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
-bool DebugUIManager::m_entityWindow = false;
-std::shared_ptr<Entity> DebugUIManager::m_currentEntity = nullptr;
-std::shared_ptr<SceneManager> DebugUIManager::m_sceneManager = nullptr;
-std::weak_ptr<Application>DebugUIManager::m_app;
-bool DebugUIManager::m_newScene = true;
-bool DebugUIManager::m_resetEntityWindowSize = false;
-
 void DebugUIManager::Init(GLFWwindow* _window, std::weak_ptr<Application> _app)
 {
 	m_app = _app;
@@ -35,13 +28,14 @@ void DebugUIManager::NewFrame()
 void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _width, int _height)
 {
 	std::shared_ptr<Scene> currentScene = m_sceneManager->GetCurrentScene();
-	//ImGui::ShowDemoWindow();
+	ImGui::ShowDemoWindow();
 	if (m_newScene)
 		ImGui::SetNextWindowSize(ImVec2(300.0f, 600.0f));
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	std::string coreTitle = "Core (" + currentScene->sceneName + ")";
 	ImGui::Begin(&coreTitle[0], NULL, ImGuiWindowFlags_MenuBar);
 	m_newScene = false;
+	std::string menu_popup_action = "";
 	if (ImGui::BeginMenuBar())
 	{
 		if (ImGui::BeginMenu("Menu"))
@@ -60,10 +54,7 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 
 				ImGui::EndMenu();
 			}
-			if (ImGui::MenuItem("Save Scene"))
-			{
-				m_app.lock()->GetSaveManager()->SaveScene();
-			}
+			if (ImGui::MenuItem("Save Scene")) menu_popup_action = "Save";
 			if (ImGui::BeginMenu("Load Scene"))
 			{
 				std::vector<std::string> names = m_app.lock()->GetSaveManager()->GetScenes();
@@ -78,16 +69,29 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 				}
 				ImGui::EndMenu();
 			}
-
-			
 			ImGui::EndMenu();
 		}
 		ImGui::EndMenuBar();
 	}
 
+	if (menu_popup_action == "Save") ImGui::OpenPopup("Save");
+	if (ImGui::BeginPopup("Save"))
+	{
+		ImGui::Text("Enter the name of your Scene");
+		ImGui::Separator();
+		static char sceneName[64] = ""; ImGui::InputText("", sceneName, 64);
+		if (ImGui::Button("save_confirm") && sceneName[0] != NULL)
+		{
+			currentScene->sceneName = sceneName;
+			m_app.lock()->GetSaveManager()->SaveScene();
+			m_newScene = true;
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+
 	//Core window with scene selection, entities tab and skybox
 
-	//bool resetWindow = false;
 	if (ImGui::CollapsingHeader("Entities"))
 	{
 		for (std::list<std::shared_ptr<Entity>>::iterator it = _entities.begin(); it != _entities.end(); ++it)
@@ -151,16 +155,14 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 		ImGui::Image((void*)(intptr_t)id, ImVec2(200, 200), uv_min, uv_max, tint_col, border_col);
 		
 	}
-
 	ImGui::End();
 	
+	// Entity Window
 	if (m_entityWindow == true)
 	{
 		bool deleteFlag = false;
 		for (std::list<std::shared_ptr<Entity>>::iterator i = _entities.begin(); i != _entities.end(); ++i)
 		{
-			//Add to entities list on core?
-			//if Window == true, display window with components
 			if ((*i) == m_currentEntity)
 			{
 				ImVec2 size{ 300.0f, 600.0f };
@@ -177,13 +179,13 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 				{
 					if (ImGui::BeginMenu("Menu"))
 					{
-						if (ImGui::MenuItem("Delete Entity"))
-							deleteFlag = true;
+						if (ImGui::MenuItem("Delete Entity")) deleteFlag = true;
+						if (ImGui::MenuItem("Rename Entity")) menu_popup_action = "rename_popup";
+
 						ImGui::EndMenu();
 					}
 					ImGui::EndMenuBar();
 				}
-
 
 				std::list<std::shared_ptr<Component>> components = (*i)->GetComponents();
 				std::shared_ptr<Component> componentToDelete = nullptr;
@@ -208,12 +210,12 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 					(*i)->RemoveComponent(componentToDelete);
 
 				if (ImGui::Button("Add Component"))
-					ImGui::OpenPopup("my_select_popup");
-				if (ImGui::BeginPopup("my_select_popup"))
+					ImGui::OpenPopup("components_popup");
+				if (ImGui::BeginPopup("components_popup"))
 				{
 					ImGui::Text("Components");
 					ImGui::Separator();
-					
+					// Prints a list of all of the component names
 					for (auto it = Component::protoTable().cbegin(); it != Component::protoTable().cend(); ++it)
 					{
 						if (ImGui::Selectable((it->first).c_str()))
@@ -224,9 +226,7 @@ void DebugUIManager::Tick(std::list<std::shared_ptr<Entity>> _entities, int _wid
 					ImGui::EndPopup();
 				}
 
-
-				if (ImGui::Button("Rename Entity"))
-					ImGui::OpenPopup("rename_popup");
+				if (menu_popup_action == "rename_popup") ImGui::OpenPopup("rename_popup");
 				if (ImGui::BeginPopup("rename_popup"))
 				{
 					ImGui::Text("New Name");

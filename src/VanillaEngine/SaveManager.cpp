@@ -1,6 +1,9 @@
 #include "VanillaEngine.h"
 #include "SaveManager.h"
 #include <list>
+#include <algorithm>
+#include <iterator>
+#include <windows.h>
 
 void SaveManager::Init(std::weak_ptr<Application> _app)
 {
@@ -64,7 +67,7 @@ void SaveManager::SaveScene()
 	json_root["scene"] = json_scene;
 
 	std::ofstream myfile;
-	myfile.open("../src/save.Json");
+	myfile.open("../src/saves/" + m_sceneManager->GetCurrentScene()->sceneName + ".Json");
 	writer->write(json_root, &myfile);
 	myfile.close();
 }
@@ -72,10 +75,11 @@ void SaveManager::SaveScene()
 void SaveManager::LoadScene(std::string _sceneName)
 {
 	std::ifstream ifs;
-	ifs.open("../src/save.Json");
+
+	ifs.open("../src/saves/" + _sceneName + ".Json");
 	if (!ifs.is_open())
 	{
-		std::cout << "Save file not found" << std::endl;
+		std::cout << "Save file " + _sceneName + ".Json not found" << std::endl;
 	}
 	else
 	{
@@ -92,7 +96,6 @@ void SaveManager::LoadScene(std::string _sceneName)
 		tmp->app = m_app;
 		Json::Value json_scene = json_root["scene"];
 		// Scene Name
-		//tmp->sceneName = json_scene["sceneName"].asString();
 		m_sceneManager->NameScene(json_scene["sceneName"].asString(), tmp);
 
 		// Light Manager
@@ -136,28 +139,34 @@ void SaveManager::LoadScene(std::string _sceneName)
 }
 std::vector<std::string> SaveManager::GetScenes()
 {
-	std::ifstream ifs;
-	ifs.open("../src/save.Json");
-	if (!ifs.is_open())
-	{
-		std::cout << "Save file not found" << std::endl;
-	}
-	else
-	{
-		std::vector<std::string> names;
-		Json::Value json_root;
-		Json::CharReaderBuilder builder;
-		builder["collectComments"] = true;
-		JSONCPP_STRING errs;
-		if (!parseFromStream(builder, ifs, &json_root, &errs)) {
-			std::cout << errs << std::endl;
-			return names;
-		}
+	std::vector<std::string> v;
+	read_directory("../src/saves", v);
+	return v;
+}
 
-
-		Json::Value json_scene = json_root["scene"];
-		names.push_back(json_scene["sceneName"].asString());
-		return names;
+void SaveManager::read_directory(const std::string& name, std::vector<std::string>& v)
+{
+	std::string pattern(name);
+	pattern.append("\\*");
+	WIN32_FIND_DATA data;
+	HANDLE hFind;
+	if ((hFind = FindFirstFile(pattern.c_str(), &data)) != INVALID_HANDLE_VALUE) {
+		do {
+			std::string in = data.cFileName;
+			std::string out;
+			for (size_t i = 0; i < in.length(); i++)
+			{
+				if (in.at(i) == '.')
+				{
+					if (out.length() > 0)
+						v.push_back(out);
+					break;
+				}
+				else
+					out += in.at(i);
+			}
+		} while (FindNextFile(hFind, &data) != 0);
+		FindClose(hFind);
 	}
 }
 

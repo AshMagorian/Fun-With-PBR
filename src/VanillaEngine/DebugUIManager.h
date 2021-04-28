@@ -12,19 +12,19 @@ class DebugUIManager
 	friend class Application;
 private:
 
-	static bool m_entityWindow;
-	static std::shared_ptr<Entity> m_currentEntity;
-	static std::shared_ptr<SceneManager> m_sceneManager;
-	static std::weak_ptr<Application> m_app;
+	bool m_entityWindow = false;
+	std::shared_ptr<Entity> m_currentEntity;
+	std::shared_ptr<SceneManager> m_sceneManager;
+	std::weak_ptr<Application> m_app;
 
-	static bool m_newScene;
-	static bool m_resetEntityWindowSize;
+	bool m_newScene = true;
+	bool m_resetEntityWindowSize = false;
 
-	static void Init(GLFWwindow* _window, std::weak_ptr<Application> _app);
-	static void NewFrame();
-	static void Tick(std::list<std::shared_ptr<Entity>> _entities, int _width, int _height);
-	static void Display();
-	static void End();
+	void Init(GLFWwindow* _window, std::weak_ptr<Application> _app);
+	void NewFrame();
+	void Tick(std::list<std::shared_ptr<Entity>> _entities, int _width, int _height);
+	void Display();
+	void End();
 public:
 
 };

@@ -4,14 +4,20 @@
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
+#include <string>
+#include <iostream>
+#include <filesystem>
+
+
 Application::Application() {}
 Application::~Application()
 {
-	DebugUIManager::End();
+	if (m_debugUIManager!= nullptr)
+		m_debugUIManager->End();
 	glfwDestroyWindow(m_window);
 	glfwTerminate();
 }
-std::shared_ptr<Application> const Application::Init(int _w, int _h)
+std::shared_ptr<Application> const Application::Init(int _w, int _h, int _debugMode)
 {
 	std::shared_ptr<Application> app = std::make_shared<Application>();
 	app->running = false;
@@ -66,7 +72,10 @@ std::shared_ptr<Application> const Application::Init(int _w, int _h)
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 	glStencilMask(0x00);
 
-	DebugUIManager::Init(app->m_window, app->self);
+	if(_debugMode == DEBUG_ON)
+		app->m_debugUIManager = std::make_shared<DebugUIManager>();
+	if (app->m_debugUIManager != nullptr)
+		app->m_debugUIManager->Init(app->m_window, app->self);
 	app->m_skybox->Init(app->self);
 	app->m_sceneManager->Init(app->self);
 	app->m_saveManager->Init(app->self);
@@ -79,21 +88,24 @@ void Application::Run()
 	while (!glfwWindowShouldClose(m_window))
 	{
 		m_time->StartOfFrame();
-		DebugUIManager::NewFrame();
+		if (m_debugUIManager != nullptr)
+			m_debugUIManager->NewFrame();
 		//Update window dimensions
 		glfwGetWindowSize(m_window, &m_windowWidth, &m_windowHeight);
 
 		m_mainCamera->UpdateMatrix(m_windowWidth, m_windowHeight);
 
 		m_sceneManager->UpdateScene();
-		DebugUIManager::Tick(m_sceneManager->GetCurrentScene()->entities, m_windowWidth, m_windowHeight);
+		if (m_debugUIManager != nullptr)
+			m_debugUIManager->Tick(m_sceneManager->GetCurrentScene()->entities, m_windowWidth, m_windowHeight);
 
 		glClearColor(0.6f, 0.4f, 0.6f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 		glViewport(0, 0, m_windowWidth, m_windowHeight);
 
 		m_sceneManager->DrawScene();
-		DebugUIManager::Display();
+		if (m_debugUIManager != nullptr)
+			m_debugUIManager->Display();
 
 		m_input->ResetValues();
 		glfwPollEvents();

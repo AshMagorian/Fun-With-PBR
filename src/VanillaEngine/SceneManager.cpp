@@ -172,6 +172,7 @@ std::shared_ptr<Entity> Scene::GetEntity(std::string _name)
 			return (*i);
 	}
 	std::cout << "Entity '" << _name << "' not found" << std::endl;
+	return nullptr;
 }
 
 void SceneManager::ChangeScene()

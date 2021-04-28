@@ -7,6 +7,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#define DEBUG_ON 1
+#define DEBUG_OFF 0
+
 class Entity;
 class Camera;
 class Environment;
@@ -16,6 +19,7 @@ class Skybox;
 class SceneManager;
 class SaveManager;
 class OutlineRenderer;
+class DebugUIManager;
 
 class Application
 {
@@ -33,6 +37,7 @@ private:
 	std::shared_ptr<SceneManager> m_sceneManager = std::make_shared<SceneManager>();
 	std::shared_ptr<SaveManager> m_saveManager = std::make_shared<SaveManager>();
 	std::shared_ptr<OutlineRenderer> m_outlineRenderer = std::make_shared<OutlineRenderer>();
+	std::shared_ptr<DebugUIManager> m_debugUIManager;
 
 	GLFWwindow* m_window = nullptr;
 
@@ -41,7 +46,7 @@ private:
 public:
 	Application();
 	~Application();
-	static std::shared_ptr<Application> const Init(int _w, int _h);
+	static std::shared_ptr<Application> const Init(int _w, int _h, int _debugMode);
 	void Run();
 	void Stop();
 
